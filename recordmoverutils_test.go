@@ -9,8 +9,7 @@ import (
 )
 
 type testGetter struct {
-	lastCategory *pbrc.ReleaseMetadata_Category
-	rec          *pbrc.Record
+	rec *pbrc.Record
 }
 
 func (t *testGetter) getRecords() ([]*pbrc.Record, error) {
@@ -18,7 +17,7 @@ func (t *testGetter) getRecords() ([]*pbrc.Record, error) {
 }
 
 func (t *testGetter) update(r *pbrc.Record) error {
-	t.lastCategory = &r.GetMetadata().Category
+	t.rec = r
 	return nil
 }
 
@@ -29,7 +28,7 @@ type testFailGetter struct {
 
 func (t testFailGetter) getRecords() ([]*pbrc.Record, error) {
 	if t.grf {
-		return []*pbrc.Record{&pbrc.Record{Release: &pbgd.Release{FolderId: 1}}}, nil
+		return []*pbrc.Record{&pbrc.Record{Release: &pbgd.Release{FolderId: 1}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_UNLISTENED}}}, nil
 	}
 	return nil, errors.New("Built to fail")
 }
@@ -60,4 +59,22 @@ func TestBadGetter(t *testing.T) {
 	tg := testFailGetter{}
 	s.getter = tg
 	s.moveRecords()
+}
+
+func TestUpdateFailOnUpdate(t *testing.T) {
+	s := InitTest()
+	tg := testFailGetter{grf: true}
+	s.getter = tg
+	s.moveRecords()
+}
+
+func TestUpdateToStaged(t *testing.T) {
+	s := InitTest()
+	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_UNLISTENED}}}
+	s.getter = &tg
+	s.moveRecords()
+
+	if tg.rec.GetMetadata().MoveFolder != 812802 {
+		t.Errorf("Folder has not been updated: %v", tg.rec)
+	}
 }

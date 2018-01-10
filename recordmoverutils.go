@@ -48,5 +48,11 @@ func (s *Server) moveRecord(r *pbrc.Record) *pbrc.Record {
 		r.GetMetadata().MoveFolder = 812802
 		return r
 	}
+
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_STAGED && r.GetRelease().FolderId != 673768 {
+		r.GetMetadata().MoveFolder = 673768
+		return r
+	}
+
 	return nil
 }

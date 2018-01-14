@@ -17,10 +17,8 @@ func (s *Server) moveRecords() {
 	t := time.Now()
 	records, err := s.getter.getRecords()
 
-	log.Printf("Now %v and %v", records, err)
-
 	if err != nil {
-		s.Log(fmt.Sprintf("Error moving records: %v", err))
+		s.Log(fmt.Sprintf("ERROR moving records: %v", err))
 		return
 	}
 

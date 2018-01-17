@@ -16,9 +16,8 @@ func (s *Server) moveRecords() {
 	t := time.Now()
 	records, err := s.getter.getRecords()
 
-
 	if err != nil {
-		s.Log(fmt.Sprintf("Error moving records: %v", err))
+		s.Log(fmt.Sprintf("ERROR moving records: %v", err))
 		return
 	}
 
@@ -45,5 +44,26 @@ func (s *Server) moveRecord(r *pbrc.Record) *pbrc.Record {
 		r.GetMetadata().MoveFolder = 812802
 		return r
 	}
+
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_STAGED && r.GetRelease().FolderId != 673768 {
+		r.GetMetadata().MoveFolder = 673768
+		return r
+	}
+
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_FRESHMAN && r.GetRelease().FolderId != 812802 {
+		r.GetMetadata().MoveFolder = 812802
+		return r
+	}
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_FRESHMAN {
+		if r.GetMetadata().GetGoalFolder() != 0 && r.GetRelease().FolderId != r.GetMetadata().GetGoalFolder() {
+			r.GetMetadata().MoveFolder = r.GetMetadata().GetGoalFolder()
+			return r
+		}
+		if r.GetMetadata().GetGoalFolder() == 0 && r.GetRelease().FolderId != 1362206 {
+			r.GetMetadata().MoveFolder = 1362206
+			return r
+		}
+	}
+
 	return nil
 }

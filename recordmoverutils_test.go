@@ -68,7 +68,7 @@ func TestUpdateFailOnUpdate(t *testing.T) {
 	s.moveRecords()
 }
 
-func TestUpdateToStaged(t *testing.T) {
+func TestUpdateToUnlistend(t *testing.T) {
 	s := InitTest()
 	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_UNLISTENED}}}
 	s.getter = &tg
@@ -76,5 +76,49 @@ func TestUpdateToStaged(t *testing.T) {
 
 	if tg.rec.GetMetadata().MoveFolder != 812802 {
 		t.Errorf("Folder has not been updated: %v", tg.rec)
+	}
+}
+
+func TestUpdateToStaged(t *testing.T) {
+	s := InitTest()
+	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_STAGED}}}
+	s.getter = &tg
+	s.moveRecords()
+
+	if tg.rec.GetMetadata().MoveFolder != 673768 {
+		t.Errorf("Folder has not been updated: %v", tg.rec)
+	}
+}
+
+func TestUpdatePreFreshmanToListeningPile(t *testing.T) {
+	s := InitTest()
+	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_PRE_FRESHMAN}}}
+	s.getter = &tg
+	s.moveRecords()
+
+	if tg.rec.GetMetadata().MoveFolder != 812802 {
+		t.Errorf("Pre Freshman has not been updated: %v", tg.rec)
+	}
+}
+
+func TestUpdateFreshmanToPurgatory(t *testing.T) {
+	s := InitTest()
+	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_FRESHMAN}}}
+	s.getter = &tg
+	s.moveRecords()
+
+	if tg.rec.GetMetadata().MoveFolder != 1362206 {
+		t.Errorf("Pre Freshman has not been updated: %v", tg.rec)
+	}
+}
+
+func TestUpdateFreshmanToFilled(t *testing.T) {
+	s := InitTest()
+	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{GoalFolder: 820, Category: pbrc.ReleaseMetadata_FRESHMAN}}}
+	s.getter = &tg
+	s.moveRecords()
+
+	if tg.rec.GetMetadata().MoveFolder != 820 {
+		t.Errorf("Freshman has not been moved correctly: %v", tg.rec)
 	}
 }

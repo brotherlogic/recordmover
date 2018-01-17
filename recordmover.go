@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"strconv"
@@ -117,5 +118,5 @@ func main() {
 	server.RegisterServer("recordmover", false)
 	server.RegisterRepeatingTask(server.moveRecords, time.Hour)
 	server.Log("Starting!")
-	server.Serve()
+	fmt.Printf("%v\n", server.Serve())
 }

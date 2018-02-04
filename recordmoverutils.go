@@ -66,12 +66,14 @@ func (s *Server) moveRecord(r *pbrc.Record) *pbrc.Record {
 	}
 
 	if (r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_PROFESSOR ||
-		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_PROFESSOR) && r.GetRelease().FolderId != 812802 {
+		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_POSTDOC ||
+		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_GRADUATE) && r.GetRelease().FolderId != 812802 {
 		r.GetMetadata().MoveFolder = 812802
 		return r
 	}
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PROFESSOR ||
-		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_POSTDOC {
+		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_POSTDOC ||
+		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_GRADUATE {
 		if r.GetMetadata().GetGoalFolder() != 0 && r.GetRelease().FolderId != r.GetMetadata().GetGoalFolder() {
 			r.GetMetadata().MoveFolder = r.GetMetadata().GetGoalFolder()
 			return r

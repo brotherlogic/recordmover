@@ -68,7 +68,7 @@ func (p prodGetter) update(r *pbrc.Record) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	_, err = client.UpdateRecord(ctx, &pbrc.UpdateRecordRequest{Update: r})
+	_, err = client.UpdateRecord(ctx, &pbrc.UpdateRecordRequest{Requestor: "recordmover", Update: r})
 	if err != nil {
 		return err
 	}

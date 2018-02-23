@@ -79,6 +79,17 @@ func TestUpdateToUnlistend(t *testing.T) {
 	}
 }
 
+func TestUpdateToSold(t *testing.T) {
+	s := InitTest()
+	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_SOLD}}}
+	s.getter = &tg
+	s.moveRecords()
+
+	if tg.rec.GetMetadata().MoveFolder != 488127 {
+		t.Errorf("Folder has not been updated: %v", tg.rec)
+	}
+}
+
 func TestUpdateToStaged(t *testing.T) {
 	s := InitTest()
 	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_STAGED}}}

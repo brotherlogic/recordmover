@@ -40,6 +40,10 @@ func (s *Server) moveRecords() {
 }
 
 func (s *Server) moveRecord(r *pbrc.Record) *pbrc.Record {
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_SOLD && r.GetRelease().FolderId != 488127 {
+		r.GetMetadata().MoveFolder = 488127
+	}
+
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_UNLISTENED && r.GetRelease().FolderId != 812802 {
 		r.GetMetadata().MoveFolder = 812802
 		return r

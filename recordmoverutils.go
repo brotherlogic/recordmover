@@ -72,7 +72,7 @@ func (s *Server) moveRecord(r *pbrc.Record) *pbrc.Record {
 		return r
 	}
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_FRESHMAN {
-		if r.GetMetadata().GetGoalFolder() != 0 && r.GetRelease().FolderId != r.GetMetadata().GetGoalFolder() {
+		if r.GetMetadata().GetGoalFolder() != 0 && (r.GetRelease().FolderId != r.GetMetadata().GetGoalFolder() || r.GetMetadata().MoveFolder != r.GetMetadata().GetGoalFolder()) {
 			r.GetMetadata().MoveFolder = r.GetMetadata().GetGoalFolder()
 			return r
 		}

@@ -46,7 +46,7 @@ func (s *Server) moveRecord(r *pbrc.Record) *pbrc.Record {
 			return r
 		}
 
-		if r.GetRelease().FolderId != 268147 || r.GetMetadata().MoveFolder != 268147 {
+		if r.GetRelease().FolderId != 268147 && r.GetMetadata().MoveFolder != 268147 {
 			r.GetMetadata().MoveFolder = 268147
 			return r
 		}

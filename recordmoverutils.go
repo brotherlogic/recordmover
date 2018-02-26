@@ -50,6 +50,9 @@ func (s *Server) moveRecord(r *pbrc.Record) *pbrc.Record {
 			r.GetMetadata().MoveFolder = 268147
 			return r
 		}
+
+		// Leave the digital title where it is
+		return nil
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_SOLD && r.GetRelease().FolderId != 488127 {

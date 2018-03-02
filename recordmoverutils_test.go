@@ -61,6 +61,26 @@ func TestBadGetter(t *testing.T) {
 	s.moveRecords()
 }
 
+var movetests = []struct{
+	in *pbrc.Record
+	out int32
+}{
+	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_ASSESS}}, 1362206},
+}
+
+func TestMoves(t *testing.T) {
+	for _, test := range movetests {
+		s:= InitTest()
+		tg := testGetter{rec: test.in}
+		s.getter = &tg
+		s.moveRecords()
+
+		if tg.rec.GetMetadata().MoveFolder != test.out {
+			t.Fatalf("Error moving record: %v -> %v (ended up in %v)", test.in, test.out, tg.rec.GetMetadata().MoveFolder)
+		}
+	}
+}
+
 func TestUpdateFailOnUpdate(t *testing.T) {
 	s := InitTest()
 	tg := testFailGetter{grf: true}

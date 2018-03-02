@@ -13,15 +13,12 @@ type getter interface {
 }
 
 func (s *Server) moveRecords() {
-	t := time.Now()
 	records, err := s.getter.getRecords()
 
 	if err != nil {
-		s.Log(fmt.Sprintf("ERROR moving records: %v", err))
 		return
 	}
 
-	s.Log(fmt.Sprintf("About to move %v records", len(records)))
 	count := int64(0)
 	for _, record := range records {
 		update := s.moveRecord(record)
@@ -36,10 +33,15 @@ func (s *Server) moveRecords() {
 
 	s.lastProc = time.Now()
 	s.lastCount = count
-	s.Log(fmt.Sprintf("Moved %v records (touched %v) in %v", len(records), count, time.Now().Sub(t)))
 }
 
 func (s *Server) moveRecord(r *pbrc.Record) *pbrc.Record {
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_ASSESS && (r.GetRelease().FolderId != 1362206 && r.GetMetadata().MoveFolder != 1362206) {
+		r.GetMetadata().MoveFolder = 1362206
+		r.GetMetadata().Purgatory = pbrc.Purgatory_NEEDS_STOCK_CHECK
+		return r
+	}
+	
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_DIGITAL {
 		if r.GetRelease().Rating == 0 && r.GetRelease().FolderId != 812802 {
 			r.GetMetadata().MoveFolder = 812802

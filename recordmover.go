@@ -16,6 +16,7 @@ import (
 	pbg "github.com/brotherlogic/goserver/proto"
 	"github.com/brotherlogic/goserver/utils"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
+	pb "github.com/brotherlogic/recordmover/proto"
 )
 
 //Server main server type
@@ -24,6 +25,7 @@ type Server struct {
 	getter    getter
 	lastProc  time.Time
 	lastCount int64
+	moves     map[int32]*pb.RecordMove
 }
 
 type prodGetter struct {
@@ -79,13 +81,14 @@ func (p prodGetter) update(r *pbrc.Record) error {
 // Init builds the server
 func Init() *Server {
 	s := &Server{GoServer: &goserver.GoServer{}}
+	s.moves = make(map[int32]*pb.RecordMove)
 	s.getter = &prodGetter{getIP: utils.Resolve}
 	return s
 }
 
 // DoRegister does RPC registration
 func (s *Server) DoRegister(server *grpc.Server) {
-	// Do nothing
+	pb.RegisterScoreServiceServer(server, s)
 }
 
 // ReportHealth alerts if we're not healthy

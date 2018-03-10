@@ -9,6 +9,10 @@ message RecordMove {
   int64 move_date = 4;
 }
 
+message Moves {
+  repeated RecordMove moves = 1;
+}
+
 message MoveRequest {
   RecordMove move = 1;
 }

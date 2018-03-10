@@ -28,8 +28,39 @@ type Server struct {
 	moves     map[int32]*pb.RecordMove
 }
 
+const (
+	//KEY is where we store moves
+	KEY = "github.com/brotherlogic/recordmover/moves"
+)
+
 type prodGetter struct {
 	getIP func(string) (string, int32, error)
+}
+
+func (s *Server) readMoves() error {
+	s.moves = make(map[int32]*pb.RecordMove)
+
+	movelist := &pb.Moves{}
+	data, _, err := s.KSclient.Read(KEY, movelist)
+
+	if err != nil {
+		return err
+	}
+
+	movelist := data.(*pb.Moves)
+	for _, move := range movelist.GetMoves() {
+		s.moves[move.InstanceId] = move
+	}
+
+	return nil
+}
+
+func (s *Server) saveMoves() {
+	moves := &pb.Moves{moves: make([]*pb.RecordMove, 0)}
+	for _, move := range s.moves {
+		moves.Moves = append(moves.Moves, move)
+	}
+	s.KSclient.Save(KEY, org)
 }
 
 func (p prodGetter) getRecords() ([]*pbrc.Record, error) {
@@ -98,6 +129,11 @@ func (s *Server) ReportHealth() bool {
 
 // Mote promotes/demotes this server
 func (s *Server) Mote(master bool) error {
+	if master {
+		err := s.readMoves()
+		return err
+	}
+
 	return nil
 }
 

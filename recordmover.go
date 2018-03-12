@@ -10,11 +10,12 @@ import (
 	"time"
 
 	"github.com/brotherlogic/goserver"
+	"github.com/brotherlogic/goserver/utils"
+	"github.com/brotherlogic/keystore/client"
 	"google.golang.org/grpc"
 
 	pbgd "github.com/brotherlogic/godiscogs"
 	pbg "github.com/brotherlogic/goserver/proto"
-	"github.com/brotherlogic/goserver/utils"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pb "github.com/brotherlogic/recordmover/proto"
 )
@@ -152,6 +153,7 @@ func main() {
 		log.SetOutput(ioutil.Discard)
 	}
 	server := Init()
+	server.GoServer.KSclient = *keystoreclient.GetClient(server.GetIP)
 	server.PrepServer()
 	server.Register = server
 

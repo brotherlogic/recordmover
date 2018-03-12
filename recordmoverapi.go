@@ -10,6 +10,9 @@ import (
 
 // RecordMove moves a record
 func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveResponse, error) {
+	if in.GetMove().ToFolder == in.GetMove().FromFolder {
+		return &pb.MoveResponse{}, nil
+	}
 	in.GetMove().MoveDate = time.Now().Unix()
 	s.moves[in.GetMove().InstanceId] = in.GetMove()
 	return &pb.MoveResponse{}, nil

@@ -31,7 +31,7 @@ message ClearRequest {
 
 message ClearResponse {}
 
-service ScoreService {
+service MoveService {
   rpc RecordMove(MoveRequest) returns (MoveResponse) {};
   rpc ListMoves(ListRequest) returns (ListResponse) {};
   rpc ClearMove(ClearRequest) returns (ClearResponse) {};

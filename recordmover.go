@@ -47,20 +47,20 @@ func (s *Server) readMoves() error {
 		return err
 	}
 
-	movelist := data.(*pb.Moves)
-	for _, move := range movelist.GetMoves() {
-		s.moves[move.InstanceId] = move
+	movelist = data.(*pb.Moves)
+	for _, m := range movelist.GetMoves() {
+		s.moves[m.InstanceId] = m
 	}
 
 	return nil
 }
 
 func (s *Server) saveMoves() {
-	moves := &pb.Moves{moves: make([]*pb.RecordMove, 0)}
+	moves := &pb.Moves{Moves: make([]*pb.RecordMove, 0)}
 	for _, move := range s.moves {
 		moves.Moves = append(moves.Moves, move)
 	}
-	s.KSclient.Save(KEY, org)
+	s.KSclient.Save(KEY, moves)
 }
 
 func (p prodGetter) getRecords() ([]*pbrc.Record, error) {
@@ -119,7 +119,7 @@ func Init() *Server {
 
 // DoRegister does RPC registration
 func (s *Server) DoRegister(server *grpc.Server) {
-	pb.RegisterScoreServiceServer(server, s)
+	pb.RegisterMoveServiceServer(server, s)
 }
 
 // ReportHealth alerts if we're not healthy

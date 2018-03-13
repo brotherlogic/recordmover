@@ -42,5 +42,15 @@ func main() {
 		for _, move := range res.GetMoves() {
 			fmt.Printf("%v: %v -> %v\n", move.InstanceId, move.FromFolder, move.ToFolder)
 		}
+	case "getclear":
+		res, err := client.ListMoves(ctx, &pb.ListRequest{})
+		if err != nil {
+			log.Fatalf("Error on GET: %v", err)
+		}
+		for _, move := range res.GetMoves() {
+			fmt.Printf("%v: %v -> %v\n", move.InstanceId, move.FromFolder, move.ToFolder)
+			client.ClearMove(ctx, &pb.ClearRequest{InstanceId: move.InstanceId})
+		}
 	}
+
 }

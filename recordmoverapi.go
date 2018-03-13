@@ -15,6 +15,7 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 	}
 	in.GetMove().MoveDate = time.Now().Unix()
 	s.moves[in.GetMove().InstanceId] = in.GetMove()
+	s.saveMoves()
 	return &pb.MoveResponse{}, nil
 }
 
@@ -30,5 +31,6 @@ func (s *Server) ListMoves(ctx context.Context, in *pb.ListRequest) (*pb.ListRes
 // ClearMove clears a single move
 func (s *Server) ClearMove(ctx context.Context, in *pb.ClearRequest) (*pb.ClearResponse, error) {
 	delete(s.moves, in.InstanceId)
+	s.saveMoves()
 	return &pb.ClearResponse{}, nil
 }

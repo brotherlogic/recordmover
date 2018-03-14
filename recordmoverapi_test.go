@@ -4,11 +4,15 @@ import (
 	"context"
 	"testing"
 
+	"github.com/brotherlogic/keystore/client"
+
 	pb "github.com/brotherlogic/recordmover/proto"
 )
 
 func InitTestServer() *Server {
-	return Init()
+	s := Init()
+	s.GoServer.KSclient = *keystoreclient.GetTestClient("./testing")
+	return s
 }
 
 func TestAddDouble(t *testing.T) {

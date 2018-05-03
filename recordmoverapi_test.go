@@ -4,19 +4,11 @@ import (
 	"context"
 	"testing"
 
-	"github.com/brotherlogic/keystore/client"
-
 	pb "github.com/brotherlogic/recordmover/proto"
 )
 
-func InitTestServer() *Server {
-	s := Init()
-	s.GoServer.KSclient = *keystoreclient.GetTestClient("./testing")
-	return s
-}
-
 func TestAddDouble(t *testing.T) {
-	s := InitTestServer()
+	s := InitTest()
 
 	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 2}})
 	if err != nil {
@@ -34,7 +26,7 @@ func TestAddDouble(t *testing.T) {
 }
 
 func TestRunThrough(t *testing.T) {
-	s := InitTestServer()
+	s := InitTest()
 
 	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
 

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"golang.org/x/net/context"
+
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 )
 
@@ -12,7 +14,7 @@ type getter interface {
 	update(*pbrc.Record) error
 }
 
-func (s *Server) moveRecords() {
+func (s *Server) moveRecords(ctx context.Context) {
 	records, err := s.getter.getRecords()
 
 	if err != nil {
@@ -41,7 +43,7 @@ func (s *Server) moveRecord(r *pbrc.Record) *pbrc.Record {
 		r.GetMetadata().Purgatory = pbrc.Purgatory_NEEDS_STOCK_CHECK
 		return r
 	}
-	
+
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_DIGITAL {
 		if r.GetRelease().Rating == 0 && r.GetRelease().FolderId != 812802 {
 			r.GetMetadata().MoveFolder = 812802
@@ -52,7 +54,6 @@ func (s *Server) moveRecord(r *pbrc.Record) *pbrc.Record {
 			r.GetMetadata().MoveFolder = 268147
 			return r
 		}
-
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_SOLD && r.GetRelease().FolderId != 488127 {

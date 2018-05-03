@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -12,12 +11,14 @@ import (
 	"github.com/brotherlogic/goserver"
 	"github.com/brotherlogic/goserver/utils"
 	"github.com/brotherlogic/keystore/client"
+	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
 	pbgd "github.com/brotherlogic/godiscogs"
 	pbg "github.com/brotherlogic/goserver/proto"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pb "github.com/brotherlogic/recordmover/proto"
+	pbt "github.com/brotherlogic/tracer/proto"
 )
 
 //Server main server type
@@ -56,12 +57,14 @@ func (s *Server) readMoves() error {
 	return nil
 }
 
-func (s *Server) saveMoves() {
+func (s *Server) saveMoves(ctx context.Context) {
+	s.LogTrace(ctx, "saveMoves", time.Now(), pbt.Milestone_START_FUNCTION)
 	moves := &pb.Moves{Moves: make([]*pb.RecordMove, 0)}
 	for _, move := range s.moves {
 		moves.Moves = append(moves.Moves, move)
 	}
 	s.KSclient.Save(KEY, moves)
+	s.LogTrace(ctx, "saveMoves", time.Now(), pbt.Milestone_END_FUNCTION)
 }
 
 func (p prodGetter) getRecords() ([]*pbrc.Record, error) {

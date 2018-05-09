@@ -70,6 +70,7 @@ var movetests = []struct {
 	out int32
 }{
 	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_ASSESS}}, 1362206},
+	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_NO_LABELS}}, 1362206},
 }
 
 func TestMoves(t *testing.T) {

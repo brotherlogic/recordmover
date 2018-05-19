@@ -22,7 +22,7 @@ import (
 	_ "google.golang.org/grpc/encoding/gzip"
 )
 
-func getRecord(ctx context.Context, instanceID int32) string {
+func getRecord(ctx context.Context, instanceID int32) *pbrc.Record {
 	utils.SendTrace(ctx, "getRecord", time.Now(), pbt.Milestone_START_FUNCTION, "recordmover-cli")
 	host, port, err := utils.Resolve("recordcollection")
 	if err != nil {
@@ -42,7 +42,7 @@ func getRecord(ctx context.Context, instanceID int32) string {
 	}
 
 	utils.SendTrace(ctx, "getRecord", time.Now(), pbt.Milestone_END_FUNCTION, "recordmover-cli")
-	return r.GetRecords()[0].GetRelease().Title
+	return r.GetRecords()[0]
 }
 
 func getFolder(ctx context.Context, folderID int32) string {
@@ -68,6 +68,59 @@ func getFolder(ctx context.Context, folderID int32) string {
 	return r.LocationName
 }
 
+func getReleaseString(instanceID int32) string {
+	host, port, err := utils.Resolve("recordcollection")
+	if err != nil {
+		log.Fatalf("Unable to reach collection: %v", err)
+	}
+	conn, err := grpc.Dial(host+":"+strconv.Itoa(int(port)), grpc.WithInsecure())
+	defer conn.Close()
+
+	if err != nil {
+		log.Fatalf("Unable to dial: %v", err)
+	}
+
+	client := pbrc.NewRecordCollectionServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+	rel, err := client.GetRecords(ctx, &pbrc.GetRecordsRequest{Force: true, Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: instanceID}}})
+	if err != nil {
+		log.Fatalf("unable to get record: %v", err)
+	}
+	return rel.GetRecords()[0].GetRelease().Title + " [" + strconv.Itoa(int(instanceID)) + "]"
+}
+
+func getLocation(ctx context.Context, rec *pbrc.Record) string {
+	host, port, err := utils.Resolve("recordsorganiser")
+	if err != nil {
+		log.Fatalf("Unable to reach organiser: %v", err)
+	}
+	conn, err := grpc.Dial(host+":"+strconv.Itoa(int(port)), grpc.WithInsecure())
+	defer conn.Close()
+
+	if err != nil {
+		log.Fatalf("Unable to dial: %v", err)
+	}
+
+	client := pbro.NewOrganiserServiceClient(conn)
+	location, err := client.Locate(ctx, &pbro.LocateRequest{InstanceId: rec.GetRelease().InstanceId})
+	str := ""
+	if err != nil {
+		str += fmt.Sprintf("Unable to locate instance (%v) because %v\n", rec.GetRelease().InstanceId, err)
+	} else {
+		for i, r := range location.GetFoundLocation().GetReleasesLocation() {
+			if r.GetInstanceId() == rec.GetRelease().InstanceId {
+				str += fmt.Sprintf("  Slot %v\n", r.GetSlot())
+				str += fmt.Sprintf("  %v. %v\n", i-1, getReleaseString(location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId))
+				str += fmt.Sprintf("  %v. %v\n", i, getReleaseString(location.GetFoundLocation().GetReleasesLocation()[i].InstanceId))
+				str += fmt.Sprintf("  %v. %v\n", i+1, getReleaseString(location.GetFoundLocation().GetReleasesLocation()[i+1].InstanceId))
+			}
+		}
+	}
+
+	return str
+}
+
 func main() {
 	host, port, err := utils.Resolve("recordmover")
 	if err != nil {
@@ -91,7 +144,9 @@ func main() {
 			log.Fatalf("Error on GET: %v", err)
 		}
 		for _, move := range res.GetMoves() {
-			fmt.Printf("%v: %v -> %v\n", getRecord(ctx, move.InstanceId), getFolder(ctx, move.FromFolder), getFolder(ctx, move.ToFolder))
+			r := getRecord(ctx, move.InstanceId)
+			fmt.Printf("%v: %v -> %v\n", r.GetRelease().Title, getFolder(ctx, move.FromFolder), getFolder(ctx, move.ToFolder))
+			fmt.Printf("%v", getLocation(ctx, r))
 		}
 	case "getclear":
 		res, err := client.ListMoves(ctx, &pb.ListRequest{})
@@ -99,7 +154,9 @@ func main() {
 			log.Fatalf("Error on GET: %v", err)
 		}
 		for _, move := range res.GetMoves() {
-			fmt.Printf("%v: %v -> %v\n", getRecord(ctx, move.InstanceId), getFolder(ctx, move.FromFolder), getFolder(ctx, move.ToFolder))
+			r := getRecord(ctx, move.InstanceId)
+			fmt.Printf("%v: %v -> %v\n", r.GetRelease().Title, getFolder(ctx, move.FromFolder), getFolder(ctx, move.ToFolder))
+			fmt.Printf("  %v", getLocation(ctx, r))
 			client.ClearMove(ctx, &pb.ClearRequest{InstanceId: move.InstanceId})
 		}
 	}

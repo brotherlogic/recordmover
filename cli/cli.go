@@ -111,9 +111,13 @@ func getLocation(ctx context.Context, rec *pbrc.Record) string {
 		for i, r := range location.GetFoundLocation().GetReleasesLocation() {
 			if r.GetInstanceId() == rec.GetRelease().InstanceId {
 				str += fmt.Sprintf("  Slot %v\n", r.GetSlot())
-				str += fmt.Sprintf("  %v. %v\n", i-1, getReleaseString(location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId))
+				if i > 0 {
+					str += fmt.Sprintf("  %v. %v\n", i-1, getReleaseString(location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId))
+				}
 				str += fmt.Sprintf("  %v. %v\n", i, getReleaseString(location.GetFoundLocation().GetReleasesLocation()[i].InstanceId))
-				str += fmt.Sprintf("  %v. %v\n", i+1, getReleaseString(location.GetFoundLocation().GetReleasesLocation()[i+1].InstanceId))
+				if i < len(location.GetFoundLocation().GetReleasesLocation()) {
+					str += fmt.Sprintf("  %v. %v\n", i+1, getReleaseString(location.GetFoundLocation().GetReleasesLocation()[i+1].InstanceId))
+				}
 			}
 		}
 	}

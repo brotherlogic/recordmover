@@ -115,7 +115,7 @@ func getLocation(ctx context.Context, rec *pbrc.Record) string {
 					str += fmt.Sprintf("  %v. %v\n", i-1, getReleaseString(location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId))
 				}
 				str += fmt.Sprintf("  %v. %v\n", i, getReleaseString(location.GetFoundLocation().GetReleasesLocation()[i].InstanceId))
-				if i < len(location.GetFoundLocation().GetReleasesLocation()) {
+				if i < len(location.GetFoundLocation().GetReleasesLocation())-1 {
 					str += fmt.Sprintf("  %v. %v\n", i+1, getReleaseString(location.GetFoundLocation().GetReleasesLocation()[i+1].InstanceId))
 				}
 			}

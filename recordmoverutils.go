@@ -105,6 +105,7 @@ func (s *Server) moveRecord(r *pbrc.Record) *pbrc.Record {
 		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_GRADUATE ||
 		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_SOPHMORE {
 		if r.GetMetadata().GetGoalFolder() != 0 && (r.GetRelease().FolderId != r.GetMetadata().GetGoalFolder() && r.GetMetadata().MoveFolder != r.GetMetadata().GetGoalFolder()) {
+			s.Log(fmt.Sprintf("Setting move folder: %v", r))
 			r.GetMetadata().MoveFolder = r.GetMetadata().GetGoalFolder()
 			return r
 		}

@@ -45,27 +45,27 @@ func getRecord(ctx context.Context, instanceID int32) *pbrc.Record {
 	return r.GetRecords()[0]
 }
 
-func getFolder(ctx context.Context, folderID int32) string {
+func getFolder(ctx context.Context, folderID int32) (string, error) {
 	utils.SendTrace(ctx, "getFolder", time.Now(), pbt.Milestone_START_FUNCTION, "recordmover-cli")
 	host, port, err := utils.Resolve("recordsorganiser")
 	if err != nil {
-		log.Fatalf("Unable to reach organiser: %v", err)
+		return "", err
 	}
 	conn, err := grpc.Dial(host+":"+strconv.Itoa(int(port)), grpc.WithInsecure())
 	defer conn.Close()
 
 	if err != nil {
-		log.Fatalf("Unable to dial: %v", err)
+		return "", err
 	}
 
 	client := pbro.NewOrganiserServiceClient(conn)
 	r, err := client.GetQuota(ctx, &pbro.QuotaRequest{FolderId: folderID})
 	if err != nil {
-		log.Fatalf("Unable to get quota: %v", err)
+		return "", err
 	}
 
 	utils.SendTrace(ctx, "getFolder", time.Now(), pbt.Milestone_END_FUNCTION, "recordmover-cli")
-	return r.LocationName
+	return r.LocationName, nil
 }
 
 func getReleaseString(instanceID int32) string {
@@ -90,16 +90,16 @@ func getReleaseString(instanceID int32) string {
 	return rel.GetRecords()[0].GetRelease().Title + " [" + strconv.Itoa(int(instanceID)) + "]"
 }
 
-func getLocation(ctx context.Context, rec *pbrc.Record) string {
+func getLocation(ctx context.Context, rec *pbrc.Record) (string, error) {
 	host, port, err := utils.Resolve("recordsorganiser")
 	if err != nil {
-		log.Fatalf("Unable to reach organiser: %v", err)
+		return "", err
 	}
 	conn, err := grpc.Dial(host+":"+strconv.Itoa(int(port)), grpc.WithInsecure())
 	defer conn.Close()
 
 	if err != nil {
-		log.Fatalf("Unable to dial: %v", err)
+		return "", err
 	}
 
 	client := pbro.NewOrganiserServiceClient(conn)
@@ -122,7 +122,7 @@ func getLocation(ctx context.Context, rec *pbrc.Record) string {
 		}
 	}
 
-	return str
+	return str, nil
 }
 
 func main() {
@@ -149,19 +149,45 @@ func main() {
 		}
 		for _, move := range res.GetMoves() {
 			r := getRecord(ctx, move.InstanceId)
-			fmt.Printf("%v: %v -> %v\n", r.GetRelease().Title, getFolder(ctx, move.FromFolder), getFolder(ctx, move.ToFolder))
-			fmt.Printf("%v", getLocation(ctx, r))
+			f1, err := getFolder(ctx, move.FromFolder)
+			if err == nil {
+				f2, err := getFolder(ctx, move.ToFolder)
+				if err == nil {
+					fmt.Printf("%v: %v -> %v\n", r.GetRelease().Title, f1, f2)
+					loc, err := getLocation(ctx, r)
+					if err == nil {
+						fmt.Printf("%v", loc)
+					}
+				}
+			}
 		}
 	case "getclear":
+		foldermap := make(map[int32]string)
 		res, err := client.ListMoves(ctx, &pb.ListRequest{})
 		if err != nil {
 			log.Fatalf("Error on GET: %v", err)
 		}
 		for _, move := range res.GetMoves() {
+			err = nil
 			r := getRecord(ctx, move.InstanceId)
-			fmt.Printf("%v: %v -> %v\n", r.GetRelease().Title, getFolder(ctx, move.FromFolder), getFolder(ctx, move.ToFolder))
-			fmt.Printf("  %v", getLocation(ctx, r))
-			client.ClearMove(ctx, &pb.ClearRequest{InstanceId: move.InstanceId})
+			f1, ok := foldermap[move.FromFolder]
+			if !ok {
+				f1, err = getFolder(ctx, move.FromFolder)
+			}
+			if err == nil {
+				f2, ok := foldermap[move.ToFolder]
+				if !ok {
+					f2, err = getFolder(ctx, move.ToFolder)
+				}
+				if err == nil {
+					fmt.Printf("%v: %v -> %v\n", r.GetRelease().Title, f1, f2)
+					loc, err := getLocation(ctx, r)
+					if err == nil {
+						fmt.Printf("  %v", loc)
+						client.ClearMove(ctx, &pb.ClearRequest{InstanceId: move.InstanceId})
+					}
+				}
+			}
 		}
 	}
 

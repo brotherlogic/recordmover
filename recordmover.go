@@ -143,7 +143,10 @@ func (s *Server) Mote(master bool) error {
 
 // GetState gets the state of the server
 func (s *Server) GetState() []*pbg.State {
-	return []*pbg.State{&pbg.State{Key: "last_proc", TimeValue: s.lastProc.Unix(), Value: s.lastCount}}
+	return []*pbg.State{
+		&pbg.State{Key: "last_proc", TimeValue: s.lastProc.Unix(), Value: s.lastCount},
+		&pbg.State{Key: "moves", Value: int64(len(s.moves))},
+	}
 }
 
 func main() {

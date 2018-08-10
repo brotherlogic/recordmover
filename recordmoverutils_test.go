@@ -148,17 +148,6 @@ func TestUpdateToStaged(t *testing.T) {
 	}
 }
 
-func TestUpdatePreProfessorToListeningPile(t *testing.T) {
-	s := InitTest()
-	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_PRE_PROFESSOR}}}
-	s.getter = &tg
-	s.moveRecords(context.Background())
-
-	if tg.rec.GetMetadata().MoveFolder != 812802 {
-		t.Errorf("Pre Freshman has not been updated: %v", tg.rec)
-	}
-}
-
 func TestUpdateProfessorToPurgatory(t *testing.T) {
 	s := InitTest()
 	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_PROFESSOR}}}
@@ -211,5 +200,15 @@ func TestUpdateFreshmanToFilled(t *testing.T) {
 
 	if tg.rec.GetMetadata().MoveFolder != 820 {
 		t.Errorf("Freshman has not been moved correctly: %v", tg.rec)
+	}
+}
+
+func TestUpdateStagedToSellToListeningPile(t *testing.T) {
+	s := InitTest()
+	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_STAGED_TO_SELL}}}
+	s.getter = &tg
+	s.moveRecords(context.Background())
+	if tg.rec.GetMetadata().MoveFolder != 812802 {
+		t.Errorf("Pre Freshman has not been updated: %v", tg.rec)
 	}
 }

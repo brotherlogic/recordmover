@@ -39,11 +39,11 @@ type prodGetter struct {
 	getIP func(string) (string, int32, error)
 }
 
-func (s *Server) readMoves() error {
+func (s *Server) readMoves(ctx context.Context) error {
 	s.moves = make(map[int32]*pb.RecordMove)
 
 	movelist := &pb.Moves{}
-	data, _, err := s.KSclient.Read(KEY, movelist)
+	data, _, err := s.KSclient.Read(ctx, KEY, movelist)
 
 	if err != nil {
 		return err
@@ -63,7 +63,7 @@ func (s *Server) saveMoves(ctx context.Context) {
 	for _, move := range s.moves {
 		moves.Moves = append(moves.Moves, move)
 	}
-	s.KSclient.Save(KEY, moves)
+	s.KSclient.Save(ctx, KEY, moves)
 	s.LogTrace(ctx, "saveMoves", time.Now(), pbt.Milestone_END_FUNCTION)
 }
 
@@ -132,9 +132,9 @@ func (s *Server) ReportHealth() bool {
 }
 
 // Mote promotes/demotes this server
-func (s *Server) Mote(master bool) error {
+func (s *Server) Mote(ctx context.Context, master bool) error {
 	if master {
-		err := s.readMoves()
+		err := s.readMoves(ctx)
 		return err
 	}
 

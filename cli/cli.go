@@ -42,6 +42,9 @@ func getRecord(ctx context.Context, instanceID int32) *pbrc.Record {
 	}
 
 	utils.SendTrace(ctx, "getRecord", time.Now(), pbt.Milestone_END_FUNCTION, "recordmover-cli")
+	if len(r.GetRecords()) == 0 {
+		log.Fatalf("Unable to get record: %v", instanceID)
+	}
 	return r.GetRecords()[0]
 }
 

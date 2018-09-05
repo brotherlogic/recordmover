@@ -11,6 +11,14 @@ import (
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 )
 
+type testRipper struct {
+	ripped bool
+}
+
+func (t *testRipper) isRipped(ID int32) bool {
+	return t.ripped
+}
+
 type testGetter struct {
 	rec *pbrc.Record
 }
@@ -49,6 +57,7 @@ func InitTest() *Server {
 	s.SkipLog = true
 	s.getter = &testGetter{}
 	s.GoServer.KSclient = *keystoreclient.GetTestClient("./testing")
+	s.cdproc = &testRipper{}
 
 	return s
 }
@@ -145,6 +154,15 @@ func TestUpdateToStaged(t *testing.T) {
 
 	if tg.rec.GetMetadata().MoveFolder != 673768 {
 		t.Errorf("Folder has not been updated: %v", tg.rec)
+	}
+}
+
+func TestMoveUnripped(t *testing.T) {
+	s := InitTest()
+	val := s.moveRecord(&pbrc.Record{Release: &pbgd.Release{Id: 123, Formats: []*pbgd.Format{&pbgd.Format{Name: "CD"}}}})
+
+	if val != nil {
+		t.Errorf("moved: %v", val)
 	}
 }
 

@@ -37,7 +37,23 @@ func (s *Server) moveRecords(ctx context.Context) {
 	s.lastCount = count
 }
 
+func (s *Server) canMove(r *pbrc.Record) bool {
+	for _, f := range r.GetRelease().GetFormats() {
+		if f.Name == "CD" {
+			if !s.cdproc.isRipped(r.GetRelease().Id) {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
 func (s *Server) moveRecord(r *pbrc.Record) *pbrc.Record {
+	if !s.canMove(r) {
+		return nil
+	}
+
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_ASSESS && (r.GetRelease().FolderId != 1362206 && r.GetMetadata().MoveFolder != 1362206) {
 		r.GetMetadata().MoveFolder = 1362206
 		r.GetMetadata().Purgatory = pbrc.Purgatory_NEEDS_STOCK_CHECK

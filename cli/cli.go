@@ -141,7 +141,7 @@ func main() {
 	}
 
 	client := pb.NewMoveServiceClient(conn)
-	ctx, cancel := utils.BuildContext("recordmover-cli", pbgs.ContextType_LONG)
+	ctx, cancel := utils.BuildContext("recordmover-cli", "recordmover-cli", pbgs.ContextType_LONG)
 	defer cancel()
 
 	switch os.Args[1] {
@@ -191,6 +191,15 @@ func main() {
 					}
 				}
 			}
+		}
+
+	case "clear":
+		res, err := client.ListMoves(ctx, &pb.ListRequest{})
+		if err != nil {
+			log.Fatalf("Error on GET: %v", err)
+		}
+		for _, move := range res.GetMoves() {
+			client.ClearMove(ctx, &pb.ClearRequest{InstanceId: move.InstanceId})
 		}
 	}
 

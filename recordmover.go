@@ -28,12 +28,17 @@ type Server struct {
 	lastProc  time.Time
 	lastCount int64
 	moves     map[int32]*pb.RecordMove
+	cdproc    cdproc
 }
 
 const (
 	//KEY is where we store moves
 	KEY = "github.com/brotherlogic/recordmover/moves"
 )
+
+type cdproc interface {
+	isRipped(ID int32) bool
+}
 
 type prodGetter struct {
 	getIP func(string) (string, int32, error)

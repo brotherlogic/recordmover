@@ -14,6 +14,7 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
+	pbcdp "github.com/brotherlogic/cdprocessor/proto"
 	pbgd "github.com/brotherlogic/godiscogs"
 	pbg "github.com/brotherlogic/goserver/proto"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
@@ -38,6 +39,38 @@ const (
 
 type cdproc interface {
 	isRipped(ID int32) bool
+}
+
+type cdprocProd struct{}
+
+func (p *cdprocProd) isRipped(ID int32) bool {
+	ip, port, err := utils.Resolve("cdprocessor")
+	if err != nil {
+		return false
+	}
+
+	conn, err := grpc.Dial(ip+":"+strconv.Itoa(int(port)), grpc.WithInsecure())
+	if err != nil {
+		return false
+	}
+	defer conn.Close()
+
+	client := pbcdp.NewCDProcessorClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	res, err := client.GetRipped(ctx, &pbcdp.GetRippedRequest{})
+	if err != nil {
+		return false
+	}
+
+	for _, r := range res.GetRipped() {
+		if r.Id == ID {
+			return true
+		}
+	}
+
+	return false
 }
 
 type prodGetter struct {

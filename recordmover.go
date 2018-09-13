@@ -153,9 +153,14 @@ func (p prodGetter) update(r *pbrc.Record) error {
 
 // Init builds the server
 func Init() *Server {
-	s := &Server{GoServer: &goserver.GoServer{}}
-	s.moves = make(map[int32]*pb.RecordMove)
-	s.getter = &prodGetter{getIP: utils.Resolve}
+	s := &Server{
+		&goserver.GoServer{},
+		&prodGetter{getIP: utils.Resolve},
+		time.Unix(0, 1),
+		0,
+		make(map[int32]*pb.RecordMove),
+		&cdprocProd{},
+	}
 	return s
 }
 

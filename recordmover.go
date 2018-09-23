@@ -207,6 +207,6 @@ func main() {
 	server.Register = server
 
 	server.RegisterServer("recordmover", false)
-	server.RegisterRepeatingTask(server.moveRecords, time.Minute)
+	server.RegisterRepeatingTask(server.moveRecords, "move_records", time.Minute)
 	fmt.Printf("%v\n", server.Serve())
 }

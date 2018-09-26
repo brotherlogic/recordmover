@@ -39,7 +39,7 @@ type testFailGetter struct {
 
 func (t testFailGetter) getRecords() ([]*pbrc.Record, error) {
 	if t.grf {
-		return []*pbrc.Record{&pbrc.Record{Release: &pbgd.Release{FolderId: 1}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_UNLISTENED}}}, nil
+		return []*pbrc.Record{&pbrc.Record{Release: &pbgd.Release{FolderId: 1}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_UNLISTENED, GoalFolder: 123}}}, nil
 	}
 	return nil, errors.New("Built to fail")
 }
@@ -160,6 +160,15 @@ func TestUpdateToStaged(t *testing.T) {
 func TestMoveUnripped(t *testing.T) {
 	s := InitTest()
 	val := s.moveRecord(&pbrc.Record{Release: &pbgd.Release{Id: 123, Formats: []*pbgd.Format{&pbgd.Format{Name: "CD"}}}})
+
+	if val != nil {
+		t.Errorf("moved: %v", val)
+	}
+}
+
+func TestMoveUnrippedButDigital(t *testing.T) {
+	s := InitTest()
+	val := s.moveRecord(&pbrc.Record{Metadata: &pbrc.ReleaseMetadata{GoalFolder: 268147}, Release: &pbgd.Release{Id: 123, Formats: []*pbgd.Format{&pbgd.Format{Name: "CD"}}}})
 
 	if val != nil {
 		t.Errorf("moved: %v", val)

@@ -38,6 +38,11 @@ func (s *Server) moveRecords(ctx context.Context) {
 }
 
 func (s *Server) canMove(r *pbrc.Record) bool {
+	//We can always move to digital
+	if r.GetMetadata() != nil && r.GetMetadata().GoalFolder == 268147 {
+		return true
+	}
+
 	for _, f := range r.GetRelease().GetFormats() {
 		if f.Name == "CD" {
 			if !s.cdproc.isRipped(r.GetRelease().Id) {

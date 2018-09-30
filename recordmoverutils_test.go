@@ -230,6 +230,17 @@ func TestUpdateFreshmanToFilled(t *testing.T) {
 	}
 }
 
+func TestUpdateRipThenSellToListeningPile(t *testing.T) {
+	s := InitTest()
+	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{GoalFolder: 820, Category: pbrc.ReleaseMetadata_RIP_THEN_SELL}}}
+	s.getter = &tg
+	s.moveRecords(context.Background())
+
+	if tg.rec.GetMetadata().MoveFolder != 812802 {
+		t.Errorf("RIP THEN SELL has not been moved correctly: %v", tg.rec)
+	}
+}
+
 func TestUpdateStagedToSellToListeningPile(t *testing.T) {
 	s := InitTest()
 	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_STAGED_TO_SELL}}}

@@ -44,6 +44,11 @@ func TestRunThrough(t *testing.T) {
 		t.Fatalf("Move is a problem: %v", moves)
 	}
 
+	_, err = s.ClearMove(context.Background(), &pb.ClearRequest{InstanceId: 123456})
+	if err == nil {
+		t.Fatalf("No error on clearing fake move")
+	}
+
 	_, err = s.ClearMove(context.Background(), &pb.ClearRequest{InstanceId: 1})
 
 	if err != nil {

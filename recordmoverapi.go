@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	"golang.org/x/net/context"
@@ -34,6 +35,9 @@ func (s *Server) ListMoves(ctx context.Context, in *pb.ListRequest) (*pb.ListRes
 // ClearMove clears a single move
 func (s *Server) ClearMove(ctx context.Context, in *pb.ClearRequest) (*pb.ClearResponse, error) {
 	s.LogTrace(ctx, "ClearMove", time.Now(), pbt.Milestone_START_FUNCTION)
+	if _, ok := s.moves[in.InstanceId]; !ok {
+		return nil, fmt.Errorf("Instance ID not found in moves list")
+	}
 	delete(s.moves, in.InstanceId)
 	s.saveMoves(ctx)
 	s.LogTrace(ctx, "ClearMove", time.Now(), pbt.Milestone_END_FUNCTION)

@@ -59,6 +59,11 @@ func (s *Server) moveRecord(r *pbrc.Record) *pbrc.Record {
 		return nil
 	}
 
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_GOOGLE_PLAY && (r.GetRelease().FolderId != 1433217 && r.GetMetadata().MoveFolder != 1433217) {
+		r.GetMetadata().MoveFolder = 1433217
+		return r
+	}
+
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_RIP_THEN_SELL && (r.GetRelease().FolderId != 812802 && r.GetMetadata().MoveFolder != 812802) {
 		r.GetMetadata().MoveFolder = 812802
 		return r

@@ -15,7 +15,7 @@ type testRipper struct {
 	ripped bool
 }
 
-func (t *testRipper) isRipped(ID int32) bool {
+func (t *testRipper) isRipped(ctx context.Context, ID int32) bool {
 	return t.ripped
 }
 
@@ -23,11 +23,11 @@ type testGetter struct {
 	rec *pbrc.Record
 }
 
-func (t *testGetter) getRecords() ([]*pbrc.Record, error) {
+func (t *testGetter) getRecords(ctx context.Context) ([]*pbrc.Record, error) {
 	return []*pbrc.Record{t.rec}, nil
 }
 
-func (t *testGetter) update(r *pbrc.Record) error {
+func (t *testGetter) update(ctx context.Context, r *pbrc.Record) error {
 	t.rec = r
 	return nil
 }
@@ -37,14 +37,14 @@ type testFailGetter struct {
 	lastCategory pbrc.ReleaseMetadata_Category
 }
 
-func (t testFailGetter) getRecords() ([]*pbrc.Record, error) {
+func (t testFailGetter) getRecords(ctx context.Context) ([]*pbrc.Record, error) {
 	if t.grf {
 		return []*pbrc.Record{&pbrc.Record{Release: &pbgd.Release{FolderId: 1}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_UNLISTENED, GoalFolder: 123}}}, nil
 	}
 	return nil, errors.New("Built to fail")
 }
 
-func (t testFailGetter) update(r *pbrc.Record) error {
+func (t testFailGetter) update(ctx context.Context, r *pbrc.Record) error {
 	if !t.grf {
 		t.lastCategory = r.GetMetadata().GetCategory()
 		return nil
@@ -58,6 +58,7 @@ func InitTest() *Server {
 	s.getter = &testGetter{}
 	s.GoServer.KSclient = *keystoreclient.GetTestClient("./testing")
 	s.cdproc = &testRipper{}
+	s.organiser = &testOrg{failCount: 100}
 
 	return s
 }
@@ -160,7 +161,7 @@ func TestUpdateToStaged(t *testing.T) {
 
 func TestMoveUnripped(t *testing.T) {
 	s := InitTest()
-	val := s.moveRecord(&pbrc.Record{Release: &pbgd.Release{Id: 123, Formats: []*pbgd.Format{&pbgd.Format{Name: "CD"}}}})
+	val := s.moveRecord(context.Background(), &pbrc.Record{Release: &pbgd.Release{Id: 123, Formats: []*pbgd.Format{&pbgd.Format{Name: "CD"}}}})
 
 	if val != nil {
 		t.Errorf("moved: %v", val)
@@ -169,7 +170,7 @@ func TestMoveUnripped(t *testing.T) {
 
 func TestMoveUnrippedButDigital(t *testing.T) {
 	s := InitTest()
-	val := s.moveRecord(&pbrc.Record{Metadata: &pbrc.ReleaseMetadata{GoalFolder: 268147}, Release: &pbgd.Release{Id: 123, Formats: []*pbgd.Format{&pbgd.Format{Name: "CD"}}}})
+	val := s.moveRecord(context.Background(), &pbrc.Record{Metadata: &pbrc.ReleaseMetadata{GoalFolder: 268147}, Release: &pbgd.Release{Id: 123, Formats: []*pbgd.Format{&pbgd.Format{Name: "CD"}}}})
 
 	if val != nil {
 		t.Errorf("moved: %v", val)

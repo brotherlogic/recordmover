@@ -1,11 +1,65 @@
 package main
 
 import (
-	"context"
+	"fmt"
 	"testing"
+
+	"golang.org/x/net/context"
 
 	pb "github.com/brotherlogic/recordmover/proto"
 )
+
+type testOrg struct {
+	reorgs    int
+	failCount int
+}
+
+func (t *testOrg) reorgLocation(ctx context.Context, folder int32) error {
+	t.reorgs++
+	t.failCount--
+
+	if t.failCount <= 0 {
+		return fmt.Errorf("Built to fail")
+	}
+	return nil
+}
+
+func TestAddCausesUpdate(t *testing.T) {
+	s := InitTest()
+	testOrg := &testOrg{failCount: 100}
+	s.organiser = testOrg
+
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
+	if err != nil {
+		t.Fatalf("Error making move: %v", err)
+	}
+
+	if testOrg.reorgs != 2 {
+		t.Errorf("Moves have not caused reorgs")
+	}
+}
+
+func TestAddCausesUpdateFail1(t *testing.T) {
+	s := InitTest()
+	testOrg := &testOrg{failCount: 1}
+	s.organiser = testOrg
+
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
+	if err == nil {
+		t.Fatalf("No error")
+	}
+}
+
+func TestAddCausesUpdateFail2(t *testing.T) {
+	s := InitTest()
+	testOrg := &testOrg{failCount: 2}
+	s.organiser = testOrg
+
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
+	if err == nil {
+		t.Fatalf("No error")
+	}
+}
 
 func TestAddDouble(t *testing.T) {
 	s := InitTest()

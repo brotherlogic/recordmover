@@ -18,6 +18,16 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 	in.GetMove().MoveDate = time.Now().Unix()
 	s.moves[in.GetMove().InstanceId] = in.GetMove()
 	s.saveMoves(ctx)
+
+	err := s.organiser.reorgLocation(ctx, in.Move.ToFolder)
+	if err != nil {
+		return &pb.MoveResponse{}, err
+	}
+	err = s.organiser.reorgLocation(ctx, in.Move.FromFolder)
+	if err != nil {
+		return &pb.MoveResponse{}, err
+	}
+
 	return &pb.MoveResponse{}, nil
 }
 

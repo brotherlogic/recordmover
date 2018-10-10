@@ -19,6 +19,7 @@ import (
 	pbg "github.com/brotherlogic/goserver/proto"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pb "github.com/brotherlogic/recordmover/proto"
+	pbro "github.com/brotherlogic/recordsorganiser/proto"
 	pbt "github.com/brotherlogic/tracer/proto"
 )
 
@@ -30,6 +31,7 @@ type Server struct {
 	lastCount int64
 	moves     map[int32]*pb.RecordMove
 	cdproc    cdproc
+	organiser organiser
 }
 
 const (
@@ -37,13 +39,36 @@ const (
 	KEY = "github.com/brotherlogic/recordmover/moves"
 )
 
+type organiser interface {
+	reorgLocation(ctx context.Context, folder int32) error
+}
+
+type prodOrganiser struct{}
+
+func (p *prodOrganiser) reorgLocation(ctx context.Context, folder int32) error {
+	ip, port, err := utils.Resolve("cdprocessor")
+	if err != nil {
+		return err
+	}
+
+	conn, err := grpc.Dial(ip+":"+strconv.Itoa(int(port)), grpc.WithInsecure())
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	client := pbro.NewOrganiserServiceClient(conn)
+	_, err = client.GetOrganisation(ctx, &pbro.GetOrganisationRequest{ForceReorg: true, Locations: []*pbro.Location{&pbro.Location{FolderIds: []int32{folder}}}})
+	return err
+}
+
 type cdproc interface {
-	isRipped(ID int32) bool
+	isRipped(ctx context.Context, ID int32) bool
 }
 
 type cdprocProd struct{}
 
-func (p *cdprocProd) isRipped(ID int32) bool {
+func (p *cdprocProd) isRipped(ctx context.Context, ID int32) bool {
 	ip, port, err := utils.Resolve("cdprocessor")
 	if err != nil {
 		return false
@@ -56,9 +81,6 @@ func (p *cdprocProd) isRipped(ID int32) bool {
 	defer conn.Close()
 
 	client := pbcdp.NewCDProcessorClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-	defer cancel()
-
 	res, err := client.GetRipped(ctx, &pbcdp.GetRippedRequest{})
 	if err != nil {
 		return false
@@ -105,7 +127,7 @@ func (s *Server) saveMoves(ctx context.Context) {
 	s.LogTrace(ctx, "saveMoves", time.Now(), pbt.Milestone_END_FUNCTION)
 }
 
-func (p prodGetter) getRecords() ([]*pbrc.Record, error) {
+func (p prodGetter) getRecords(ctx context.Context) ([]*pbrc.Record, error) {
 	ip, port, err := p.getIP("recordcollection")
 	if err != nil {
 		return nil, err
@@ -118,9 +140,6 @@ func (p prodGetter) getRecords() ([]*pbrc.Record, error) {
 	defer conn.Close()
 
 	client := pbrc.NewRecordCollectionServiceClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-	defer cancel()
-
 	resp, err := client.GetRecords(ctx, &pbrc.GetRecordsRequest{Filter: &pbrc.Record{Metadata: &pbrc.ReleaseMetadata{Dirty: false, MoveFolder: 0}, Release: &pbgd.Release{}}}, grpc.MaxCallRecvMsgSize(1024*1024*1024))
 	if err != nil {
 		return nil, err
@@ -128,7 +147,7 @@ func (p prodGetter) getRecords() ([]*pbrc.Record, error) {
 	return resp.GetRecords(), nil
 }
 
-func (p prodGetter) update(r *pbrc.Record) error {
+func (p prodGetter) update(ctx context.Context, r *pbrc.Record) error {
 	ip, port, err := p.getIP("recordcollection")
 	if err != nil {
 		return err
@@ -141,9 +160,6 @@ func (p prodGetter) update(r *pbrc.Record) error {
 	defer conn.Close()
 
 	client := pbrc.NewRecordCollectionServiceClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-
 	_, err = client.UpdateRecord(ctx, &pbrc.UpdateRecordRequest{Requestor: "recordmover", Update: r})
 	if err != nil {
 		return err
@@ -160,6 +176,7 @@ func Init() *Server {
 		0,
 		make(map[int32]*pb.RecordMove),
 		&cdprocProd{},
+		&prodOrganiser{},
 	}
 	return s
 }

@@ -71,7 +71,7 @@ func getFolder(ctx context.Context, folderID int32) (string, error) {
 	return r.LocationName, nil
 }
 
-func getReleaseString(instanceID int32) string {
+func getReleaseString(ctx context.Context, instanceID int32) string {
 	host, port, err := utils.Resolve("recordcollection")
 	if err != nil {
 		log.Fatalf("Unable to reach collection: %v", err)
@@ -84,8 +84,6 @@ func getReleaseString(instanceID int32) string {
 	}
 
 	client := pbrc.NewRecordCollectionServiceClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-	defer cancel()
 	rel, err := client.GetRecords(ctx, &pbrc.GetRecordsRequest{Force: true, Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: instanceID}}})
 	if err != nil {
 		log.Fatalf("unable to get record: %v", err)
@@ -115,11 +113,11 @@ func getLocation(ctx context.Context, rec *pbrc.Record) (string, error) {
 			if r.GetInstanceId() == rec.GetRelease().InstanceId {
 				str += fmt.Sprintf("  Slot %v\n", r.GetSlot())
 				if i > 0 {
-					str += fmt.Sprintf("  %v. %v\n", i-1, getReleaseString(location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId))
+					str += fmt.Sprintf("  %v. %v\n", i-1, getReleaseString(ctx, location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId))
 				}
-				str += fmt.Sprintf("  %v. %v\n", i, getReleaseString(location.GetFoundLocation().GetReleasesLocation()[i].InstanceId))
+				str += fmt.Sprintf("  %v. %v\n", i, getReleaseString(ctx, location.GetFoundLocation().GetReleasesLocation()[i].InstanceId))
 				if i < len(location.GetFoundLocation().GetReleasesLocation())-1 {
-					str += fmt.Sprintf("  %v. %v\n", i+1, getReleaseString(location.GetFoundLocation().GetReleasesLocation()[i+1].InstanceId))
+					str += fmt.Sprintf("  %v. %v\n", i+1, getReleaseString(ctx, location.GetFoundLocation().GetReleasesLocation()[i+1].InstanceId))
 				}
 			}
 		}

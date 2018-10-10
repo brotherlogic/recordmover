@@ -10,12 +10,12 @@ import (
 )
 
 type getter interface {
-	getRecords() ([]*pbrc.Record, error)
-	update(*pbrc.Record) error
+	getRecords(ctx context.Context) ([]*pbrc.Record, error)
+	update(ctx context.Context, rec *pbrc.Record) error
 }
 
 func (s *Server) moveRecords(ctx context.Context) {
-	records, err := s.getter.getRecords()
+	records, err := s.getter.getRecords(ctx)
 
 	if err != nil {
 		return
@@ -23,10 +23,10 @@ func (s *Server) moveRecords(ctx context.Context) {
 
 	count := int64(0)
 	for _, record := range records {
-		update := s.moveRecord(record)
+		update := s.moveRecord(ctx, record)
 		if update != nil {
 			count++
-			err := s.getter.update(update)
+			err := s.getter.update(ctx, update)
 			if err != nil {
 				s.Log(fmt.Sprintf("Error moving record: %v", err))
 			}
@@ -37,7 +37,7 @@ func (s *Server) moveRecords(ctx context.Context) {
 	s.lastCount = count
 }
 
-func (s *Server) canMove(r *pbrc.Record) bool {
+func (s *Server) canMove(ctx context.Context, r *pbrc.Record) bool {
 	//We can always move to digital
 	if r.GetMetadata() != nil && r.GetMetadata().GoalFolder == 268147 {
 		return true
@@ -45,7 +45,7 @@ func (s *Server) canMove(r *pbrc.Record) bool {
 
 	for _, f := range r.GetRelease().GetFormats() {
 		if f.Name == "CD" {
-			if !s.cdproc.isRipped(r.GetRelease().Id) {
+			if !s.cdproc.isRipped(ctx, r.GetRelease().Id) {
 				return false
 			}
 		}
@@ -54,13 +54,13 @@ func (s *Server) canMove(r *pbrc.Record) bool {
 	return true
 }
 
-func (s *Server) moveRecord(r *pbrc.Record) *pbrc.Record {
+func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) *pbrc.Record {
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_GOOGLE_PLAY && (r.GetRelease().FolderId != 1433217 && r.GetMetadata().MoveFolder != 1433217) {
 		r.GetMetadata().MoveFolder = 1433217
 		return r
 	}
 
-	if !s.canMove(r) {
+	if !s.canMove(ctx, r) {
 		return nil
 	}
 

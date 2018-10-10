@@ -46,7 +46,7 @@ type organiser interface {
 type prodOrganiser struct{}
 
 func (p *prodOrganiser) reorgLocation(ctx context.Context, folder int32) error {
-	ip, port, err := utils.Resolve("cdprocessor")
+	ip, port, err := utils.Resolve("recordsorganiser")
 	if err != nil {
 		return err
 	}

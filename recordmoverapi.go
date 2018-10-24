@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"golang.org/x/net/context"
-
 	pb "github.com/brotherlogic/recordmover/proto"
 	pbt "github.com/brotherlogic/tracer/proto"
+	"golang.org/x/net/context"
 )
 
 // RecordMove moves a record
@@ -15,9 +14,6 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 	if in.GetMove().ToFolder == in.GetMove().FromFolder {
 		return &pb.MoveResponse{}, nil
 	}
-	in.GetMove().MoveDate = time.Now().Unix()
-	s.moves[in.GetMove().InstanceId] = in.GetMove()
-	s.saveMoves(ctx)
 
 	err := s.organiser.reorgLocation(ctx, in.Move.ToFolder)
 	if err != nil {
@@ -27,6 +23,10 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 	if err != nil {
 		return &pb.MoveResponse{}, err
 	}
+
+	in.GetMove().MoveDate = time.Now().Unix()
+	s.moves[in.GetMove().InstanceId] = in.GetMove()
+	s.saveMoves(ctx)
 
 	return &pb.MoveResponse{}, nil
 }

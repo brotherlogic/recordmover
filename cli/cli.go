@@ -197,30 +197,12 @@ func main() {
 		}
 
 	case "clear":
-		foldermap := make(map[int32]string)
 		res, err := client.ListMoves(ctx, &pb.ListRequest{})
 		if err != nil {
 			log.Fatalf("Error on GET: %v", err)
 		}
 		for _, move := range res.GetMoves() {
-			f1, ok := foldermap[move.FromFolder]
-			if !ok {
-				f1, err = getFolder(ctx, move.FromFolder)
-				if err != nil {
-					log.Fatalf("Folder retrieve fail")
-				}
-				foldermap[move.FromFolder] = f1
-			}
-			f2, ok := foldermap[move.ToFolder]
-			if !ok {
-				f2, err = getFolder(ctx, move.ToFolder)
-				if err != nil {
-					log.Fatalf("Folder retreive fail")
-				}
-				foldermap[move.ToFolder] = f2
-			}
 			_, err := client.ClearMove(ctx, &pb.ClearRequest{InstanceId: move.InstanceId})
-			fmt.Printf("%v: %v -> %v\n", move.InstanceId, f1, f2)
 			fmt.Printf("CLEARED: %v\n", err)
 		}
 

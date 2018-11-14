@@ -69,6 +69,12 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) *pbrc.Record {
 		return r
 	}
 
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_ASSESS_FOR_SALE && (r.GetRelease().FolderId != 1362206 && r.GetMetadata().MoveFolder != 1362206) {
+		r.GetMetadata().MoveFolder = 1362206
+		r.GetMetadata().Purgatory = pbrc.Purgatory_NEEDS_STOCK_CHECK
+		return r
+	}
+
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_ASSESS && (r.GetRelease().FolderId != 1362206 && r.GetMetadata().MoveFolder != 1362206) {
 		r.GetMetadata().MoveFolder = 1362206
 		r.GetMetadata().Purgatory = pbrc.Purgatory_NEEDS_STOCK_CHECK

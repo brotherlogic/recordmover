@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/brotherlogic/goserver/utils"
 	"golang.org/x/net/context"
 
 	pbrc "github.com/brotherlogic/recordcollection/proto"
+	pbt "github.com/brotherlogic/tracer/proto"
 )
 
 type getter interface {
@@ -16,6 +18,7 @@ type getter interface {
 
 func (s *Server) moveRecords(ctx context.Context) {
 	records, err := s.getter.getRecords(ctx)
+	utils.SendTrace(ctx, "GotRecords", time.Now(), pbt.Milestone_MARKER, "recordmover")
 
 	if err != nil {
 		return

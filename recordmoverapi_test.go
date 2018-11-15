@@ -6,6 +6,8 @@ import (
 
 	"golang.org/x/net/context"
 
+	pbgd "github.com/brotherlogic/godiscogs"
+	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pb "github.com/brotherlogic/recordmover/proto"
 )
 
@@ -82,7 +84,7 @@ func TestAddDouble(t *testing.T) {
 func TestRunThrough(t *testing.T) {
 	s := InitTest()
 
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}})
 
 	if err != nil {
 		t.Fatalf("Error moving record: %v", err)
@@ -94,7 +96,7 @@ func TestRunThrough(t *testing.T) {
 		t.Fatalf("Error listing records: %v", err)
 	}
 
-	if len(moves.GetMoves()) != 1 || moves.GetMoves()[0].MoveDate <= 0 {
+	if len(moves.GetMoves()) != 1 || moves.GetMoves()[0].MoveDate <= 0 || moves.GetMoves()[0].Record.Release.InstanceId != 1 {
 		t.Fatalf("Move is a problem: %v", moves)
 	}
 

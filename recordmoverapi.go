@@ -11,6 +11,11 @@ import (
 
 // RecordMove moves a record
 func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveResponse, error) {
+	if in.GetMove().Record == nil {
+		s.RaiseIssue(ctx, "RecordMove issue", fmt.Sprintf("Move with details %v is missing record", in.GetMove().InstanceId), false)
+		return &pb.MoveResponse{}, fmt.Errorf("Missing Record on call")
+	}
+
 	if in.GetMove().ToFolder == in.GetMove().FromFolder {
 		return &pb.MoveResponse{}, nil
 	}

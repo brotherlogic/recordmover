@@ -31,7 +31,7 @@ func TestAddCausesUpdate(t *testing.T) {
 	testOrg := &testOrg{failCount: 100}
 	s.organiser = testOrg
 
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{}}})
 	if err != nil {
 		t.Fatalf("Error making move: %v", err)
 	}
@@ -41,12 +41,23 @@ func TestAddCausesUpdate(t *testing.T) {
 	}
 }
 
+func TestAddCausesUpdateMissingRecord(t *testing.T) {
+	s := InitTest()
+	testOrg := &testOrg{failCount: 100}
+	s.organiser = testOrg
+
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
+	if err == nil {
+		t.Fatalf("Move did not fail")
+	}
+}
+
 func TestAddCausesUpdateFail1(t *testing.T) {
 	s := InitTest()
 	testOrg := &testOrg{failCount: 1}
 	s.organiser = testOrg
 
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{}}})
 	if err == nil {
 		t.Fatalf("No error")
 	}
@@ -57,7 +68,7 @@ func TestAddCausesUpdateFail2(t *testing.T) {
 	testOrg := &testOrg{failCount: 2}
 	s.organiser = testOrg
 
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{}}})
 	if err == nil {
 		t.Fatalf("No error")
 	}
@@ -66,7 +77,7 @@ func TestAddCausesUpdateFail2(t *testing.T) {
 func TestAddDouble(t *testing.T) {
 	s := InitTest()
 
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 2}})
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 2, Record: &pbrc.Record{}}})
 	if err != nil {
 		t.Fatalf("Error moving record: %v", err)
 	}

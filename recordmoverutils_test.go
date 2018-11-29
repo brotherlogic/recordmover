@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/brotherlogic/keystore/client"
+	pb "github.com/brotherlogic/recordmover/proto"
 	"golang.org/x/net/context"
 
 	pbgd "github.com/brotherlogic/godiscogs"
@@ -255,5 +256,52 @@ func TestUpdateStagedToSellToListeningPile(t *testing.T) {
 	s.moveRecords(context.Background())
 	if tg.rec.GetMetadata().MoveFolder != 812802 {
 		t.Errorf("Pre Freshman has not been updated: %v", tg.rec)
+	}
+}
+
+func TestUpdateMove(t *testing.T) {
+	s := InitTest()
+	s.moves[1] = &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}
+
+	s.refreshMoves(context.Background())
+
+	if s.moves[1].AfterContext.Location == "" {
+		t.Errorf("Update not run")
+	}
+}
+
+func TestUpdateMoveFailLocate(t *testing.T) {
+	s := InitTest()
+	s.organiser = &testOrg{failLocate: true}
+	s.moves[1] = &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}
+
+	s.refreshMoves(context.Background())
+
+	if s.moves[1].AfterContext != nil {
+		t.Errorf("Update run")
+	}
+}
+
+func TestUpdateMoveFailGetRecords(t *testing.T) {
+	s := InitTest()
+	s.recordcollection = &testCol{fail: true}
+	s.moves[1] = &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}
+
+	s.refreshMoves(context.Background())
+
+	if s.moves[1].AfterContext.After != nil {
+		t.Errorf("Update run: %v", s.moves[1].AfterContext)
+	}
+}
+
+func TestUpdateMoveGetRecordsReturnsNone(t *testing.T) {
+	s := InitTest()
+	s.recordcollection = &testCol{noLocate: true}
+	s.moves[1] = &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}
+
+	s.refreshMoves(context.Background())
+
+	if s.moves[1].AfterContext.After != nil {
+		t.Errorf("Update run")
 	}
 }

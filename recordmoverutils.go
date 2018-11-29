@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"time"
 
+	pbgd "github.com/brotherlogic/godiscogs"
 	"github.com/brotherlogic/goserver/utils"
+	pb "github.com/brotherlogic/recordmover/proto"
+	pbro "github.com/brotherlogic/recordsorganiser/proto"
 	"golang.org/x/net/context"
 
 	pbrc "github.com/brotherlogic/recordcollection/proto"
@@ -14,6 +17,50 @@ import (
 type getter interface {
 	getRecords(ctx context.Context) ([]*pbrc.Record, error)
 	update(ctx context.Context, rec *pbrc.Record) error
+}
+
+func (s *Server) refreshMoves(ctx context.Context) {
+	for _, r := range s.moves {
+		if time.Now().Sub(time.Unix(r.LastUpdate, 0)) > time.Hour {
+			err := s.refreshMove(ctx, r)
+			if err != nil {
+				s.saveMoves(ctx)
+				return
+			}
+
+			s.Log(fmt.Sprintf("REFRESH failed: %v", err))
+		}
+	}
+}
+
+func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
+	location, err := s.organiser.locate(ctx, &pbro.LocateRequest{InstanceId: move.Record.GetRelease().InstanceId})
+	if err != nil {
+		return err
+	}
+
+	for i, r := range location.GetFoundLocation().GetReleasesLocation() {
+		if r.GetInstanceId() == move.InstanceId {
+			if i > 0 {
+				move.AfterContext = &pb.Context{}
+				move.GetAfterContext().Location = location.GetFoundLocation().Name
+				resp, err := s.recordcollection.getRecords(ctx, &pbrc.GetRecordsRequest{Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId}}})
+
+				if err != nil {
+					return err
+				}
+
+				if len(resp.GetRecords()) != 1 {
+					return fmt.Errorf("Ambigous move")
+				}
+
+				move.GetAfterContext().Before = resp.GetRecords()[0]
+			}
+		}
+	}
+
+	move.LastUpdate = time.Now().Unix()
+	return nil
 }
 
 func (s *Server) moveRecords(ctx context.Context) {

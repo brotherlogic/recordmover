@@ -6,9 +6,8 @@ import "github.com/brotherlogic/recordcollection/proto/recordcollection.proto";
 
 message Context {
   recordcollection.Record before = 1;
-  string before_location = 2;
+  string location = 2;
   recordcollection.Record after = 3;
-  string after_location = 4;
 }
 
 message RecordMove {
@@ -18,7 +17,10 @@ message RecordMove {
   int64 move_date = 4;
 
   recordcollection.Record record = 5;
-  Context move_context = 6;
+  Context before_context = 6;
+  Context after_context = 7;
+
+  int64 last_update = 8;
 }
 
 message Moves {

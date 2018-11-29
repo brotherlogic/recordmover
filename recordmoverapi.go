@@ -28,8 +28,8 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 	for i, r := range location.GetFoundLocation().GetReleasesLocation() {
 		if r.GetInstanceId() == in.GetMove().InstanceId {
 			if i > 0 {
-				in.GetMove().MoveContext = &pb.Context{}
-				in.GetMove().GetMoveContext().BeforeLocation = location.GetFoundLocation().Name
+				in.GetMove().BeforeContext = &pb.Context{}
+				in.GetMove().GetBeforeContext().Location = location.GetFoundLocation().Name
 				resp, err := s.recordcollection.getRecords(ctx, &pbrc.GetRecordsRequest{Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId}}})
 
 				if err != nil {
@@ -40,7 +40,7 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 					return &pb.MoveResponse{}, fmt.Errorf("Ambigous move")
 				}
 
-				in.GetMove().GetMoveContext().Before = resp.GetRecords()[0]
+				in.GetMove().GetBeforeContext().Before = resp.GetRecords()[0]
 			}
 		}
 	}

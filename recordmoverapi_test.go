@@ -2,18 +2,39 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"testing"
-
-	"golang.org/x/net/context"
 
 	pbgd "github.com/brotherlogic/godiscogs"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pb "github.com/brotherlogic/recordmover/proto"
+	pbro "github.com/brotherlogic/recordsorganiser/proto"
+	"golang.org/x/net/context"
 )
+
+type testCol struct {
+	fail     bool
+	noLocate bool
+}
+
+func (t *testCol) getRecords(ctx context.Context, rec *pbrc.GetRecordsRequest) (*pbrc.GetRecordsResponse, error) {
+	if t.fail {
+		return &pbrc.GetRecordsResponse{}, fmt.Errorf("Recs Built to fail")
+	}
+
+	if t.noLocate {
+		return &pbrc.GetRecordsResponse{}, nil
+	}
+
+	return &pbrc.GetRecordsResponse{Records: []*pbrc.Record{&pbrc.Record{Release: &pbgd.Release{InstanceId: rec.Filter.Release.InstanceId}}}}, nil
+
+}
 
 type testOrg struct {
 	reorgs    int
 	failCount int
+
+	failLocate bool
 }
 
 func (t *testOrg) reorgLocation(ctx context.Context, folder int32) error {
@@ -26,12 +47,56 @@ func (t *testOrg) reorgLocation(ctx context.Context, folder int32) error {
 	return nil
 }
 
+func (t *testOrg) locate(ctx context.Context, req *pbro.LocateRequest) (*pbro.LocateResponse, error) {
+	if t.failLocate {
+		return &pbro.LocateResponse{}, fmt.Errorf("Locate Built to fail")
+	}
+
+	return &pbro.LocateResponse{FoundLocation: &pbro.Location{Name: "madeup",
+		ReleasesLocation: []*pbro.ReleasePlacement{
+			&pbro.ReleasePlacement{InstanceId: 10},
+			&pbro.ReleasePlacement{InstanceId: 1},
+			&pbro.ReleasePlacement{InstanceId: 20},
+		}}}, nil
+}
+
+func TestAddWithRecordPullFail(t *testing.T) {
+	s := InitTest()
+	s.recordcollection = &testCol{fail: true}
+
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}})
+	if err == nil {
+		t.Fatalf("Move did not fail")
+	}
+}
+
+func TestAddWithLocateFailOne(t *testing.T) {
+	s := InitTest()
+	s.organiser = &testOrg{failLocate: true}
+
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}})
+	if err == nil {
+		t.Fatalf("Move did not fail")
+	}
+}
+
+func TestAddWithLocateFail(t *testing.T) {
+	s := InitTest()
+	s.recordcollection = &testCol{noLocate: true}
+
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}})
+	if err == nil {
+		t.Fatalf("Move did not fail")
+	}
+	log.Printf("%v", err)
+}
+
 func TestAddCausesUpdate(t *testing.T) {
 	s := InitTest()
 	testOrg := &testOrg{failCount: 100}
 	s.organiser = testOrg
 
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{}}})
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}})
 	if err != nil {
 		t.Fatalf("Error making move: %v", err)
 	}
@@ -57,7 +122,7 @@ func TestAddCausesUpdateFail1(t *testing.T) {
 	testOrg := &testOrg{failCount: 1}
 	s.organiser = testOrg
 
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{}}})
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}})
 	if err == nil {
 		t.Fatalf("No error")
 	}
@@ -68,7 +133,7 @@ func TestAddCausesUpdateFail2(t *testing.T) {
 	testOrg := &testOrg{failCount: 2}
 	s.organiser = testOrg
 
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{}}})
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}})
 	if err == nil {
 		t.Fatalf("No error")
 	}
@@ -77,7 +142,7 @@ func TestAddCausesUpdateFail2(t *testing.T) {
 func TestAddDouble(t *testing.T) {
 	s := InitTest()
 
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 2, Record: &pbrc.Record{}}})
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 2, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}})
 	if err != nil {
 		t.Fatalf("Error moving record: %v", err)
 	}

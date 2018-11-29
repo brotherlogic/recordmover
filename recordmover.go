@@ -266,5 +266,6 @@ func main() {
 
 	server.RegisterServer("recordmover", false)
 	server.RegisterRepeatingTask(server.moveRecords, "move_records", time.Minute)
+	server.Log(fmt.Sprintf("Starting %v", server.GoServer.RunningFile))
 	fmt.Printf("%v\n", server.Serve())
 }

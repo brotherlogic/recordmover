@@ -59,6 +59,7 @@ func InitTest() *Server {
 	s.GoServer.KSclient = *keystoreclient.GetTestClient("./testing")
 	s.cdproc = &testRipper{}
 	s.organiser = &testOrg{failCount: 100}
+	s.recordcollection = &testCol{}
 
 	return s
 }

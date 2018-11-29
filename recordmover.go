@@ -26,12 +26,13 @@ import (
 //Server main server type
 type Server struct {
 	*goserver.GoServer
-	getter    getter
-	lastProc  time.Time
-	lastCount int64
-	moves     map[int32]*pb.RecordMove
-	cdproc    cdproc
-	organiser organiser
+	getter           getter
+	lastProc         time.Time
+	lastCount        int64
+	moves            map[int32]*pb.RecordMove
+	cdproc           cdproc
+	organiser        organiser
+	recordcollection recordcollection
 }
 
 const (
@@ -39,8 +40,31 @@ const (
 	KEY = "github.com/brotherlogic/recordmover/moves"
 )
 
+type recordcollection interface {
+	getRecords(ctx context.Context, rec *pbrc.GetRecordsRequest) (*pbrc.GetRecordsResponse, error)
+}
+
+type prodRecordcollection struct{}
+
+func (p *prodRecordcollection) getRecords(ctx context.Context, req *pbrc.GetRecordsRequest) (*pbrc.GetRecordsResponse, error) {
+	ip, port, err := utils.Resolve("recordcollection")
+	if err != nil {
+		return &pbrc.GetRecordsResponse{}, err
+	}
+
+	conn, err := grpc.Dial(ip+":"+strconv.Itoa(int(port)), grpc.WithInsecure())
+	if err != nil {
+		return &pbrc.GetRecordsResponse{}, err
+	}
+	defer conn.Close()
+
+	client := pbrc.NewRecordCollectionServiceClient(conn)
+	return client.GetRecords(ctx, req)
+}
+
 type organiser interface {
 	reorgLocation(ctx context.Context, folder int32) error
+	locate(ctx context.Context, req *pbro.LocateRequest) (*pbro.LocateResponse, error)
 }
 
 type prodOrganiser struct{}
@@ -60,6 +84,22 @@ func (p *prodOrganiser) reorgLocation(ctx context.Context, folder int32) error {
 	client := pbro.NewOrganiserServiceClient(conn)
 	_, err = client.GetOrganisation(ctx, &pbro.GetOrganisationRequest{ForceReorg: true, Locations: []*pbro.Location{&pbro.Location{FolderIds: []int32{folder}}}})
 	return err
+}
+
+func (p *prodOrganiser) locate(ctx context.Context, req *pbro.LocateRequest) (*pbro.LocateResponse, error) {
+	ip, port, err := utils.Resolve("recordsorganiser")
+	if err != nil {
+		return &pbro.LocateResponse{}, err
+	}
+
+	conn, err := grpc.Dial(ip+":"+strconv.Itoa(int(port)), grpc.WithInsecure())
+	if err != nil {
+		return &pbro.LocateResponse{}, err
+	}
+	defer conn.Close()
+
+	client := pbro.NewOrganiserServiceClient(conn)
+	return client.Locate(ctx, req)
 }
 
 type cdproc interface {
@@ -177,6 +217,7 @@ func Init() *Server {
 		make(map[int32]*pb.RecordMove),
 		&cdprocProd{},
 		&prodOrganiser{},
+		&prodRecordcollection{},
 	}
 	return s
 }

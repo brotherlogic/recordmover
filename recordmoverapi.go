@@ -4,9 +4,13 @@ import (
 	"fmt"
 	"time"
 
-	pb "github.com/brotherlogic/recordmover/proto"
-	pbt "github.com/brotherlogic/tracer/proto"
 	"golang.org/x/net/context"
+
+	pbgd "github.com/brotherlogic/godiscogs"
+	pbrc "github.com/brotherlogic/recordcollection/proto"
+	pb "github.com/brotherlogic/recordmover/proto"
+	pbro "github.com/brotherlogic/recordsorganiser/proto"
+	pbt "github.com/brotherlogic/tracer/proto"
 )
 
 // RecordMove moves a record
@@ -16,11 +20,36 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 		return &pb.MoveResponse{}, fmt.Errorf("Missing Record on call")
 	}
 
+	location, err := s.organiser.locate(ctx, &pbro.LocateRequest{InstanceId: in.GetMove().Record.GetRelease().InstanceId})
+	if err != nil {
+		return &pb.MoveResponse{}, err
+	}
+
+	for i, r := range location.GetFoundLocation().GetReleasesLocation() {
+		if r.GetInstanceId() == in.GetMove().InstanceId {
+			if i > 0 {
+				in.GetMove().MoveContext = &pb.Context{}
+				in.GetMove().GetMoveContext().BeforeLocation = location.GetFoundLocation().Name
+				resp, err := s.recordcollection.getRecords(ctx, &pbrc.GetRecordsRequest{Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId}}})
+
+				if err != nil {
+					return &pb.MoveResponse{}, err
+				}
+
+				if len(resp.GetRecords()) != 1 {
+					return &pb.MoveResponse{}, fmt.Errorf("Ambigous move")
+				}
+
+				in.GetMove().GetMoveContext().Before = resp.GetRecords()[0]
+			}
+		}
+	}
+
 	if in.GetMove().ToFolder == in.GetMove().FromFolder {
 		return &pb.MoveResponse{}, nil
 	}
 
-	err := s.organiser.reorgLocation(ctx, in.Move.ToFolder)
+	err = s.organiser.reorgLocation(ctx, in.Move.ToFolder)
 	if err != nil {
 		return &pb.MoveResponse{}, err
 	}

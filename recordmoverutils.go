@@ -199,9 +199,13 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) *pbrc.Record {
 		return r
 	}
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PROFESSOR ||
+		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_PROFESSOR ||
 		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_POSTDOC ||
+		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_POSTDOC ||
 		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_GRADUATE ||
-		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_SOPHMORE {
+		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_GRADUATE ||
+		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_SOPHMORE ||
+		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_SOPHMORE {
 		if r.GetMetadata().GetGoalFolder() != 0 && (r.GetRelease().FolderId != r.GetMetadata().GetGoalFolder() && r.GetMetadata().MoveFolder != r.GetMetadata().GetGoalFolder()) {
 			s.Log(fmt.Sprintf("Setting move folder: %v", r))
 			r.GetMetadata().MoveFolder = r.GetMetadata().GetGoalFolder()

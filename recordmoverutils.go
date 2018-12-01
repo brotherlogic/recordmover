@@ -77,6 +77,8 @@ func (s *Server) moveRecords(ctx context.Context) {
 			err := s.getter.update(ctx, update)
 			if err != nil {
 				s.Log(fmt.Sprintf("Error moving record: %v", err))
+			} else {
+				return
 			}
 		}
 	}

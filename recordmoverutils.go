@@ -27,8 +27,6 @@ func (s *Server) refreshMoves(ctx context.Context) {
 				s.saveMoves(ctx)
 				return
 			}
-
-			s.Log(fmt.Sprintf("REFRESH failed: %v", err))
 		}
 	}
 }

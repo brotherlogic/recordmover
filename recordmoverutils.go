@@ -198,6 +198,7 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) *pbrc.Record {
 		r.GetMetadata().MoveFolder = 812802
 		return r
 	}
+
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PROFESSOR ||
 		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_PROFESSOR ||
 		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_POSTDOC ||
@@ -207,7 +208,7 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) *pbrc.Record {
 		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_SOPHMORE ||
 		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_SOPHMORE {
 		if r.GetMetadata().GetGoalFolder() != 0 && (r.GetRelease().FolderId != r.GetMetadata().GetGoalFolder() && r.GetMetadata().MoveFolder != r.GetMetadata().GetGoalFolder()) {
-			s.Log(fmt.Sprintf("Setting move folder: %v", r))
+			s.Log(fmt.Sprintf("Setting move folder: %v as ->", r, r.GetMetadata().GetGoalFolder()))
 			r.GetMetadata().MoveFolder = r.GetMetadata().GetGoalFolder()
 			return r
 		}

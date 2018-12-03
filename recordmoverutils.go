@@ -74,11 +74,12 @@ func (s *Server) moveRecords(ctx context.Context) {
 		update := s.moveRecord(ctx, record)
 		if update != nil {
 			count++
+			utils.SendTrace(ctx, fmt.Sprintf("Updating Record-%v", update.GetRelease().InstanceId), time.Now(), pbt.Milestone_MARKER, "recordmover")
 			err := s.getter.update(ctx, update)
 			if err != nil {
 				s.Log(fmt.Sprintf("Error moving record: %v", err))
 			} else {
-				return
+				break
 			}
 		}
 	}

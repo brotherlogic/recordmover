@@ -200,5 +200,5 @@ func main() {
 		}
 
 	}
-
+	utils.SendTrace(ctx, "recordmover-cli", time.Now(), pbt.Milestone_END, "recordmover")
 }

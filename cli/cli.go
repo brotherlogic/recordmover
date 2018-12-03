@@ -148,18 +148,11 @@ func main() {
 		if err != nil {
 			log.Fatalf("Error on GET: %v", err)
 		}
-		for _, move := range res.GetMoves() {
-			r := getRecord(ctx, move.InstanceId)
-			f1, err := getFolder(ctx, move.FromFolder)
-			if err == nil {
-				f2, err := getFolder(ctx, move.ToFolder)
-				if err == nil {
-					fmt.Printf("%v: %v -> %v\n", r.GetRelease().Title, f1, f2)
-					loc, err := getLocation(ctx, r)
-					if err == nil {
-						fmt.Printf("%v", loc)
-					}
-				}
+		for i, move := range res.GetMoves() {
+			if move.BeforeContext != nil && move.AfterContext != nil {
+				fmt.Printf("%v. %v -> %v\n", i, move.BeforeContext.Location, move.AfterContext.Location)
+			} else {
+				fmt.Printf("%v. %v,%v\n", i, move.BeforeContext == nil, move.AfterContext == nil)
 			}
 		}
 	case "getclear":

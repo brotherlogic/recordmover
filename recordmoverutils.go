@@ -83,6 +83,8 @@ func (s *Server) moveRecords(ctx context.Context) {
 		}
 	}
 
+	utils.SendTrace(ctx, fmt.Sprintf("GotRecords-moved-%v", count), time.Now(), pbt.Milestone_MARKER, "recordmover")
+
 	s.lastProc = time.Now()
 	s.lastCount = count
 }

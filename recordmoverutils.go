@@ -70,6 +70,7 @@ func (s *Server) moveRecords(ctx context.Context) {
 	}
 
 	count := int64(0)
+	miss := 0
 	for _, record := range records {
 		update := s.moveRecord(ctx, record)
 		if update != nil {
@@ -81,10 +82,12 @@ func (s *Server) moveRecords(ctx context.Context) {
 			} else {
 				break
 			}
+		} else {
+			miss++
 		}
 	}
 
-	utils.SendTrace(ctx, fmt.Sprintf("GotRecords-moved-%v", count), time.Now(), pbt.Milestone_MARKER, "recordmover")
+	utils.SendTrace(ctx, fmt.Sprintf("GotRecords-moved-%v-%v", count, miss), time.Now(), pbt.Milestone_MARKER, "recordmover")
 
 	s.lastProc = time.Now()
 	s.lastCount = count

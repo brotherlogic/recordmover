@@ -101,7 +101,7 @@ func (s *Server) canMove(ctx context.Context, r *pbrc.Record) bool {
 
 	for _, f := range r.GetRelease().GetFormats() {
 		if f.Name == "CD" {
-			if len(f.GetMetadata().FilePath) == 0 {
+			if len(r.GetMetadata().FilePath) == 0 {
 				return false
 			}
 		}

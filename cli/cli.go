@@ -139,7 +139,7 @@ func main() {
 	}
 
 	client := pb.NewMoveServiceClient(conn)
-	ctx, cancel := utils.BuildContext("recordmover-cli", "recordmover-cli", pbgs.ContextType_LONG)
+	ctx, cancel := utils.BuildContext("recordmover-cli-"+os.Args[1], "recordmover-cli", pbgs.ContextType_LONG)
 	defer cancel()
 
 	switch os.Args[1] {

@@ -73,6 +73,9 @@ func (s *Server) moveRecords(ctx context.Context) {
 	miss := 0
 	for _, record := range records {
 		update := s.moveRecord(ctx, record)
+		if record != nil && record.GetRelease().InstanceId == 19867493 {
+			s.Log(fmt.Sprintf("Moving %v to %v", record.GetRelease().Id, update))
+		}
 		if update != nil {
 			count++
 			utils.SendTrace(ctx, fmt.Sprintf("Updating Record-%v", update.GetRelease().InstanceId), time.Now(), pbt.Milestone_MARKER, "recordmover")

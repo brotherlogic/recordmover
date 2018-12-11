@@ -89,6 +89,7 @@ var movetests = []struct {
 	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_PRE_HIGH_SCHOOL}}, 812802},
 	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_HIGH_SCHOOL}}, 673768},
 	{&pbrc.Record{Release: &pbgd.Release{FolderId: 4321}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_PRE_SOPHMORE, GoalFolder: 1234}}, 1234},
+	{&pbrc.Record{Release: &pbgd.Release{FolderId: 1249, Rating: 5}, Metadata: &pbrc.ReleaseMetadata{DateAdded: 1368884100, FilePath: "1450170", LastCache: 1543338069, Category: pbrc.ReleaseMetadata_STAGED_TO_SELL, GoalFolder: 242018, LastSyncTime: 1544561649, Purgatory: pbrc.Purgatory_NEEDS_STOCK_CHECK, LastStockCheck: 1544490181, OverallScore: 4}}, 812802},
 }
 
 func TestMoves(t *testing.T) {
@@ -168,7 +169,7 @@ func TestUpdateToStaged(t *testing.T) {
 
 func TestMoveUnripped(t *testing.T) {
 	s := InitTest()
-	val := s.moveRecord(context.Background(), &pbrc.Record{Release: &pbgd.Release{Id: 123, Formats: []*pbgd.Format{&pbgd.Format{Name: "CD"}}}})
+	val := s.moveRecord(context.Background(), &pbrc.Record{Release: &pbgd.Release{Id: 123, Formats: []*pbgd.Format{&pbgd.Format{Name: "CD"}}}, Metadata: &pbrc.ReleaseMetadata{}})
 
 	if val != nil {
 		t.Errorf("moved: %v", val)

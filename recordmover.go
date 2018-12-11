@@ -245,8 +245,9 @@ func (s *Server) Mote(ctx context.Context, master bool) error {
 // GetState gets the state of the server
 func (s *Server) GetState() []*pbg.State {
 	return []*pbg.State{
-		&pbg.State{Key: "last_proc", TimeValue: s.lastProc.Unix(), Value: s.lastCount},
+		&pbg.State{Key: "last_proc", TimeValue: s.lastProc.Unix()},
 		&pbg.State{Key: "moves", Value: int64(len(s.moves))},
+		&pbg.State{Key: "last_count", Value: s.lastCount},
 	}
 }
 
@@ -267,6 +268,6 @@ func main() {
 	server.RegisterServer("recordmover", false)
 	server.RegisterRepeatingTask(server.moveRecords, "move_records", time.Minute)
 	server.RegisterRepeatingTask(server.refreshMoves, "refresh_moves", time.Minute)
-	server.Log(fmt.Sprintf("Starting %v", server.GoServer.RunningFile))
+
 	fmt.Printf("%v\n", server.Serve())
 }

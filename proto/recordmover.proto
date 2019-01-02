@@ -8,6 +8,7 @@ message Context {
   recordcollection.Record before = 1;
   string location = 2;
   recordcollection.Record after = 3;
+  int32 slot = 4;
 }
 
 message RecordMove {

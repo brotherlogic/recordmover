@@ -48,6 +48,7 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 			if i > 0 {
 				move.AfterContext = &pb.Context{}
 				move.GetAfterContext().Location = location.GetFoundLocation().Name
+				move.GetAfterContext().Slot = location.GetFoundLocation().GetReleasesLocation()[0].Slot
 				resp, err := s.recordcollection.getRecords(ctx, &pbrc.GetRecordsRequest{Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId}}})
 
 				if err != nil {

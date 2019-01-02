@@ -35,6 +35,8 @@ type testOrg struct {
 	failCount int
 
 	failLocate bool
+
+	emptyLocate bool
 }
 
 func (t *testOrg) reorgLocation(ctx context.Context, folder int32) error {
@@ -50,6 +52,11 @@ func (t *testOrg) reorgLocation(ctx context.Context, folder int32) error {
 func (t *testOrg) locate(ctx context.Context, req *pbro.LocateRequest) (*pbro.LocateResponse, error) {
 	if t.failLocate {
 		return &pbro.LocateResponse{}, fmt.Errorf("Locate Built to fail")
+	}
+
+	if t.emptyLocate {
+		return &pbro.LocateResponse{FoundLocation: &pbro.Location{Name: "madeup",
+			ReleasesLocation: []*pbro.ReleasePlacement{}}}, nil
 	}
 
 	return &pbro.LocateResponse{FoundLocation: &pbro.Location{Name: "madeup",
@@ -70,6 +77,16 @@ func TestAddWithRecordPullFail(t *testing.T) {
 	}
 }
 
+func TestAddWithLocateFail(t *testing.T) {
+	s := InitTest()
+	s.organiser = &testOrg{emptyLocate: true}
+
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}})
+	if err == nil {
+		t.Fatalf("Move did not fail")
+	}
+}
+
 func TestAddWithLocateFailOne(t *testing.T) {
 	s := InitTest()
 	s.organiser = &testOrg{failLocate: true}
@@ -80,7 +97,7 @@ func TestAddWithLocateFailOne(t *testing.T) {
 	}
 }
 
-func TestAddWithLocateFail(t *testing.T) {
+func TestAddWithLocateEmpty(t *testing.T) {
 	s := InitTest()
 	s.recordcollection = &testCol{noLocate: true}
 

@@ -32,7 +32,12 @@ func (s *Server) refreshMoves(ctx context.Context) {
 }
 
 func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
+	if move.GetBeforeContext() == nil {
+		s.Log(fmt.Sprintf("%v has no before context %v -> %v", move.InstanceId, move.FromFolder, move.ToFolder))
+	}
+
 	location, err := s.organiser.locate(ctx, &pbro.LocateRequest{InstanceId: move.Record.GetRelease().InstanceId})
+
 	if err != nil {
 		return err
 	}

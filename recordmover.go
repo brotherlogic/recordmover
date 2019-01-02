@@ -244,9 +244,22 @@ func (s *Server) Mote(ctx context.Context, master bool) error {
 
 // GetState gets the state of the server
 func (s *Server) GetState() []*pbg.State {
+	fromCount := int64(0)
+	toCount := int64(0)
+	for _, m := range s.moves {
+		if m.BeforeContext != nil {
+			fromCount++
+		}
+		if m.AfterContext != nil {
+			toCount++
+		}
+	}
+
 	return []*pbg.State{
 		&pbg.State{Key: "last_proc", TimeValue: s.lastProc.Unix()},
 		&pbg.State{Key: "moves", Value: int64(len(s.moves))},
+		&pbg.State{Key: "moves_with_from", Value: fromCount},
+		&pbg.State{Key: "moves_with_to", Value: toCount},
 		&pbg.State{Key: "last_count", Value: s.lastCount},
 	}
 }

@@ -20,6 +20,13 @@ type getter interface {
 }
 
 func (s *Server) refreshMoves(ctx context.Context) {
+	//Clean in folder moves
+	for key, val := range s.moves {
+		if val.ToFolder == val.FromFolder {
+			delete(s.moves, key)
+		}
+	}
+
 	for _, r := range s.moves {
 		if time.Now().Sub(time.Unix(r.LastUpdate, 0)) > time.Hour {
 			err := s.refreshMove(ctx, r)

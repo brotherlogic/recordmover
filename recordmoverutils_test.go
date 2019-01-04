@@ -307,3 +307,15 @@ func TestUpdateMoveGetRecordsReturnsNone(t *testing.T) {
 		t.Errorf("Update run")
 	}
 }
+
+func TestInFolderMovesAreIgnored(t *testing.T) {
+	s := InitTest()
+	s.recordcollection = &testCol{noLocate: true}
+	s.moves[1] = &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 2, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}
+
+	s.refreshMoves(context.Background())
+
+	if len(s.moves) != 0 {
+		t.Errorf("In Folder move has not been removed")
+	}
+}

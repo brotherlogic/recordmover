@@ -47,7 +47,7 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 	}
 
 	if in.GetMove().GetBeforeContext() == nil {
-		return &pb.MoveResponse{}, fmt.Errorf("Unable to define before context: %v", in.GetMove().InstanceId)
+		return &pb.MoveResponse{}, fmt.Errorf("Unable to define before context: %v, given %v locations", in.GetMove().InstanceId, len(location.GetFoundLocation().GetReleasesLocation()))
 	}
 
 	if in.GetMove().ToFolder == in.GetMove().FromFolder {

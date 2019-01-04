@@ -13,19 +13,23 @@ import (
 )
 
 type testCol struct {
-	fail     bool
-	noLocate bool
+	fail           bool
+	failSecond     bool
+	noLocate       bool
+	noLocateSecond bool
+	count          int
 }
 
 func (t *testCol) getRecords(ctx context.Context, rec *pbrc.GetRecordsRequest) (*pbrc.GetRecordsResponse, error) {
-	if t.fail {
+	if t.fail || (t.failSecond && t.count > 0) {
 		return &pbrc.GetRecordsResponse{}, fmt.Errorf("Recs Built to fail")
 	}
 
-	if t.noLocate {
+	if t.noLocate || (t.noLocateSecond && t.count > 0) {
 		return &pbrc.GetRecordsResponse{}, nil
 	}
 
+	t.count++
 	return &pbrc.GetRecordsResponse{Records: []*pbrc.Record{&pbrc.Record{Release: &pbgd.Release{InstanceId: rec.Filter.Release.InstanceId}}}}, nil
 
 }
@@ -77,6 +81,16 @@ func TestAddWithRecordPullFail(t *testing.T) {
 	}
 }
 
+func TestAddWithRecordPullFailOnSecond(t *testing.T) {
+	s := InitTest()
+	s.recordcollection = &testCol{failSecond: true}
+
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}})
+	if err == nil {
+		t.Fatalf("Move did not fail")
+	}
+}
+
 func TestAddWithLocateFail(t *testing.T) {
 	s := InitTest()
 	s.organiser = &testOrg{emptyLocate: true}
@@ -105,7 +119,16 @@ func TestAddWithLocateEmpty(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Move did not fail")
 	}
-	log.Printf("%v", err)
+}
+
+func TestAddWithLocateEmptySecond(t *testing.T) {
+	s := InitTest()
+	s.recordcollection = &testCol{noLocateSecond: true}
+
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}})
+	if err == nil {
+		t.Fatalf("Move did not fail")
+	}
 }
 
 func TestAddCausesUpdate(t *testing.T) {
@@ -143,6 +166,7 @@ func TestAddCausesUpdateFail1(t *testing.T) {
 	if err == nil {
 		t.Fatalf("No error")
 	}
+	log.Printf("UPDATE: %v", err)
 }
 
 func TestAddCausesUpdateFail2(t *testing.T) {

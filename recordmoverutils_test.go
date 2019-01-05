@@ -296,9 +296,33 @@ func TestUpdateMoveFailGetRecords(t *testing.T) {
 	}
 }
 
+func TestUpdateMoveFailGetRecordsSecond(t *testing.T) {
+	s := InitTest()
+	s.recordcollection = &testCol{failSecond: true}
+	s.moves[1] = &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}
+
+	s.refreshMoves(context.Background())
+
+	if s.moves[1].AfterContext.After != nil {
+		t.Errorf("Update run: %v", s.moves[1].AfterContext)
+	}
+}
+
 func TestUpdateMoveGetRecordsReturnsNone(t *testing.T) {
 	s := InitTest()
 	s.recordcollection = &testCol{noLocate: true}
+	s.moves[1] = &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}
+
+	s.refreshMoves(context.Background())
+
+	if s.moves[1].AfterContext.After != nil {
+		t.Errorf("Update run")
+	}
+}
+
+func TestUpdateMoveGetRecordsReturnsNoneSecond(t *testing.T) {
+	s := InitTest()
+	s.recordcollection = &testCol{noLocateSecond: true}
 	s.moves[1] = &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}
 
 	s.refreshMoves(context.Background())

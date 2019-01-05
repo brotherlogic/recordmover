@@ -68,6 +68,20 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 
 				move.GetAfterContext().Before = resp.GetRecords()[0]
 			}
+			if i < len(location.GetFoundLocation().GetReleasesLocation())-1 {
+				resp, err := s.recordcollection.getRecords(ctx, &pbrc.GetRecordsRequest{Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: location.GetFoundLocation().GetReleasesLocation()[i+1].InstanceId}}})
+
+				if err != nil {
+					return err
+				}
+
+				if len(resp.GetRecords()) != 1 {
+					return fmt.Errorf("Ambigous move")
+				}
+
+				move.GetAfterContext().After = resp.GetRecords()[0]
+
+			}
 		}
 	}
 

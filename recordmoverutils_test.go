@@ -123,17 +123,6 @@ func TestUpdateToUnlistend(t *testing.T) {
 	}
 }
 
-func TestUpdateToDigital(t *testing.T) {
-	s := InitTest()
-	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{Rating: 0, FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_DIGITAL}}}
-	s.getter = &tg
-	s.moveRecords(context.Background())
-
-	if tg.rec.GetMetadata().MoveFolder != 812802 {
-		t.Errorf("Folder has not been updated: %v", tg.rec)
-	}
-}
-
 func TestUpdateToDigitalDone(t *testing.T) {
 	s := InitTest()
 	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{Rating: 4, FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_DIGITAL}}}

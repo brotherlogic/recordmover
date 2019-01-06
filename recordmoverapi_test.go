@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"testing"
 
 	pbgd "github.com/brotherlogic/godiscogs"
@@ -166,7 +165,6 @@ func TestAddCausesUpdateFail1(t *testing.T) {
 	if err == nil {
 		t.Fatalf("No error")
 	}
-	log.Printf("UPDATE: %v", err)
 }
 
 func TestAddCausesUpdateFail2(t *testing.T) {

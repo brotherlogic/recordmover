@@ -150,7 +150,7 @@ func main() {
 		}
 		for i, move := range res.GetMoves() {
 			if move.BeforeContext != nil && move.AfterContext != nil {
-				fmt.Printf("%v. %v -> %v\n", i, move.BeforeContext.Location, move.AfterContext.Location)
+				fmt.Printf("%v. [%v] %v -> %v\n", i, move.InstanceId, move.BeforeContext.Location, move.AfterContext.Location)
 			} else {
 				fmt.Printf("%v. %v,%v\n", i, move.BeforeContext == nil, move.AfterContext == nil)
 			}

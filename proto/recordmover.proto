@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package recordprocessor;
+package recordmover;
 
 import "github.com/brotherlogic/recordcollection/proto/recordcollection.proto";
 
@@ -17,7 +17,7 @@ message RecordedMove {
 
 message Config {
   repeated RecordMove moves = 1;
-  repeated RecordedMove moveArchive = 2;
+  repeated RecordedMove move_archive = 2;
 }
 
 message Context {

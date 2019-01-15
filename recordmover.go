@@ -33,11 +33,15 @@ type Server struct {
 	cdproc           cdproc
 	organiser        organiser
 	recordcollection recordcollection
+	config           *pb.Config
 }
 
 const (
 	//KEY is where we store moves
 	KEY = "github.com/brotherlogic/recordmover/moves"
+
+	//ConfigKey is where we store the overall config
+	ConfigKey = "github.com/brotherlogic/recordmover/config"
 )
 
 type recordcollection interface {
@@ -154,6 +158,16 @@ func (s *Server) readMoves(ctx context.Context) error {
 		s.moves[m.InstanceId] = m
 	}
 
+	//Side load the config
+	config := &pb.Config{}
+	data, _, err = s.KSclient.Read(ctx, ConfigKey, config)
+
+	if err != nil {
+		return err
+	}
+
+	s.config = data.(*pb.Config)
+
 	return nil
 }
 
@@ -164,6 +178,7 @@ func (s *Server) saveMoves(ctx context.Context) {
 		moves.Moves = append(moves.Moves, move)
 	}
 	s.KSclient.Save(ctx, KEY, moves)
+	s.KSclient.Save(ctx, ConfigKey, s.config)
 	s.LogTrace(ctx, "saveMoves", time.Now(), pbt.Milestone_END_FUNCTION)
 }
 
@@ -218,6 +233,7 @@ func Init() *Server {
 		&cdprocProd{},
 		&prodOrganiser{},
 		&prodRecordcollection{},
+		&pb.Config{},
 	}
 	return s
 }
@@ -261,6 +277,8 @@ func (s *Server) GetState() []*pbg.State {
 		&pbg.State{Key: "moves_with_from", Value: fromCount},
 		&pbg.State{Key: "moves_with_to", Value: toCount},
 		&pbg.State{Key: "last_count", Value: s.lastCount},
+		&pbg.State{Key: "config_moves", Value: int64(len(s.config.Moves))},
+		&pbg.State{Key: "config_archives", Value: int64(len(s.config.MoveArchive))},
 	}
 }
 

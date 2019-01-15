@@ -4,6 +4,22 @@ package recordprocessor;
 
 import "github.com/brotherlogic/recordcollection/proto/recordcollection.proto";
 
+message RecordedMove {
+  // The record being moved
+  int32 instance_id = 1;
+
+  // The time of the move
+  int64 move_time = 2;
+
+  // The eventual destination of the move
+  string move_location = 3;
+}
+
+message Config {
+  repeated RecordMove moves = 1;
+  repeated RecordedMove moveArchive = 2;
+}
+
 message Context {
   recordcollection.Record before = 1;
   string location = 2;

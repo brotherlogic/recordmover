@@ -81,8 +81,20 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 
 	in.GetMove().MoveDate = time.Now().Unix()
 	s.moves[in.GetMove().InstanceId] = in.GetMove()
-	s.saveMoves(ctx)
 
+	// Overwrite existing move or create a new one
+	found := false
+	for i, val := range s.config.Moves {
+		if val.InstanceId == in.GetMove().InstanceId {
+			found = true
+			s.config.Moves[i] = in.GetMove()
+		}
+	}
+	if !found {
+		s.config.Moves = append(s.config.Moves, in.GetMove())
+	}
+
+	s.saveMoves(ctx)
 	return &pb.MoveResponse{}, nil
 }
 

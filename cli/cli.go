@@ -143,17 +143,13 @@ func main() {
 	defer cancel()
 
 	switch os.Args[1] {
-	case "get":
+	case "archive":
 		res, err := client.ListMoves(ctx, &pb.ListRequest{})
 		if err != nil {
 			log.Fatalf("Error on GET: %v", err)
 		}
-		for i, move := range res.GetMoves() {
-			if move.BeforeContext != nil && move.AfterContext != nil {
-				fmt.Printf("%v. [%v] %v -> %v\n", i, move.InstanceId, move.BeforeContext.Location, move.AfterContext.Location)
-			} else {
-				fmt.Printf("%v. %v,%v\n", i, move.BeforeContext == nil, move.AfterContext == nil)
-			}
+		for _, move := range res.GetArchives() {
+			fmt.Printf("%v", move)
 		}
 	case "getclear":
 		foldermap := make(map[int32]string)

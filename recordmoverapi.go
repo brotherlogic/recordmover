@@ -117,7 +117,7 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 // ListMoves list the moves made
 func (s *Server) ListMoves(ctx context.Context, in *pb.ListRequest) (*pb.ListResponse, error) {
 	s.LogTrace(ctx, "ListMoves", time.Now(), pbt.Milestone_START_FUNCTION)
-	resp := &pb.ListResponse{Moves: make([]*pb.RecordMove, 0)}
+	resp := &pb.ListResponse{Moves: make([]*pb.RecordMove, 0), Archives: s.config.MoveArchive}
 	for _, move := range s.moves {
 		resp.Moves = append(resp.Moves, move)
 	}

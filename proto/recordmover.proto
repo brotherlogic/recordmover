@@ -54,6 +54,7 @@ message ListRequest {}
 
 message ListResponse {
   repeated RecordMove moves = 1;
+  repeated RecordedMove archives = 2;
 }
 
 message ClearRequest {

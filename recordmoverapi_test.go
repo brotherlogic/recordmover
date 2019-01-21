@@ -232,7 +232,7 @@ func TestRunThrough(t *testing.T) {
 		t.Fatalf("Error listing records: %v", err)
 	}
 
-	if len(moves.GetMoves()) != 0 {
+	if len(moves.GetMoves()) != 0 || len(s.config.Moves) != 0 {
 		t.Fatalf("Move is a problem: %v", moves)
 	}
 

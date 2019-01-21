@@ -34,6 +34,7 @@ type Server struct {
 	organiser        organiser
 	recordcollection recordcollection
 	config           *pb.Config
+	lastArch         time.Duration
 }
 
 const (
@@ -234,6 +235,7 @@ func Init() *Server {
 		&prodOrganiser{},
 		&prodRecordcollection{},
 		&pb.Config{},
+		0,
 	}
 	return s
 }
@@ -279,6 +281,7 @@ func (s *Server) GetState() []*pbg.State {
 		&pbg.State{Key: "last_count", Value: s.lastCount},
 		&pbg.State{Key: "config_moves", Value: int64(len(s.config.Moves))},
 		&pbg.State{Key: "config_archives", Value: int64(len(s.config.MoveArchive))},
+		&pbg.State{Key: "archive_process", TimeDuration: s.lastArch.Nanoseconds()},
 	}
 }
 

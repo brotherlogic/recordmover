@@ -13,6 +13,22 @@ import (
 	pbt "github.com/brotherlogic/tracer/proto"
 )
 
+func (s *Server) updateArchive(move *pb.RecordedMove) {
+	t := time.Now()
+	newMove := true
+	for _, archMove := range s.config.MoveArchive {
+		if archMove.InstanceId == move.InstanceId && archMove.MoveLocation == move.MoveLocation {
+			newMove = false
+		}
+	}
+
+	if newMove {
+		s.config.MoveArchive = append(s.config.MoveArchive, move)
+	}
+
+	s.lastArch = time.Now().Sub(t)
+}
+
 // RecordMove moves a record
 func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveResponse, error) {
 	if in.GetMove().Record == nil {

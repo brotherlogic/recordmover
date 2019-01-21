@@ -86,7 +86,12 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 				move.GetAfterContext().After = resp.GetRecords()[0]
 
 			}
+
 		}
+	}
+
+	if move.GetAfterContext() != nil && move.GetAfterContext().Location != "" {
+		s.updateArchive(&pb.RecordedMove{InstanceId: move.InstanceId, MoveLocation: move.GetAfterContext().Location, MoveTime: time.Now().Unix()})
 	}
 
 	move.LastUpdate = time.Now().Unix()

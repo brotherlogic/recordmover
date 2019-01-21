@@ -132,6 +132,11 @@ func (s *Server) ClearMove(ctx context.Context, in *pb.ClearRequest) (*pb.ClearR
 		return nil, fmt.Errorf("Instance ID not found in moves list")
 	}
 	delete(s.moves, in.InstanceId)
+	for i, mv := range s.config.Moves {
+		if mv.InstanceId == in.InstanceId {
+			s.config.Moves = append(s.config.Moves[:i], s.config.Moves[i+1:]...)
+		}
+	}
 	s.saveMoves(ctx)
 	s.LogTrace(ctx, "ClearMove", time.Now(), pbt.Milestone_END_FUNCTION)
 	return &pb.ClearResponse{}, nil

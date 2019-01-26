@@ -260,7 +260,7 @@ func (s *Server) Mote(ctx context.Context, master bool) error {
 		err := s.readMoves(ctx)
 		for _, m := range s.moves {
 			if m.InstanceId == 127363223 {
-				s.refreshMove(ctx, m)
+				s.Log(fmt.Sprintf("OUTCOME for 127363223 %v", s.refreshMove(ctx, m)))
 			}
 		}
 		return err

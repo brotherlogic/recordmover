@@ -157,6 +157,10 @@ func (s *Server) readMoves(ctx context.Context) error {
 	movelist = data.(*pb.Moves)
 	for _, m := range movelist.GetMoves() {
 		s.moves[m.InstanceId] = m
+
+		if m.InstanceId == 127363223 {
+			m.LastUpdate = 0
+		}
 	}
 
 	//Side load the config

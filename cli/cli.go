@@ -151,6 +151,27 @@ func main() {
 		for _, move := range res.GetArchives() {
 			fmt.Printf("%v", move)
 		}
+	case "get":
+		res, err := client.ListMoves(ctx, &pb.ListRequest{})
+		if err != nil {
+			log.Fatalf("Error on GET: %v", err)
+		}
+		val, _ := strconv.Atoi(os.Args[2])
+		for _, move := range res.GetMoves() {
+			if move.InstanceId == int32(val) {
+				fmt.Printf("Last refresh %v\n", time.Unix(move.LastUpdate, 0))
+				fmt.Printf("BEFORE %v %v %v\n", move.BeforeContext.Location, move.BeforeContext.Before == nil, move.BeforeContext.After == nil)
+				fmt.Printf("AFTER %v %v %v\n", move.AfterContext.Location, move.AfterContext.Before == nil, move.AfterContext.After == nil)
+				if move.AfterContext.Before != nil {
+					fmt.Printf("  %v\n", move.AfterContext.Before.GetRelease().Title)
+				}
+				if move.AfterContext.After != nil {
+					fmt.Printf("  %v\n", move.AfterContext.After.GetRelease().Title)
+				}
+
+			}
+
+		}
 	case "getclear":
 		foldermap := make(map[int32]string)
 		res, err := client.ListMoves(ctx, &pb.ListRequest{})

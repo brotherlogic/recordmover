@@ -70,6 +70,7 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 					return fmt.Errorf("Ambigous move")
 				}
 
+				s.Log(fmt.Sprintf("Setting before for %v = %v", move.InstanceId, resp.GetRecords()[0].GetRelease().Title))
 				move.GetAfterContext().Before = resp.GetRecords()[0]
 			}
 			if i < len(location.GetFoundLocation().GetReleasesLocation())-1 {

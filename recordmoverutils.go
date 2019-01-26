@@ -53,6 +53,7 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 
 	for i, r := range location.GetFoundLocation().GetReleasesLocation() {
 		if r.GetInstanceId() == move.InstanceId {
+			s.Log(fmt.Sprintf("FOUND %v -> %v", move.InstanceId, i))
 			if i > 0 {
 				move.AfterContext = &pb.Context{}
 				move.GetAfterContext().Location = location.GetFoundLocation().Name

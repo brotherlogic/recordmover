@@ -261,6 +261,7 @@ func (s *Server) Mote(ctx context.Context, master bool) error {
 		for _, m := range s.moves {
 			if m.InstanceId == 127363223 {
 				s.Log(fmt.Sprintf("OUTCOME for 127363223 %v", s.refreshMove(ctx, m)))
+				s.Log(fmt.Sprintf("NOW %v is %v", m.InstanceId, m.GetAfterContext().Before))
 			}
 		}
 		return err

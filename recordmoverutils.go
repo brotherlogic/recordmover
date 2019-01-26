@@ -30,7 +30,7 @@ func (s *Server) refreshMoves(ctx context.Context) {
 	for _, r := range s.moves {
 		if time.Now().Sub(time.Unix(r.LastUpdate, 0)) > time.Hour {
 			err := s.refreshMove(ctx, r)
-			if err != nil {
+			if err == nil {
 				s.Log(fmt.Sprintf("Refreshing %v", r.InstanceId))
 				s.saveMoves(ctx)
 				return

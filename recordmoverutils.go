@@ -41,10 +41,6 @@ func (s *Server) refreshMoves(ctx context.Context) {
 }
 
 func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
-	if move.GetBeforeContext() == nil {
-		s.Log(fmt.Sprintf("%v has no before context %v -> %v", move.InstanceId, move.FromFolder, move.ToFolder))
-	}
-
 	location, err := s.organiser.locate(ctx, &pbro.LocateRequest{InstanceId: move.Record.GetRelease().InstanceId})
 
 	if err != nil {
@@ -53,28 +49,28 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 
 	for i, r := range location.GetFoundLocation().GetReleasesLocation() {
 		if r.GetInstanceId() == move.InstanceId {
-			s.Log(fmt.Sprintf("FOUND %v -> %v", move.InstanceId, i))
 			if i > 0 {
-				move.AfterContext = &pb.Context{}
+				if move.AfterContext == nil {
+					move.AfterContext = &pb.Context{}
+				}
 				move.GetAfterContext().Location = location.GetFoundLocation().Name
 				move.GetAfterContext().Slot = location.GetFoundLocation().GetReleasesLocation()[i].Slot
 				resp, err := s.recordcollection.getRecords(ctx, &pbrc.GetRecordsRequest{Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId}}})
 
 				if err != nil {
-					s.Log(fmt.Sprintf("ERROR in refresh: %v -> %v", move.InstanceId, err))
 					return err
 				}
 
 				if len(resp.GetRecords()) != 1 {
-					s.Log(fmt.Sprintf("ERROR in refresh: %v -> %v", move.InstanceId, "AMBIGOUS"))
 					return fmt.Errorf("Ambigous move")
 				}
 
-				s.Log(fmt.Sprintf("Setting before for %v = %v", move.InstanceId, resp.GetRecords()[0].GetRelease().Title))
 				move.GetAfterContext().Before = resp.GetRecords()[0]
 			}
 			if i < len(location.GetFoundLocation().GetReleasesLocation())-1 {
-				move.AfterContext = &pb.Context{}
+				if move.AfterContext == nil {
+					move.AfterContext = &pb.Context{}
+				}
 				move.GetAfterContext().Location = location.GetFoundLocation().Name
 				move.GetAfterContext().Slot = location.GetFoundLocation().GetReleasesLocation()[i].Slot
 
@@ -87,7 +83,6 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 				if len(resp.GetRecords()) != 1 {
 					return fmt.Errorf("Ambigous move")
 				}
-				s.Log(fmt.Sprintf("Setting after for %v = %v", move.InstanceId, resp.GetRecords()[0].GetRelease().Title))
 				move.GetAfterContext().After = resp.GetRecords()[0]
 
 			}

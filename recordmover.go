@@ -258,6 +258,11 @@ func (s *Server) ReportHealth() bool {
 func (s *Server) Mote(ctx context.Context, master bool) error {
 	if master {
 		err := s.readMoves(ctx)
+		for _, m := range s.moves {
+			if m.InstanceId == 127363223 {
+				s.refreshMove(ctx, m)
+			}
+		}
 		return err
 	}
 

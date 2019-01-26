@@ -59,10 +59,12 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 				resp, err := s.recordcollection.getRecords(ctx, &pbrc.GetRecordsRequest{Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId}}})
 
 				if err != nil {
+					s.Log(fmt.Sprintf("ERROR in refresh: %v -> %v", move.InstanceId, err))
 					return err
 				}
 
 				if len(resp.GetRecords()) != 1 {
+					s.Log(fmt.Sprintf("ERROR in refresh: %v -> %v", move.InstanceId, "AMBIGOUS"))
 					return fmt.Errorf("Ambigous move")
 				}
 
@@ -82,7 +84,6 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 				if len(resp.GetRecords()) != 1 {
 					return fmt.Errorf("Ambigous move")
 				}
-
 				move.GetAfterContext().After = resp.GetRecords()[0]
 
 			}

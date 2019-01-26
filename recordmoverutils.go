@@ -87,6 +87,7 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 				if len(resp.GetRecords()) != 1 {
 					return fmt.Errorf("Ambigous move")
 				}
+				s.Log(fmt.Sprintf("Setting after for %v = %v", move.InstanceId, resp.GetRecords()[0].GetRelease().Title))
 				move.GetAfterContext().After = resp.GetRecords()[0]
 
 			}

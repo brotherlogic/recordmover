@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/brotherlogic/keystore/client"
 	pb "github.com/brotherlogic/recordmover/proto"
@@ -331,4 +332,11 @@ func TestInFolderMovesAreIgnored(t *testing.T) {
 	if len(s.moves) != 0 {
 		t.Errorf("In Folder move has not been removed")
 	}
+}
+
+func TestTriggerAlert(t *testing.T) {
+	s := InitTest()
+	s.moves[1] = &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 2, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}, MoveDate: time.Now().Add(-time.Hour * 24 * 9).Unix()}
+
+	s.lookForStale(context.Background())
 }

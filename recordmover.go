@@ -264,12 +264,17 @@ func (s *Server) Mote(ctx context.Context, master bool) error {
 func (s *Server) GetState() []*pbg.State {
 	fromCount := int64(0)
 	toCount := int64(0)
+	oldest := time.Now().Unix()
 	for _, m := range s.moves {
 		if m.BeforeContext != nil {
 			fromCount++
 		}
 		if m.AfterContext != nil {
 			toCount++
+		}
+
+		if m.MoveDate < oldest {
+			oldest = m.MoveDate
 		}
 	}
 
@@ -282,6 +287,7 @@ func (s *Server) GetState() []*pbg.State {
 		&pbg.State{Key: "config_moves", Value: int64(len(s.config.Moves))},
 		&pbg.State{Key: "config_archives", Value: int64(len(s.config.MoveArchive))},
 		&pbg.State{Key: "archive_process", TimeDuration: s.lastArch.Nanoseconds()},
+		&pbg.State{Key: "oldest_move", TimeValue: oldest},
 	}
 }
 
@@ -302,6 +308,7 @@ func main() {
 	server.RegisterServer("recordmover", false)
 	server.RegisterRepeatingTask(server.moveRecords, "move_records", time.Minute)
 	server.RegisterRepeatingTask(server.refreshMoves, "refresh_moves", time.Minute)
+	server.RegisterRepeatingTask(server.lookForStale, "look_for_stale", time.Minute)
 
 	fmt.Printf("%v\n", server.Serve())
 }

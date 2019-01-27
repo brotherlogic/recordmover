@@ -274,6 +274,18 @@ func TestUpdateMoveWithFlip(t *testing.T) {
 	}
 }
 
+func TestReverseUpdateMoveWithFlip(t *testing.T) {
+	s := InitTest()
+	s.organiser = &testOrg{rflipLocate: true}
+	s.moves[1] = &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}
+
+	s.refreshMoves(context.Background())
+
+	if s.moves[1].AfterContext.Location == "" {
+		t.Errorf("Update not run")
+	}
+}
+
 func TestUpdateMoveFailLocate(t *testing.T) {
 	s := InitTest()
 	s.organiser = &testOrg{failLocate: true}

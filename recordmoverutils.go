@@ -49,10 +49,11 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 
 	for i, r := range location.GetFoundLocation().GetReleasesLocation() {
 		if r.GetInstanceId() == move.InstanceId {
+			if move.AfterContext == nil {
+				move.AfterContext = &pb.Context{}
+			}
+
 			if i > 0 {
-				if move.AfterContext == nil {
-					move.AfterContext = &pb.Context{}
-				}
 				move.GetAfterContext().Location = location.GetFoundLocation().Name
 				move.GetAfterContext().Slot = location.GetFoundLocation().GetReleasesLocation()[i].Slot
 				resp, err := s.recordcollection.getRecords(ctx, &pbrc.GetRecordsRequest{Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId}}})
@@ -68,9 +69,6 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 				move.GetAfterContext().Before = resp.GetRecords()[0]
 			}
 			if i < len(location.GetFoundLocation().GetReleasesLocation())-1 {
-				if move.AfterContext == nil {
-					move.AfterContext = &pb.Context{}
-				}
 				move.GetAfterContext().Location = location.GetFoundLocation().Name
 				move.GetAfterContext().Slot = location.GetFoundLocation().GetReleasesLocation()[i].Slot
 
@@ -85,6 +83,8 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 				}
 				move.GetAfterContext().After = resp.GetRecords()[0]
 
+			} else {
+				move.AfterContext.After = &pbrc.Record{Release: &pbgd.Release{Title: "END_OF_SLOT"}}
 			}
 
 		}

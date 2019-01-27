@@ -41,7 +41,8 @@ type testOrg struct {
 
 	emptyLocate bool
 
-	flipLocate bool
+	flipLocate  bool
+	rflipLocate bool
 }
 
 func (t *testOrg) reorgLocation(ctx context.Context, folder int32) error {
@@ -70,6 +71,15 @@ func (t *testOrg) locate(ctx context.Context, req *pbro.LocateRequest) (*pbro.Lo
 				&pbro.ReleasePlacement{InstanceId: 1},
 				&pbro.ReleasePlacement{InstanceId: 10},
 				&pbro.ReleasePlacement{InstanceId: 20},
+			}}}, nil
+
+	}
+	if t.rflipLocate {
+		return &pbro.LocateResponse{FoundLocation: &pbro.Location{Name: "madeup",
+			ReleasesLocation: []*pbro.ReleasePlacement{
+				&pbro.ReleasePlacement{InstanceId: 10},
+				&pbro.ReleasePlacement{InstanceId: 20},
+				&pbro.ReleasePlacement{InstanceId: 1},
 			}}}, nil
 
 	}

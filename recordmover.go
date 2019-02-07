@@ -307,6 +307,7 @@ func main() {
 	server.GoServer.KSclient = *keystoreclient.GetClient(server.GetIP)
 	server.PrepServer()
 	server.Register = server
+	server.RPCTracing = true
 
 	server.RegisterServer("recordmover", false)
 	server.RegisterRepeatingTask(server.moveRecords, "move_records", time.Minute)

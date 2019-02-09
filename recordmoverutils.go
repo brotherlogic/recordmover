@@ -67,7 +67,10 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 				}
 
 				move.GetAfterContext().Before = resp.GetRecords()[0]
+			} else {
+				move.AfterContext.Before = &pbrc.Record{Release: &pbgd.Release{Title: "START_OF_SLOT"}}
 			}
+
 			if i < len(location.GetFoundLocation().GetReleasesLocation())-1 {
 				move.GetAfterContext().Location = location.GetFoundLocation().Name
 				move.GetAfterContext().Slot = location.GetFoundLocation().GetReleasesLocation()[i].Slot

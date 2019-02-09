@@ -5,11 +5,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"strconv"
 	"time"
 
 	"github.com/brotherlogic/goserver"
-	"github.com/brotherlogic/goserver/utils"
 	"github.com/brotherlogic/keystore/client"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -37,6 +35,27 @@ type Server struct {
 	lastArch         time.Duration
 }
 
+// Init builds the server
+func Init() *Server {
+	s := &Server{
+		&goserver.GoServer{},
+		&prodGetter{},
+		time.Unix(0, 1),
+		0,
+		make(map[int32]*pb.RecordMove),
+		&cdprocProd{},
+		&prodOrganiser{},
+		&prodRecordcollection{},
+		&pb.Config{},
+		0,
+	}
+	s.getter = &prodGetter{s.DialMaster}
+	s.cdproc = &cdprocProd{s.DialMaster}
+	s.organiser = &prodOrganiser{s.DialMaster}
+	s.recordcollection = &prodRecordcollection{s.DialMaster}
+	return s
+}
+
 const (
 	//KEY is where we store moves
 	KEY = "github.com/brotherlogic/recordmover/moves"
@@ -49,15 +68,12 @@ type recordcollection interface {
 	getRecords(ctx context.Context, rec *pbrc.GetRecordsRequest) (*pbrc.GetRecordsResponse, error)
 }
 
-type prodRecordcollection struct{}
+type prodRecordcollection struct {
+	dial func(server string) (*grpc.ClientConn, error)
+}
 
 func (p *prodRecordcollection) getRecords(ctx context.Context, req *pbrc.GetRecordsRequest) (*pbrc.GetRecordsResponse, error) {
-	ip, port, err := utils.Resolve("recordcollection")
-	if err != nil {
-		return &pbrc.GetRecordsResponse{}, err
-	}
-
-	conn, err := grpc.Dial(ip+":"+strconv.Itoa(int(port)), grpc.WithInsecure())
+	conn, err := p.dial("recordcollection")
 	if err != nil {
 		return &pbrc.GetRecordsResponse{}, err
 	}
@@ -72,15 +88,12 @@ type organiser interface {
 	locate(ctx context.Context, req *pbro.LocateRequest) (*pbro.LocateResponse, error)
 }
 
-type prodOrganiser struct{}
+type prodOrganiser struct {
+	dial func(server string) (*grpc.ClientConn, error)
+}
 
 func (p *prodOrganiser) reorgLocation(ctx context.Context, folder int32) error {
-	ip, port, err := utils.Resolve("recordsorganiser")
-	if err != nil {
-		return err
-	}
-
-	conn, err := grpc.Dial(ip+":"+strconv.Itoa(int(port)), grpc.WithInsecure())
+	conn, err := p.dial("recordsorganiser")
 	if err != nil {
 		return err
 	}
@@ -92,12 +105,7 @@ func (p *prodOrganiser) reorgLocation(ctx context.Context, folder int32) error {
 }
 
 func (p *prodOrganiser) locate(ctx context.Context, req *pbro.LocateRequest) (*pbro.LocateResponse, error) {
-	ip, port, err := utils.Resolve("recordsorganiser")
-	if err != nil {
-		return &pbro.LocateResponse{}, err
-	}
-
-	conn, err := grpc.Dial(ip+":"+strconv.Itoa(int(port)), grpc.WithInsecure())
+	conn, err := p.dial("recordsorganiser")
 	if err != nil {
 		return &pbro.LocateResponse{}, err
 	}
@@ -111,15 +119,12 @@ type cdproc interface {
 	isRipped(ctx context.Context, ID int32) bool
 }
 
-type cdprocProd struct{}
+type cdprocProd struct {
+	dial func(server string) (*grpc.ClientConn, error)
+}
 
 func (p *cdprocProd) isRipped(ctx context.Context, ID int32) bool {
-	ip, port, err := utils.Resolve("cdprocessor")
-	if err != nil {
-		return false
-	}
-
-	conn, err := grpc.Dial(ip+":"+strconv.Itoa(int(port)), grpc.WithInsecure())
+	conn, err := p.dial("cdprocessor")
 	if err != nil {
 		return false
 	}
@@ -141,7 +146,7 @@ func (p *cdprocProd) isRipped(ctx context.Context, ID int32) bool {
 }
 
 type prodGetter struct {
-	getIP func(string) (string, int32, error)
+	dial func(server string) (*grpc.ClientConn, error)
 }
 
 func (s *Server) readMoves(ctx context.Context) error {
@@ -188,12 +193,7 @@ func (s *Server) saveMoves(ctx context.Context) {
 }
 
 func (p prodGetter) getRecords(ctx context.Context) ([]*pbrc.Record, error) {
-	ip, port, err := p.getIP("recordcollection")
-	if err != nil {
-		return nil, err
-	}
-
-	conn, err := grpc.Dial(ip+":"+strconv.Itoa(int(port)), grpc.WithInsecure())
+	conn, err := p.dial("recordcollection")
 	if err != nil {
 		return nil, err
 	}
@@ -208,12 +208,7 @@ func (p prodGetter) getRecords(ctx context.Context) ([]*pbrc.Record, error) {
 }
 
 func (p prodGetter) update(ctx context.Context, r *pbrc.Record) error {
-	ip, port, err := p.getIP("recordcollection")
-	if err != nil {
-		return err
-	}
-
-	conn, err := grpc.Dial(ip+":"+strconv.Itoa(int(port)), grpc.WithInsecure())
+	conn, err := p.dial("recordcollection")
 	if err != nil {
 		return err
 	}
@@ -225,23 +220,6 @@ func (p prodGetter) update(ctx context.Context, r *pbrc.Record) error {
 		return err
 	}
 	return nil
-}
-
-// Init builds the server
-func Init() *Server {
-	s := &Server{
-		&goserver.GoServer{},
-		&prodGetter{getIP: utils.Resolve},
-		time.Unix(0, 1),
-		0,
-		make(map[int32]*pb.RecordMove),
-		&cdprocProd{},
-		&prodOrganiser{},
-		&prodRecordcollection{},
-		&pb.Config{},
-		0,
-	}
-	return s
 }
 
 // DoRegister does RPC registration

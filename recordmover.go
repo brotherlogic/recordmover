@@ -18,7 +18,6 @@ import (
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pb "github.com/brotherlogic/recordmover/proto"
 	pbro "github.com/brotherlogic/recordsorganiser/proto"
-	pbt "github.com/brotherlogic/tracer/proto"
 )
 
 //Server main server type
@@ -182,14 +181,12 @@ func (s *Server) readMoves(ctx context.Context) error {
 }
 
 func (s *Server) saveMoves(ctx context.Context) {
-	s.LogTrace(ctx, "saveMoves", time.Now(), pbt.Milestone_START_FUNCTION)
 	moves := &pb.Moves{Moves: make([]*pb.RecordMove, 0)}
 	for _, move := range s.moves {
 		moves.Moves = append(moves.Moves, move)
 	}
 	s.KSclient.Save(ctx, KEY, moves)
 	s.KSclient.Save(ctx, ConfigKey, s.config)
-	s.LogTrace(ctx, "saveMoves", time.Now(), pbt.Milestone_END_FUNCTION)
 }
 
 func (p prodGetter) getRecords(ctx context.Context) ([]*pbrc.Record, error) {
@@ -291,7 +288,7 @@ func main() {
 	server.GoServer.KSclient = *keystoreclient.GetClient(server.GetIP)
 	server.PrepServer()
 	server.Register = server
-	server.RPCTracing = true
+	server.SendTrace = true
 
 	server.RegisterServer("recordmover", false)
 	server.RegisterRepeatingTask(server.moveRecords, "move_records", time.Minute)

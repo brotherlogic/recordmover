@@ -12,18 +12,15 @@ import (
 	"google.golang.org/grpc"
 
 	pbgd "github.com/brotherlogic/godiscogs"
-	pbgs "github.com/brotherlogic/goserver/proto"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pb "github.com/brotherlogic/recordmover/proto"
 	pbro "github.com/brotherlogic/recordsorganiser/proto"
-	pbt "github.com/brotherlogic/tracer/proto"
 
 	//Needed to pull in gzip encoding init
 	_ "google.golang.org/grpc/encoding/gzip"
 )
 
 func getRecord(ctx context.Context, instanceID int32) *pbrc.Record {
-	utils.SendTrace(ctx, "getRecord", time.Now(), pbt.Milestone_START_FUNCTION, "recordmover-cli")
 	host, port, err := utils.Resolve("recordcollection")
 	if err != nil {
 		log.Fatalf("Unable to reach recordcollection: %v", err)
@@ -41,7 +38,6 @@ func getRecord(ctx context.Context, instanceID int32) *pbrc.Record {
 		log.Fatalf("Unable to get records: %v", err)
 	}
 
-	utils.SendTrace(ctx, "getRecord", time.Now(), pbt.Milestone_END_FUNCTION, "recordmover-cli")
 	if len(r.GetRecords()) == 0 {
 		log.Fatalf("Unable to get record: %v", instanceID)
 	}
@@ -49,7 +45,6 @@ func getRecord(ctx context.Context, instanceID int32) *pbrc.Record {
 }
 
 func getFolder(ctx context.Context, folderID int32) (string, error) {
-	utils.SendTrace(ctx, "getFolder", time.Now(), pbt.Milestone_START_FUNCTION, "recordmover-cli")
 	host, port, err := utils.Resolve("recordsorganiser")
 	if err != nil {
 		return "", err
@@ -67,7 +62,6 @@ func getFolder(ctx context.Context, folderID int32) (string, error) {
 		return "", err
 	}
 
-	utils.SendTrace(ctx, "getFolder", time.Now(), pbt.Milestone_END_FUNCTION, "recordmover-cli")
 	return r.LocationName, nil
 }
 
@@ -139,7 +133,7 @@ func main() {
 	}
 
 	client := pb.NewMoveServiceClient(conn)
-	ctx, cancel := utils.BuildContext("recordmover-cli-"+os.Args[1], "recordmover-cli", pbgs.ContextType_LONG)
+	ctx, cancel := utils.BuildContext("recordmover-cli-"+os.Args[1], "recordmover-cli")
 	defer cancel()
 
 	switch os.Args[1] {
@@ -217,5 +211,4 @@ func main() {
 		}
 
 	}
-	utils.SendTrace(ctx, "recordmover-cli", time.Now(), pbt.Milestone_END, "recordmover")
 }

@@ -5,13 +5,11 @@ import (
 	"time"
 
 	pbgd "github.com/brotherlogic/godiscogs"
-	"github.com/brotherlogic/goserver/utils"
 	pb "github.com/brotherlogic/recordmover/proto"
 	pbro "github.com/brotherlogic/recordsorganiser/proto"
 	"golang.org/x/net/context"
 
 	pbrc "github.com/brotherlogic/recordcollection/proto"
-	pbt "github.com/brotherlogic/tracer/proto"
 )
 
 type getter interface {
@@ -103,7 +101,6 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 
 func (s *Server) moveRecords(ctx context.Context) {
 	records, err := s.getter.getRecords(ctx)
-	utils.SendTrace(ctx, "GotRecords", time.Now(), pbt.Milestone_MARKER, "recordmover")
 
 	if err != nil {
 		return
@@ -115,7 +112,6 @@ func (s *Server) moveRecords(ctx context.Context) {
 		update := s.moveRecord(ctx, record)
 		if update != nil {
 			count++
-			utils.SendTrace(ctx, fmt.Sprintf("Updating Record-%v", update.GetRelease().InstanceId), time.Now(), pbt.Milestone_MARKER, "recordmover")
 			err := s.getter.update(ctx, update)
 			if err != nil {
 				s.Log(fmt.Sprintf("Error moving record: %v", err))
@@ -126,8 +122,6 @@ func (s *Server) moveRecords(ctx context.Context) {
 			miss++
 		}
 	}
-
-	utils.SendTrace(ctx, fmt.Sprintf("GotRecords-moved-%v-%v", count, miss), time.Now(), pbt.Milestone_MARKER, "recordmover")
 
 	s.lastProc = time.Now()
 	s.lastCount = count

@@ -10,7 +10,6 @@ import (
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pb "github.com/brotherlogic/recordmover/proto"
 	pbro "github.com/brotherlogic/recordsorganiser/proto"
-	pbt "github.com/brotherlogic/tracer/proto"
 )
 
 func (s *Server) updateArchive(move *pb.RecordedMove) {
@@ -116,18 +115,15 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 
 // ListMoves list the moves made
 func (s *Server) ListMoves(ctx context.Context, in *pb.ListRequest) (*pb.ListResponse, error) {
-	s.LogTrace(ctx, "ListMoves", time.Now(), pbt.Milestone_START_FUNCTION)
 	resp := &pb.ListResponse{Moves: make([]*pb.RecordMove, 0), Archives: s.config.MoveArchive}
 	for _, move := range s.moves {
 		resp.Moves = append(resp.Moves, move)
 	}
-	s.LogTrace(ctx, "ListMoves", time.Now(), pbt.Milestone_END_FUNCTION)
 	return resp, nil
 }
 
 // ClearMove clears a single move
 func (s *Server) ClearMove(ctx context.Context, in *pb.ClearRequest) (*pb.ClearResponse, error) {
-	s.LogTrace(ctx, "ClearMove", time.Now(), pbt.Milestone_START_FUNCTION)
 	if _, ok := s.moves[in.InstanceId]; !ok {
 		return nil, fmt.Errorf("Instance ID not found in moves list")
 	}
@@ -138,6 +134,5 @@ func (s *Server) ClearMove(ctx context.Context, in *pb.ClearRequest) (*pb.ClearR
 		}
 	}
 	s.saveMoves(ctx)
-	s.LogTrace(ctx, "ClearMove", time.Now(), pbt.Milestone_END_FUNCTION)
 	return &pb.ClearResponse{}, nil
 }

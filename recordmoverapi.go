@@ -109,7 +109,7 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 		s.config.Moves = append(s.config.Moves, in.GetMove())
 	}
 
-	s.Log(fmt.Sprintf("Moved %v %v -> %v", in.GetMove().InstanceId, in.GetMove().GetBeforeContext().Location, in.GetMove().GetAfterContext().Location))
+	s.Log(fmt.Sprintf("Moved %v", in.GetMove().InstanceId))
 
 	s.saveMoves(ctx)
 	return &pb.MoveResponse{}, nil

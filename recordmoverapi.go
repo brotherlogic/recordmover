@@ -109,6 +109,8 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 		s.config.Moves = append(s.config.Moves, in.GetMove())
 	}
 
+	s.Log(fmt.Sprintf("Moved %v", in.GetMove().InstanceId))
+
 	s.saveMoves(ctx)
 	return &pb.MoveResponse{}, nil
 }
@@ -124,6 +126,7 @@ func (s *Server) ListMoves(ctx context.Context, in *pb.ListRequest) (*pb.ListRes
 
 // ClearMove clears a single move
 func (s *Server) ClearMove(ctx context.Context, in *pb.ClearRequest) (*pb.ClearResponse, error) {
+	s.Log(fmt.Sprintf("CLEARING %v", in.InstanceId))
 	if _, ok := s.moves[in.InstanceId]; !ok {
 		return nil, fmt.Errorf("Instance ID not found in moves list")
 	}

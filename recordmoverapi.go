@@ -95,7 +95,6 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 	}
 
 	in.GetMove().MoveDate = time.Now().Unix()
-	s.moves[in.GetMove().InstanceId] = in.GetMove()
 
 	// Overwrite existing move or create a new one
 	found := false
@@ -118,7 +117,7 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 // ListMoves list the moves made
 func (s *Server) ListMoves(ctx context.Context, in *pb.ListRequest) (*pb.ListResponse, error) {
 	resp := &pb.ListResponse{Moves: make([]*pb.RecordMove, 0), Archives: s.config.MoveArchive}
-	for _, move := range s.moves {
+	for _, move := range s.config.Moves {
 		resp.Moves = append(resp.Moves, move)
 	}
 	return resp, nil
@@ -127,15 +126,13 @@ func (s *Server) ListMoves(ctx context.Context, in *pb.ListRequest) (*pb.ListRes
 // ClearMove clears a single move
 func (s *Server) ClearMove(ctx context.Context, in *pb.ClearRequest) (*pb.ClearResponse, error) {
 	s.Log(fmt.Sprintf("CLEARING %v", in.InstanceId))
-	if _, ok := s.moves[in.InstanceId]; !ok {
-		return nil, fmt.Errorf("Instance ID not found in moves list")
-	}
-	delete(s.moves, in.InstanceId)
 	for i, mv := range s.config.Moves {
 		if mv.InstanceId == in.InstanceId {
 			s.config.Moves = append(s.config.Moves[:i], s.config.Moves[i+1:]...)
+			s.saveMoves(ctx)
+			return &pb.ClearResponse{}, nil
 		}
 	}
-	s.saveMoves(ctx)
-	return &pb.ClearResponse{}, nil
+
+	return nil, fmt.Errorf("Unable to clear move: %v", in.InstanceId)
 }

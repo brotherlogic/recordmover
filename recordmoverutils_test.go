@@ -255,11 +255,11 @@ func TestUpdateStagedToSellToListeningPile(t *testing.T) {
 
 func TestUpdateMove(t *testing.T) {
 	s := InitTest()
-	s.moves[1] = &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}
+	s.config.Moves = append(s.config.Moves, &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}})
 
 	s.refreshMoves(context.Background())
 
-	if s.moves[1].AfterContext.Location == "" {
+	if s.config.Moves[0].AfterContext.Location == "" {
 		t.Errorf("Update not run")
 	}
 }
@@ -267,11 +267,11 @@ func TestUpdateMove(t *testing.T) {
 func TestUpdateMoveWithFlip(t *testing.T) {
 	s := InitTest()
 	s.organiser = &testOrg{flipLocate: true}
-	s.moves[1] = &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}
+	s.config.Moves = append(s.config.Moves, &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}})
 
 	s.refreshMoves(context.Background())
 
-	if s.moves[1].AfterContext.Location == "" {
+	if s.config.Moves[0].AfterContext.Location == "" {
 		t.Errorf("Update not run")
 	}
 }
@@ -279,11 +279,11 @@ func TestUpdateMoveWithFlip(t *testing.T) {
 func TestReverseUpdateMoveWithFlip(t *testing.T) {
 	s := InitTest()
 	s.organiser = &testOrg{rflipLocate: true}
-	s.moves[1] = &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}
+	s.config.Moves = append(s.config.Moves, &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}})
 
 	s.refreshMoves(context.Background())
 
-	if s.moves[1].AfterContext.Location == "" {
+	if s.config.Moves[0].AfterContext.Location == "" {
 		t.Errorf("Update not run")
 	}
 }
@@ -291,11 +291,11 @@ func TestReverseUpdateMoveWithFlip(t *testing.T) {
 func TestUpdateMoveFailLocate(t *testing.T) {
 	s := InitTest()
 	s.organiser = &testOrg{failLocate: true}
-	s.moves[1] = &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}
+	s.config.Moves = append(s.config.Moves, &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}})
 
 	s.refreshMoves(context.Background())
 
-	if s.moves[1].AfterContext != nil {
+	if s.config.Moves[0].AfterContext != nil {
 		t.Errorf("Update run")
 	}
 }
@@ -303,35 +303,35 @@ func TestUpdateMoveFailLocate(t *testing.T) {
 func TestUpdateMoveFailGetRecords(t *testing.T) {
 	s := InitTest()
 	s.recordcollection = &testCol{fail: true}
-	s.moves[1] = &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}
+	s.config.Moves = append(s.config.Moves, &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}})
 
 	s.refreshMoves(context.Background())
 
-	if s.moves[1].AfterContext.After != nil {
-		t.Errorf("Update run: %v", s.moves[1].AfterContext)
+	if s.config.Moves[0].AfterContext.After != nil {
+		t.Errorf("Update run: %v", s.config.Moves[0].AfterContext)
 	}
 }
 
 func TestUpdateMoveFailGetRecordsSecond(t *testing.T) {
 	s := InitTest()
 	s.recordcollection = &testCol{failSecond: true}
-	s.moves[1] = &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}
+	s.config.Moves = append(s.config.Moves, &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}})
 
 	s.refreshMoves(context.Background())
 
-	if s.moves[1].AfterContext.After != nil {
-		t.Errorf("Update run: %v", s.moves[1].AfterContext)
+	if s.config.Moves[0].AfterContext.After != nil {
+		t.Errorf("Update run: %v", s.config.Moves[0].AfterContext)
 	}
 }
 
 func TestUpdateMoveGetRecordsReturnsNone(t *testing.T) {
 	s := InitTest()
 	s.recordcollection = &testCol{noLocate: true}
-	s.moves[1] = &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}
+	s.config.Moves = append(s.config.Moves, &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}})
 
 	s.refreshMoves(context.Background())
 
-	if s.moves[1].AfterContext.After != nil {
+	if s.config.Moves[0].AfterContext.After != nil {
 		t.Errorf("Update run")
 	}
 }
@@ -339,30 +339,18 @@ func TestUpdateMoveGetRecordsReturnsNone(t *testing.T) {
 func TestUpdateMoveGetRecordsReturnsNoneSecond(t *testing.T) {
 	s := InitTest()
 	s.recordcollection = &testCol{noLocateSecond: true}
-	s.moves[1] = &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}
+	s.config.Moves = append(s.config.Moves, &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}})
 
 	s.refreshMoves(context.Background())
 
-	if s.moves[1].AfterContext.After != nil {
+	if s.config.Moves[0].AfterContext.After != nil {
 		t.Errorf("Update run")
-	}
-}
-
-func TestInFolderMovesAreIgnored(t *testing.T) {
-	s := InitTest()
-	s.recordcollection = &testCol{noLocate: true}
-	s.moves[1] = &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 2, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}
-
-	s.refreshMoves(context.Background())
-
-	if len(s.moves) != 0 {
-		t.Errorf("In Folder move has not been removed")
 	}
 }
 
 func TestTriggerAlert(t *testing.T) {
 	s := InitTest()
-	s.moves[1] = &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 2, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}, MoveDate: time.Now().Add(-time.Hour * 24 * 9).Unix()}
+	s.config.Moves = append(s.config.Moves, &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 2, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}, MoveDate: time.Now().Add(-time.Hour * 24 * 9).Unix()})
 
 	s.lookForStale(context.Background())
 }

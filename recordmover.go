@@ -26,7 +26,6 @@ type Server struct {
 	getter           getter
 	lastProc         time.Time
 	lastCount        int64
-	moves            map[int32]*pb.RecordMove
 	cdproc           cdproc
 	organiser        organiser
 	recordcollection recordcollection
@@ -41,7 +40,6 @@ func Init() *Server {
 		&prodGetter{},
 		time.Unix(0, 1),
 		0,
-		make(map[int32]*pb.RecordMove),
 		&cdprocProd{},
 		&prodOrganiser{},
 		&prodRecordcollection{},
@@ -149,27 +147,8 @@ type prodGetter struct {
 }
 
 func (s *Server) readMoves(ctx context.Context) error {
-	s.moves = make(map[int32]*pb.RecordMove)
-
-	movelist := &pb.Moves{}
-	data, _, err := s.KSclient.Read(ctx, KEY, movelist)
-
-	if err != nil {
-		return err
-	}
-
-	movelist = data.(*pb.Moves)
-	for _, m := range movelist.GetMoves() {
-		s.moves[m.InstanceId] = m
-
-		if m.InstanceId == 127363223 {
-			m.LastUpdate = 0
-		}
-	}
-
-	//Side load the config
 	config := &pb.Config{}
-	data, _, err = s.KSclient.Read(ctx, ConfigKey, config)
+	data, _, err := s.KSclient.Read(ctx, ConfigKey, config)
 
 	if err != nil {
 		return err
@@ -181,11 +160,6 @@ func (s *Server) readMoves(ctx context.Context) error {
 }
 
 func (s *Server) saveMoves(ctx context.Context) {
-	moves := &pb.Moves{Moves: make([]*pb.RecordMove, 0)}
-	for _, move := range s.moves {
-		moves.Moves = append(moves.Moves, move)
-	}
-	s.KSclient.Save(ctx, KEY, moves)
 	s.KSclient.Save(ctx, ConfigKey, s.config)
 }
 
@@ -249,7 +223,7 @@ func (s *Server) GetState() []*pbg.State {
 	fromCount := int64(0)
 	toCount := int64(0)
 	oldest := time.Now().Unix()
-	for _, m := range s.moves {
+	for _, m := range s.config.Moves {
 		if m.BeforeContext != nil {
 			fromCount++
 		}
@@ -264,7 +238,6 @@ func (s *Server) GetState() []*pbg.State {
 
 	return []*pbg.State{
 		&pbg.State{Key: "last_proc", TimeValue: s.lastProc.Unix()},
-		&pbg.State{Key: "moves", Value: int64(len(s.moves))},
 		&pbg.State{Key: "moves_with_from", Value: fromCount},
 		&pbg.State{Key: "moves_with_to", Value: toCount},
 		&pbg.State{Key: "last_count", Value: s.lastCount},

@@ -18,14 +18,7 @@ type getter interface {
 }
 
 func (s *Server) refreshMoves(ctx context.Context) {
-	//Clean in folder moves
-	for key, val := range s.moves {
-		if val.ToFolder == val.FromFolder {
-			delete(s.moves, key)
-		}
-	}
-
-	for _, r := range s.moves {
+	for _, r := range s.config.Moves {
 		if time.Now().Sub(time.Unix(r.LastUpdate, 0)) > time.Hour {
 			err := s.refreshMove(ctx, r)
 			if err == nil {
@@ -266,8 +259,7 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) *pbrc.Record {
 }
 
 func (s *Server) lookForStale(ctx context.Context) {
-
-	for _, move := range s.moves {
+	for _, move := range s.config.Moves {
 		if time.Now().Sub(time.Unix(move.MoveDate, 0)) > time.Hour*24*7 {
 			s.RaiseIssue(ctx, "Stale Move", fmt.Sprintf("Move has been stuck for over a week: %v", move.InstanceId), false)
 		}

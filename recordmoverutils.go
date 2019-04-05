@@ -17,18 +17,20 @@ type getter interface {
 	update(ctx context.Context, rec *pbrc.Record) error
 }
 
-func (s *Server) refreshMoves(ctx context.Context) {
+func (s *Server) refreshMoves(ctx context.Context) error {
 	for _, r := range s.config.Moves {
 		if time.Now().Sub(time.Unix(r.LastUpdate, 0)) > time.Hour {
 			err := s.refreshMove(ctx, r)
 			if err == nil {
 				s.Log(fmt.Sprintf("Refreshing %v", r.InstanceId))
 				s.saveMoves(ctx)
-				return
+				return nil
 			}
 			s.Log(fmt.Sprintf("Failed refresh of %v -> %v", r.InstanceId, err))
 		}
 	}
+
+	return nil
 }
 
 func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
@@ -92,11 +94,11 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 	return nil
 }
 
-func (s *Server) moveRecords(ctx context.Context) {
+func (s *Server) moveRecords(ctx context.Context) error {
 	records, err := s.getter.getRecords(ctx)
 
 	if err != nil {
-		return
+		return err
 	}
 
 	count := int64(0)
@@ -118,6 +120,8 @@ func (s *Server) moveRecords(ctx context.Context) {
 
 	s.lastProc = time.Now()
 	s.lastCount = count
+
+	return nil
 }
 
 func (s *Server) canMove(ctx context.Context, r *pbrc.Record) bool {
@@ -263,10 +267,11 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) *pbrc.Record {
 	return nil
 }
 
-func (s *Server) lookForStale(ctx context.Context) {
+func (s *Server) lookForStale(ctx context.Context) error {
 	for _, move := range s.config.Moves {
 		if time.Now().Sub(time.Unix(move.MoveDate, 0)) > time.Hour*24*7 {
 			s.RaiseIssue(ctx, "Stale Move", fmt.Sprintf("Move has been stuck for over a week: %v", move.InstanceId), false)
 		}
 	}
+	return nil
 }

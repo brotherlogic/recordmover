@@ -264,9 +264,9 @@ func main() {
 	//server.SendTrace = true
 
 	server.RegisterServer("recordmover", false)
-	server.RegisterRepeatingTask(server.moveRecords, "move_records", time.Minute)
-	server.RegisterRepeatingTask(server.refreshMoves, "refresh_moves", time.Second)
-	server.RegisterRepeatingTask(server.lookForStale, "look_for_stale", time.Minute)
+	//server.RegisterRepeatingTask(server.moveRecords, "move_records", time.Minute)
+	//server.RegisterRepeatingTask(server.refreshMoves, "refresh_moves", time.Second)
+	//server.RegisterRepeatingTask(server.lookForStale, "look_for_stale", time.Minute)
 
 	fmt.Printf("%v\n", server.Serve())
 }

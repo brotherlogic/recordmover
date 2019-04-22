@@ -105,7 +105,9 @@ func (s *Server) moveRecords(ctx context.Context) error {
 	miss := 0
 	for _, record := range records {
 		update := s.moveRecord(ctx, record)
+		s.Log(fmt.Sprintf("Moving %v", record.GetRelease().Id))
 		if update != nil {
+			s.Log(fmt.Sprintf("Moving %v -> %v", record.GetRelease().Id, update.GetMetadata().MoveFolder))
 			count++
 			err := s.getter.update(ctx, update)
 			if err != nil {

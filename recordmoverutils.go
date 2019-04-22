@@ -82,7 +82,6 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 			} else {
 				move.AfterContext.After = &pbrc.Record{Release: &pbgd.Release{Title: "END_OF_SLOT"}}
 			}
-
 		}
 	}
 
@@ -105,9 +104,13 @@ func (s *Server) moveRecords(ctx context.Context) error {
 	miss := 0
 	for _, record := range records {
 		update := s.moveRecord(ctx, record)
-		s.Log(fmt.Sprintf("Moving %v", record.GetRelease().Id))
+		if record.GetRelease().Id == 3754989 {
+			s.Log(fmt.Sprintf("Moving %v", record.GetRelease().Id))
+		}
 		if update != nil {
-			s.Log(fmt.Sprintf("Moving %v -> %v", record.GetRelease().Id, update.GetMetadata().MoveFolder))
+			if record.GetRelease().Id == 3754989 {
+				s.Log(fmt.Sprintf("Moving %v -> %v", record.GetRelease().Id, update.GetMetadata().MoveFolder))
+			}
 			count++
 			err := s.getter.update(ctx, update)
 			if err != nil {

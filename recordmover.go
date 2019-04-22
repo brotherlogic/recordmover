@@ -243,7 +243,6 @@ func (s *Server) GetState() []*pbg.State {
 		&pbg.State{Key: "last_count", Value: s.lastCount},
 		&pbg.State{Key: "config_moves", Value: int64(len(s.config.Moves))},
 		&pbg.State{Key: "config_archives", Value: int64(len(s.config.MoveArchive))},
-		&pbg.State{Key: "archive_process", TimeDuration: s.lastArch.Nanoseconds()},
 		&pbg.State{Key: "oldest_move", TimeValue: oldest},
 	}
 }

@@ -108,14 +108,12 @@ func (s *Server) moveRecords(ctx context.Context) error {
 			s.Log(fmt.Sprintf("Moving %v", record.GetRelease().Id))
 		}
 		if update != nil {
-			if record.GetRelease().Id == 3754989 {
-				s.Log(fmt.Sprintf("Moving %v -> %v", record.GetRelease().Id, update.GetMetadata().MoveFolder))
-			}
 			count++
 			err := s.getter.update(ctx, update)
 			if err != nil {
 				s.Log(fmt.Sprintf("Error moving record: %v", err))
 			} else {
+				s.Log(fmt.Sprintf("Moving %v -> %v", record.GetRelease().Id, update.GetMetadata().MoveFolder))
 				break
 			}
 		} else {

@@ -355,3 +355,35 @@ func TestTriggerAlert(t *testing.T) {
 
 	s.lookForStale(context.Background())
 }
+
+func TestTriggerIncrement(t *testing.T) {
+	s := InitTest()
+
+	errCount := 0
+	for i := 0; i < 20; i++ {
+		err := s.incrementCount(context.Background(), int32(12))
+		if err != nil {
+			errCount++
+		}
+	}
+
+	if errCount == 0 {
+		t.Errorf("Triggered Increment")
+	}
+}
+
+func TestNoTriggerIncrement(t *testing.T) {
+	s := InitTest()
+
+	errCount := 0
+	for i := 0; i < 20; i++ {
+		err := s.incrementCount(context.Background(), int32(i))
+		if err != nil {
+			errCount++
+		}
+	}
+
+	if errCount != 0 {
+		t.Errorf("An increment was triggered incorrectly")
+	}
+}

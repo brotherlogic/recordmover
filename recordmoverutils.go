@@ -12,6 +12,22 @@ import (
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 )
 
+func (s *Server) incrementCount(ctx context.Context, id int32) error {
+	if s.lastID == id {
+		s.lastIDCount++
+	} else {
+		s.lastIDCount = 1
+		s.lastID = id
+	}
+
+	if s.lastIDCount > 10 {
+		s.RaiseIssue(ctx, "Stuck move", fmt.Sprintf("%v cannot be moved", id), false)
+		return fmt.Errorf("Stuck Move")
+	}
+
+	return nil
+}
+
 type getter interface {
 	getRecords(ctx context.Context) ([]*pbrc.Record, error)
 	update(ctx context.Context, rec *pbrc.Record) error
@@ -104,9 +120,6 @@ func (s *Server) moveRecords(ctx context.Context) error {
 	miss := 0
 	for _, record := range records {
 		update := s.moveRecord(ctx, record)
-		if record.GetRelease().Id == 3754989 {
-			s.Log(fmt.Sprintf("Moving %v", record.GetRelease().Id))
-		}
 		if update != nil {
 			count++
 			err := s.getter.update(ctx, update)
@@ -114,6 +127,7 @@ func (s *Server) moveRecords(ctx context.Context) error {
 				s.Log(fmt.Sprintf("Error moving record: %v", err))
 			} else {
 				s.Log(fmt.Sprintf("Moving %v -> %v", record.GetRelease().Id, update.GetMetadata().MoveFolder))
+				s.incrementCount(ctx, record.GetRelease().Id)
 				break
 			}
 		} else {

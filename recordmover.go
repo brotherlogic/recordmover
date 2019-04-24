@@ -31,6 +31,8 @@ type Server struct {
 	recordcollection recordcollection
 	config           *pb.Config
 	lastArch         time.Duration
+	lastID           int32
+	lastIDCount      int
 }
 
 // Init builds the server
@@ -44,6 +46,8 @@ func Init() *Server {
 		&prodOrganiser{},
 		&prodRecordcollection{},
 		&pb.Config{},
+		0,
+		int32(0),
 		0,
 	}
 	s.getter = &prodGetter{s.DialMaster}
@@ -237,6 +241,8 @@ func (s *Server) GetState() []*pbg.State {
 	}
 
 	return []*pbg.State{
+		&pbg.State{Key: "last_id_count", Value: int64(s.lastIDCount)},
+		&pbg.State{Key: "last_id", Value: int64(s.lastID)},
 		&pbg.State{Key: "last_proc", TimeValue: s.lastProc.Unix()},
 		&pbg.State{Key: "moves_with_from", Value: fromCount},
 		&pbg.State{Key: "moves_with_to", Value: toCount},

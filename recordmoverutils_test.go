@@ -360,7 +360,7 @@ func TestTriggerIncrement(t *testing.T) {
 	s := InitTest()
 
 	errCount := 0
-	for i := 0; i < 20; i++ {
+	for i := 0; i < 200; i++ {
 		err := s.incrementCount(context.Background(), int32(12))
 		if err != nil {
 			errCount++
@@ -376,7 +376,7 @@ func TestNoTriggerIncrement(t *testing.T) {
 	s := InitTest()
 
 	errCount := 0
-	for i := 0; i < 20; i++ {
+	for i := 0; i < 200; i++ {
 		err := s.incrementCount(context.Background(), int32(i))
 		if err != nil {
 			errCount++

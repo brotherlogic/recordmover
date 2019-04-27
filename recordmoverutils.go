@@ -20,7 +20,7 @@ func (s *Server) incrementCount(ctx context.Context, id int32) error {
 		s.lastID = id
 	}
 
-	if s.lastIDCount > 10 {
+	if s.lastIDCount > 100 {
 		s.RaiseIssue(ctx, "Stuck move", fmt.Sprintf("%v cannot be moved", id), false)
 		return fmt.Errorf("Stuck Move")
 	}

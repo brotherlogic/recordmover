@@ -142,6 +142,11 @@ func (s *Server) moveRecords(ctx context.Context) error {
 }
 
 func (s *Server) canMove(ctx context.Context, r *pbrc.Record) bool {
+	// Don't attempt to move a dirty record
+	if r.GetMetadata() != nil && r.GetMetadata().Dirty {
+		return false
+	}
+
 	//We can always move to digital
 	if r.GetMetadata() != nil && r.GetMetadata().GoalFolder == 268147 {
 		return true

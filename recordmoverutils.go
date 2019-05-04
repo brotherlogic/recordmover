@@ -169,6 +169,11 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) *pbrc.Record {
 		return r
 	}
 
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_DIGITAL && (r.GetRelease().FolderId != 268147 && r.GetMetadata().MoveFolder != 268147) {
+		r.GetMetadata().MoveFolder = 268147
+		return r
+	}
+
 	if !s.canMove(ctx, r) {
 		return nil
 	}
@@ -199,13 +204,6 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) *pbrc.Record {
 		r.GetMetadata().MoveFolder = 1362206
 		r.GetMetadata().Purgatory = pbrc.Purgatory_NEEDS_LABELS
 		return r
-	}
-
-	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_DIGITAL {
-		if r.GetRelease().FolderId != 268147 && r.GetMetadata().MoveFolder != 268147 {
-			r.GetMetadata().MoveFolder = 268147
-			return r
-		}
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_SOLD && r.GetRelease().FolderId != 488127 {

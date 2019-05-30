@@ -387,3 +387,11 @@ func TestNoTriggerIncrement(t *testing.T) {
 		t.Errorf("An increment was triggered incorrectly")
 	}
 }
+
+func TestCanMoveFail(t *testing.T) {
+	s := InitTest()
+
+	if s.canMove(context.Background(), &pbrc.Record{Metadata: &pbrc.ReleaseMetadata{Dirty: true}}) {
+		t.Errorf("Should not be able to move dirty record")
+	}
+}

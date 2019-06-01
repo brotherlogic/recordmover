@@ -155,7 +155,6 @@ func (s *Server) canMove(ctx context.Context, r *pbrc.Record) bool {
 	for _, f := range r.GetRelease().GetFormats() {
 		if f.Name == "CD" {
 			if len(r.GetMetadata().CdPath) == 0 {
-				s.RaiseIssue(ctx, "Missing CD Path", fmt.Sprintf("%v (%v) is missing the CD Path", r.GetRelease().Id, r.GetRelease().Title), false)
 				return false
 			}
 		}

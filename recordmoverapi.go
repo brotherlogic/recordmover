@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"golang.org/x/net/context"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	pbgd "github.com/brotherlogic/godiscogs"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
@@ -32,7 +34,7 @@ func (s *Server) updateArchive(move *pb.RecordedMove) {
 func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveResponse, error) {
 	if in.GetMove().Record == nil {
 		s.RaiseIssue(ctx, "RecordMove issue", fmt.Sprintf("Move with details %v is missing record", in.GetMove().InstanceId), false)
-		return &pb.MoveResponse{}, fmt.Errorf("Missing Record on call")
+		return &pb.MoveResponse{}, status.Errorf(codes.InvalidArgument, "Missing Record on call")
 	}
 
 	location, err := s.organiser.locate(ctx, &pbro.LocateRequest{InstanceId: in.GetMove().Record.GetRelease().InstanceId})

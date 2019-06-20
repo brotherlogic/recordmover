@@ -127,7 +127,7 @@ func (s *Server) moveRecords(ctx context.Context) error {
 				s.Log(fmt.Sprintf("Error moving record: %v", err))
 			} else {
 				s.Log(fmt.Sprintf("Moving %v -> %v", record.GetRelease().Id, update.GetMetadata().MoveFolder))
-				s.incrementCount(ctx, record.GetRelease().Id)
+				s.incrementCount(ctx, record.GetRelease().InstanceId)
 				break
 			}
 		} else {

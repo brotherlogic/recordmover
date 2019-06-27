@@ -151,16 +151,17 @@ func main() {
 			log.Fatalf("Error on GET: %v", err)
 		}
 		for _, move := range res.GetMoves() {
-			fmt.Printf("Last refresh %v\n", time.Unix(move.LastUpdate, 0))
-			fmt.Printf("BEFORE %v %v %v\n", move.BeforeContext.Location, move.BeforeContext.Before == nil, move.BeforeContext.After == nil)
-			fmt.Printf("AFTER %v %v %v\n", move.AfterContext.Location, move.AfterContext.Before == nil, move.AfterContext.After == nil)
-			if move.AfterContext.Before != nil {
-				fmt.Printf("  BeforeMeta = %v\n", move.AfterContext.Before.GetMetadata())
+			if len(os.Args) == 2 || strconv.Itoa(int(move.InstanceId)) == os.Args[2] {
+				fmt.Printf("Last refresh %v\n", time.Unix(move.LastUpdate, 0))
+				fmt.Printf("BEFORE %v %v %v\n", move.BeforeContext.Location, move.BeforeContext.Before == nil, move.BeforeContext.After == nil)
+				fmt.Printf("AFTER %v %v %v\n", move.AfterContext.Location, move.AfterContext.Before == nil, move.AfterContext.After == nil)
+				if move.AfterContext.Before != nil {
+					fmt.Printf("  BeforeMeta = %v\n", move.AfterContext.Before.GetMetadata())
+				}
+				if move.AfterContext.After != nil {
+					fmt.Printf("  AfterMeta = %v\n", move.AfterContext.After.GetMetadata())
+				}
 			}
-			if move.AfterContext.After != nil {
-				fmt.Printf("  AfterMeta = %v\n", move.AfterContext.After.GetMetadata())
-			}
-
 		}
 	case "getclear":
 		foldermap := make(map[int32]string)

@@ -289,7 +289,8 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) *pbrc.Record {
 
 func (s *Server) lookForStale(ctx context.Context) error {
 	for _, move := range s.config.Moves {
-		if time.Now().Sub(time.Unix(move.MoveDate, 0)) > time.Hour*24*7 {
+		if time.Now().Sub(time.Unix(move.MoveDate, 0)) > time.Hour*24*7 &&
+			move.Record.GetMetadata().Category != pbrc.ReleaseMetadata_STAGED {
 			s.RaiseIssue(ctx, "Stale Move", fmt.Sprintf("Move has been stuck for over a week: %v", move.InstanceId), false)
 		}
 	}

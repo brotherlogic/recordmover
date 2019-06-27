@@ -351,7 +351,7 @@ func TestUpdateMoveGetRecordsReturnsNoneSecond(t *testing.T) {
 
 func TestTriggerAlert(t *testing.T) {
 	s := InitTest()
-	s.config.Moves = append(s.config.Moves, &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 2, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}, MoveDate: time.Now().Add(-time.Hour * 24 * 9).Unix()})
+	s.config.Moves = append(s.config.Moves, &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 2, Record: &pbrc.Record{Metadata: &pbrc.ReleaseMetadata{}, Release: &pbgd.Release{InstanceId: 1}}, MoveDate: time.Now().Add(-time.Hour * 24 * 9).Unix()})
 
 	s.lookForStale(context.Background())
 }

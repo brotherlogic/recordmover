@@ -147,6 +147,11 @@ func (s *Server) canMove(ctx context.Context, r *pbrc.Record) bool {
 		return false
 	}
 
+	// Can't move a record with no goal
+	if r.GetMetadata() != nil && r.GetMetadata().GoalFolder == 0 {
+		return false
+	}
+
 	//We can always move to digital
 	if r.GetMetadata() != nil && r.GetMetadata().GoalFolder == 268147 {
 		return true

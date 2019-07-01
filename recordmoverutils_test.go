@@ -82,15 +82,15 @@ var movetests = []struct {
 	in  *pbrc.Record
 	out int32
 }{
-	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_PARENTS}}, 1727264},
-	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_ASSESS}}, 1362206},
-	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_NO_LABELS}}, 1362206},
-	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_GOOGLE_PLAY}}, 1433217},
-	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_SOLD_ARCHIVE}}, 1613206},
-	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_ASSESS_FOR_SALE}}, 1362206},
-	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_PRE_HIGH_SCHOOL}}, 673768},
-	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_LISTED_TO_SELL}}, 488127},
-	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_HIGH_SCHOOL}}, 673768},
+	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_PARENTS, GoalFolder: 1234}}, 1727264},
+	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_ASSESS, GoalFolder: 1234}}, 1362206},
+	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_NO_LABELS, GoalFolder: 1234}}, 1362206},
+	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_GOOGLE_PLAY, GoalFolder: 1234}}, 1433217},
+	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_SOLD_ARCHIVE, GoalFolder: 1234}}, 1613206},
+	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_ASSESS_FOR_SALE, GoalFolder: 1234}}, 1362206},
+	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_PRE_HIGH_SCHOOL, GoalFolder: 1234}}, 673768},
+	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_LISTED_TO_SELL, GoalFolder: 1234}}, 488127},
+	{&pbrc.Record{Release: &pbgd.Release{}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_HIGH_SCHOOL, GoalFolder: 1234}}, 673768},
 	{&pbrc.Record{Release: &pbgd.Release{FolderId: 4321}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_PRE_SOPHMORE, GoalFolder: 1234}}, 1234},
 	{&pbrc.Record{Release: &pbgd.Release{FolderId: 1249, Rating: 5, InstanceId: 19867493}, Metadata: &pbrc.ReleaseMetadata{DateAdded: 1368884100, FilePath: "1450170", LastCache: 1543338069, Category: pbrc.ReleaseMetadata_STAGED_TO_SELL, GoalFolder: 242018, LastSyncTime: 1544561649, Purgatory: pbrc.Purgatory_NEEDS_STOCK_CHECK, LastStockCheck: 1544490181, OverallScore: 4}}, 812802},
 	{&pbrc.Record{Release: &pbgd.Release{FolderId: 4321}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_STALE_SALE, GoalFolder: 1234}}, 1708299},
@@ -118,7 +118,7 @@ func TestUpdateFailOnUpdate(t *testing.T) {
 
 func TestUpdateToUnlistend(t *testing.T) {
 	s := InitTest()
-	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_UNLISTENED}}}
+	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_UNLISTENED, GoalFolder: 1234}}}
 	s.getter = &tg
 	s.moveRecords(context.Background())
 
@@ -129,7 +129,7 @@ func TestUpdateToUnlistend(t *testing.T) {
 
 func TestUpdateToDigitalDone(t *testing.T) {
 	s := InitTest()
-	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{Rating: 4, FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_DIGITAL}}}
+	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{Rating: 4, FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_DIGITAL, GoalFolder: 1234}}}
 	s.getter = &tg
 	s.moveRecords(context.Background())
 
@@ -140,7 +140,7 @@ func TestUpdateToDigitalDone(t *testing.T) {
 
 func TestUpdateToSold(t *testing.T) {
 	s := InitTest()
-	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_SOLD}}}
+	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_SOLD, GoalFolder: 1234}}}
 	s.getter = &tg
 	s.moveRecords(context.Background())
 
@@ -151,7 +151,7 @@ func TestUpdateToSold(t *testing.T) {
 
 func TestUpdateToStaged(t *testing.T) {
 	s := InitTest()
-	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_STAGED}}}
+	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_STAGED, GoalFolder: 1234}}}
 	s.getter = &tg
 	s.moveRecords(context.Background())
 
@@ -178,17 +178,6 @@ func TestMoveUnrippedButDigital(t *testing.T) {
 	}
 }
 
-func TestUpdateProfessorToPurgatory(t *testing.T) {
-	s := InitTest()
-	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_PROFESSOR}}}
-	s.getter = &tg
-	s.moveRecords(context.Background())
-
-	if tg.rec.GetMetadata().MoveFolder != 1362206 {
-		t.Errorf("Pre Freshman has not been updated: %v", tg.rec)
-	}
-}
-
 func TestUpdateProfessorToFilled(t *testing.T) {
 	s := InitTest()
 	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{GoalFolder: 820, Category: pbrc.ReleaseMetadata_PROFESSOR}}}
@@ -202,22 +191,11 @@ func TestUpdateProfessorToFilled(t *testing.T) {
 
 func TestUpdatePreFreshmanToListeningPile(t *testing.T) {
 	s := InitTest()
-	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_PRE_FRESHMAN}}}
+	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_PRE_FRESHMAN, GoalFolder: 1234}}}
 	s.getter = &tg
 	s.moveRecords(context.Background())
 
 	if tg.rec.GetMetadata().MoveFolder != 812802 {
-		t.Errorf("Pre Freshman has not been updated: %v", tg.rec)
-	}
-}
-
-func TestUpdateFreshmanToPurgatory(t *testing.T) {
-	s := InitTest()
-	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_FRESHMAN}}}
-	s.getter = &tg
-	s.moveRecords(context.Background())
-
-	if tg.rec.GetMetadata().MoveFolder != 1362206 {
 		t.Errorf("Pre Freshman has not been updated: %v", tg.rec)
 	}
 }
@@ -246,7 +224,7 @@ func TestUpdateRipThenSellToListeningPile(t *testing.T) {
 
 func TestUpdateStagedToSellToListeningPile(t *testing.T) {
 	s := InitTest()
-	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_STAGED_TO_SELL}}}
+	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_STAGED_TO_SELL, GoalFolder: 1234}}}
 	s.getter = &tg
 	s.moveRecords(context.Background())
 	if tg.rec.GetMetadata().MoveFolder != 812802 {

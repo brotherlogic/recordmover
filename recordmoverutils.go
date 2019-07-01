@@ -260,10 +260,6 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) *pbrc.Record {
 			r.GetMetadata().MoveFolder = r.GetMetadata().GetGoalFolder()
 			return r
 		}
-		if r.GetMetadata().GetGoalFolder() == 0 && r.GetRelease().FolderId != 1362206 {
-			r.GetMetadata().MoveFolder = 1362206
-			return r
-		}
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_STAGED_TO_SELL && r.GetRelease().FolderId != 812802 && r.GetMetadata().MoveFolder != 812802 {
@@ -281,10 +277,6 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) *pbrc.Record {
 		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_SOPHMORE {
 		if r.GetMetadata().GetGoalFolder() != 0 && (r.GetRelease().FolderId != r.GetMetadata().GetGoalFolder() && r.GetMetadata().MoveFolder != r.GetMetadata().GetGoalFolder()) {
 			r.GetMetadata().MoveFolder = r.GetMetadata().GetGoalFolder()
-			return r
-		}
-		if r.GetMetadata().GetGoalFolder() == 0 && r.GetRelease().FolderId != 1362206 {
-			r.GetMetadata().MoveFolder = 1362206
 			return r
 		}
 	}

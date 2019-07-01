@@ -373,3 +373,11 @@ func TestCanMoveFail(t *testing.T) {
 		t.Errorf("Should not be able to move dirty record")
 	}
 }
+
+func TestCanMoveCD(t *testing.T) {
+	s := InitTest()
+
+	if s.canMove(context.Background(), &pbrc.Record{Release: &pbgd.Release{Formats: []*pbgd.Format{&pbgd.Format{Name: "CD"}}}, Metadata: &pbrc.ReleaseMetadata{GoalFolder: 1234}}) {
+		t.Errorf("Should not be able to move dirty record")
+	}
+}

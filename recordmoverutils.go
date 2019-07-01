@@ -158,7 +158,7 @@ func (s *Server) canMove(ctx context.Context, r *pbrc.Record) bool {
 	}
 
 	for _, f := range r.GetRelease().GetFormats() {
-		if f.Name == "CD" {
+		if f.Name == "CD" || f.Name == "CDr" {
 			if len(r.GetMetadata().CdPath) == 0 {
 				return false
 			}
@@ -179,17 +179,18 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) *pbrc.Record {
 		return r
 	}
 
+	// We can always move something for processing.
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_RIP_THEN_SELL && (r.GetRelease().FolderId != 812802 && r.GetMetadata().MoveFolder != 812802) {
+		r.GetMetadata().MoveFolder = 812802
+		return r
+	}
+
 	if !s.canMove(ctx, r) {
 		return nil
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PARENTS && (r.GetRelease().FolderId != 1727264 && r.GetMetadata().MoveFolder != 1727264) {
 		r.GetMetadata().MoveFolder = 1727264
-		return r
-	}
-
-	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_RIP_THEN_SELL && (r.GetRelease().FolderId != 812802 && r.GetMetadata().MoveFolder != 812802) {
-		r.GetMetadata().MoveFolder = 812802
 		return r
 	}
 

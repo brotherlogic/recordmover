@@ -58,9 +58,6 @@ func Init() *Server {
 }
 
 const (
-	//KEY is where we store moves
-	KEY = "github.com/brotherlogic/recordmover/moves"
-
 	//ConfigKey is where we store the overall config
 	ConfigKey = "github.com/brotherlogic/recordmover/config"
 )

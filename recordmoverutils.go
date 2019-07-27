@@ -291,7 +291,8 @@ func (s *Server) lookForStale(ctx context.Context) error {
 			move.Record.GetMetadata().Category != pbrc.ReleaseMetadata_STAGED &&
 			move.Record.GetMetadata().Category != pbrc.ReleaseMetadata_GOOGLE_PLAY &&
 			move.Record.GetMetadata().Category != pbrc.ReleaseMetadata_PROFESSOR &&
-			move.Record.GetMetadata().Category != pbrc.ReleaseMetadata_DISTINGUISHED {
+			move.Record.GetMetadata().Category != pbrc.ReleaseMetadata_DISTINGUISHED &&
+			move.Record.GetMetadata().Category != pbrc.ReleaseMetadata_PRE_DISTINGUISHED {
 			s.RaiseIssue(ctx, "Stale Move", fmt.Sprintf("Move has been stuck for over a week: %v", move.InstanceId), false)
 		}
 	}

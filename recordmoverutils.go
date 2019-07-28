@@ -284,17 +284,3 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) *pbrc.Record {
 
 	return nil
 }
-
-func (s *Server) lookForStale(ctx context.Context) error {
-	for _, move := range s.config.Moves {
-		if time.Now().Sub(time.Unix(move.MoveDate, 0)) > time.Hour*24*7 &&
-			move.Record.GetMetadata().Category != pbrc.ReleaseMetadata_STAGED &&
-			move.Record.GetMetadata().Category != pbrc.ReleaseMetadata_GOOGLE_PLAY &&
-			move.Record.GetMetadata().Category != pbrc.ReleaseMetadata_PROFESSOR &&
-			move.Record.GetMetadata().Category != pbrc.ReleaseMetadata_DISTINGUISHED &&
-			move.Record.GetMetadata().Category != pbrc.ReleaseMetadata_PRE_DISTINGUISHED {
-			s.RaiseIssue(ctx, "Stale Move", fmt.Sprintf("Move has been stuck for over a week: %v", move.InstanceId), false)
-		}
-	}
-	return nil
-}

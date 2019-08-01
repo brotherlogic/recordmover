@@ -366,6 +366,14 @@ func TestCanMoveFail(t *testing.T) {
 	}
 }
 
+func TestCanMoveFailInternal(t *testing.T) {
+	s := InitTest()
+
+	if s.moveRecordInternal(context.Background(), &pbrc.Record{Metadata: &pbrc.ReleaseMetadata{Dirty: true}}) == nil {
+		t.Errorf("Should not be able to move dirty record")
+	}
+}
+
 func TestCanMoveCD(t *testing.T) {
 	s := InitTest()
 

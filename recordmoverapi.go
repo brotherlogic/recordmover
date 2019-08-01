@@ -39,7 +39,6 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 
 	location, err := s.organiser.locate(ctx, &pbro.LocateRequest{InstanceId: in.GetMove().Record.GetRelease().InstanceId})
 	if err != nil {
-		s.Log(fmt.Sprintf("Unable to locate %v", in.GetMove().Record.GetRelease().InstanceId))
 		return &pb.MoveResponse{}, err
 	}
 
@@ -53,7 +52,6 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 				resp, err := s.recordcollection.getRecords(ctx, &pbrc.GetRecordsRequest{Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId}}})
 
 				if err != nil {
-					s.Log(fmt.Sprintf("Unable to locate %v", location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId))
 					return &pb.MoveResponse{}, err
 				}
 
@@ -68,7 +66,6 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 				resp, err := s.recordcollection.getRecords(ctx, &pbrc.GetRecordsRequest{Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: location.GetFoundLocation().GetReleasesLocation()[i+1].InstanceId}}})
 
 				if err != nil {
-					s.Log(fmt.Sprintf("Unable to locate %v", location.GetFoundLocation().GetReleasesLocation()[i+1].InstanceId))
 					return &pb.MoveResponse{}, err
 				}
 
@@ -92,12 +89,10 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 
 	err = s.organiser.reorgLocation(ctx, in.Move.ToFolder)
 	if err != nil {
-		s.Log(fmt.Sprintf("Unable to reorg %v", in.Move.ToFolder))
 		return &pb.MoveResponse{}, err
 	}
 	err = s.organiser.reorgLocation(ctx, in.Move.FromFolder)
 	if err != nil {
-		s.Log(fmt.Sprintf("Unable to reorg %v", in.Move.FromFolder))
 		return &pb.MoveResponse{}, err
 	}
 
@@ -115,8 +110,6 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 		s.config.Moves = append(s.config.Moves, in.GetMove())
 	}
 
-	s.Log(fmt.Sprintf("Moved %v", in.GetMove().InstanceId))
-
 	s.saveMoves(ctx)
 	return &pb.MoveResponse{}, nil
 }
@@ -132,7 +125,6 @@ func (s *Server) ListMoves(ctx context.Context, in *pb.ListRequest) (*pb.ListRes
 
 // ClearMove clears a single move
 func (s *Server) ClearMove(ctx context.Context, in *pb.ClearRequest) (*pb.ClearResponse, error) {
-	s.Log(fmt.Sprintf("CLEARING %v", in.InstanceId))
 	for i, mv := range s.config.Moves {
 		if mv.InstanceId == in.InstanceId {
 			s.config.Moves = append(s.config.Moves[:i], s.config.Moves[i+1:]...)

@@ -38,11 +38,9 @@ func (s *Server) refreshMoves(ctx context.Context) error {
 		if time.Now().Sub(time.Unix(r.LastUpdate, 0)) > time.Hour {
 			err := s.refreshMove(ctx, r)
 			if err == nil {
-				s.Log(fmt.Sprintf("Refreshing %v", r.InstanceId))
 				s.saveMoves(ctx)
 				return nil
 			}
-			s.Log(fmt.Sprintf("Failed refresh of %v -> %v", r.InstanceId, err))
 		}
 	}
 
@@ -113,6 +111,23 @@ func (s *Server) moveRecords(ctx context.Context) error {
 	return s.moveRecordsHelper(ctx, 0)
 }
 
+func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) error {
+	update, rule := s.moveRecord(ctx, record)
+	if update != nil {
+		err := s.getter.update(ctx, update)
+		if err != nil {
+			return err
+		}
+		s.incrementCount(ctx, record.GetRelease().InstanceId)
+	} else {
+		if len(rule) > 0 {
+			return fmt.Errorf("Unable to move record: %v", rule)
+		}
+	}
+
+	return nil
+}
+
 func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error {
 	records, err := s.getter.getRecords(ctx)
 
@@ -120,28 +135,14 @@ func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error 
 		return err
 	}
 
-	count := int64(0)
-	miss := 0
 	for _, record := range records {
 		if instanceID == 0 || record.GetRelease().InstanceId == instanceID {
-			update, rule := s.moveRecord(ctx, record)
-			if update != nil {
-				count++
-				err := s.getter.update(ctx, update)
-				if err != nil {
-					return err
-				}
-				s.incrementCount(ctx, record.GetRelease().InstanceId)
-				break
-			} else {
-				s.Log(fmt.Sprintf("Unable to move %v -> %v", record.GetRelease().GetInstanceId(), rule))
-				miss++
+			err := s.moveRecordInternal(ctx, record)
+			if err != nil {
+				return err
 			}
 		}
 	}
-
-	s.lastProc = time.Now()
-	s.lastCount = count
 
 	return nil
 }
@@ -288,5 +289,5 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (*pbrc.Record, 
 		}
 	}
 
-	return nil, "NO RULE"
+	return nil, ""
 }

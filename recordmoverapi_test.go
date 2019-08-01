@@ -270,3 +270,11 @@ func TestAppendArchive(t *testing.T) {
 		t.Errorf("Update has failed")
 	}
 }
+
+func TestForceUpdate(t *testing.T) {
+	s := InitTest()
+	_, err := s.ForceMove(context.Background(), &pb.ForceRequest{})
+	if err != nil {
+		t.Errorf("Bad force")
+	}
+}

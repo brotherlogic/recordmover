@@ -110,6 +110,10 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 }
 
 func (s *Server) moveRecords(ctx context.Context) error {
+	return s.moveRecordsHelper(ctx, 0)
+}
+
+func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error {
 	records, err := s.getter.getRecords(ctx)
 
 	if err != nil {
@@ -119,19 +123,21 @@ func (s *Server) moveRecords(ctx context.Context) error {
 	count := int64(0)
 	miss := 0
 	for _, record := range records {
-		update := s.moveRecord(ctx, record)
-		if update != nil {
-			count++
-			err := s.getter.update(ctx, update)
-			if err != nil {
-				s.Log(fmt.Sprintf("Error moving record: %v", err))
+		if instanceID == 0 || record.GetRelease().InstanceId == instanceID {
+			update := s.moveRecord(ctx, record)
+			if update != nil {
+				count++
+				err := s.getter.update(ctx, update)
+				if err != nil {
+					s.Log(fmt.Sprintf("Error moving record: %v", err))
+				} else {
+					s.Log(fmt.Sprintf("Moving %v -> %v", record.GetRelease().Id, update.GetMetadata().MoveFolder))
+					s.incrementCount(ctx, record.GetRelease().InstanceId)
+					break
+				}
 			} else {
-				s.Log(fmt.Sprintf("Moving %v -> %v", record.GetRelease().Id, update.GetMetadata().MoveFolder))
-				s.incrementCount(ctx, record.GetRelease().InstanceId)
-				break
+				miss++
 			}
-		} else {
-			miss++
 		}
 	}
 

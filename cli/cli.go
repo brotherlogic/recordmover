@@ -206,6 +206,15 @@ func main() {
 			_, err := client.ClearMove(ctx, &pb.ClearRequest{InstanceId: move.InstanceId})
 			fmt.Printf("CLEARED: %v\n", err)
 		}
+	case "force":
+		val, err := strconv.Atoi(os.Args[2])
+		if err != nil {
+			log.Fatalf("Error conv: %v", err)
+		}
+		_, err = client.ForceMove(ctx, &pb.ForceRequest{InstanceId: int32(val)})
+		if err != nil {
+			log.Fatalf("Error on Force: %v", err)
+		}
 
 	}
 }

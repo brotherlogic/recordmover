@@ -146,5 +146,5 @@ func (s *Server) ClearMove(ctx context.Context, in *pb.ClearRequest) (*pb.ClearR
 
 //ForceMove forces a move
 func (s *Server) ForceMove(ctx context.Context, in *pb.ForceRequest) (*pb.ForceResponse, error) {
-	return nil, s.moveRecordsHelper(ctx, in.InstanceId)
+	return &pb.ForceResponse{}, s.moveRecordsHelper(ctx, in.InstanceId)
 }

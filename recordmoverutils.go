@@ -282,7 +282,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (*pbrc.Record, 
 		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_GRADUATE ||
 		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_GRADUATE ||
 		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_SOPHMORE ||
-		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_SOPHMORE {
+		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_SOPHMORE ||
+		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_DISTINGUISHED ||
+		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_DISTINGUISHED {
 		if r.GetMetadata().GetGoalFolder() != 0 && (r.GetRelease().FolderId != r.GetMetadata().GetGoalFolder() && r.GetMetadata().MoveFolder != r.GetMetadata().GetGoalFolder()) {
 			r.GetMetadata().MoveFolder = r.GetMetadata().GetGoalFolder()
 			return r, "GOAL FOLDER"

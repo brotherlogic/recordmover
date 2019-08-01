@@ -166,7 +166,7 @@ func (s *Server) canMove(ctx context.Context, r *pbrc.Record) error {
 	for _, f := range r.GetRelease().GetFormats() {
 		if f.Name == "CD" || f.Name == "CDr" {
 			if len(r.GetMetadata().CdPath) == 0 {
-				return fmt.Errorf("No CDPath")
+				return fmt.Errorf("No CDPath: %v", r.GetMetadata())
 			}
 		}
 	}

@@ -163,10 +163,13 @@ func (s *Server) canMove(ctx context.Context, r *pbrc.Record) error {
 		return nil
 	}
 
-	for _, f := range r.GetRelease().GetFormats() {
-		if f.Name == "CD" || f.Name == "CDr" {
-			if len(r.GetMetadata().CdPath) == 0 {
-				return fmt.Errorf("No CDPath: %v", r.GetMetadata())
+	// Only check for non GOOGLE_PLAY releases
+	if r.GetMetadata().GetCategory() != pbrc.ReleaseMetadata_GOOGLE_PLAY {
+		for _, f := range r.GetRelease().GetFormats() {
+			if f.Name == "CD" || f.Name == "CDr" {
+				if len(r.GetMetadata().CdPath) == 0 {
+					return fmt.Errorf("No CDPath: %v", r.GetMetadata())
+				}
 			}
 		}
 	}

@@ -361,7 +361,7 @@ func TestNoTriggerIncrement(t *testing.T) {
 func TestCanMoveFail(t *testing.T) {
 	s := InitTest()
 
-	if s.canMove(context.Background(), &pbrc.Record{Metadata: &pbrc.ReleaseMetadata{Dirty: true}}) {
+	if s.canMove(context.Background(), &pbrc.Record{Metadata: &pbrc.ReleaseMetadata{Dirty: true}}) == nil {
 		t.Errorf("Should not be able to move dirty record")
 	}
 }
@@ -369,7 +369,7 @@ func TestCanMoveFail(t *testing.T) {
 func TestCanMoveCD(t *testing.T) {
 	s := InitTest()
 
-	if s.canMove(context.Background(), &pbrc.Record{Release: &pbgd.Release{Formats: []*pbgd.Format{&pbgd.Format{Name: "CD"}}}, Metadata: &pbrc.ReleaseMetadata{GoalFolder: 1234}}) {
+	if s.canMove(context.Background(), &pbrc.Record{Release: &pbgd.Release{Formats: []*pbgd.Format{&pbgd.Format{Name: "CD"}}}, Metadata: &pbrc.ReleaseMetadata{GoalFolder: 1234}}) == nil {
 		t.Errorf("Should not be able to move dirty record")
 	}
 }

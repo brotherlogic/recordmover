@@ -125,18 +125,16 @@ func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error 
 	for _, record := range records {
 		if instanceID == 0 || record.GetRelease().InstanceId == instanceID {
 			update, rule := s.moveRecord(ctx, record)
-			s.Log(fmt.Sprintf("Moving %v -> %v", record.GetRelease().GetInstanceId(), rule))
 			if update != nil {
 				count++
 				err := s.getter.update(ctx, update)
 				if err != nil {
-					s.Log(fmt.Sprintf("Error moving record: %v", err))
-				} else {
-					s.Log(fmt.Sprintf("Moving %v -> %v", record.GetRelease().Id, update.GetMetadata().MoveFolder))
-					s.incrementCount(ctx, record.GetRelease().InstanceId)
-					break
+					return err
 				}
+				s.incrementCount(ctx, record.GetRelease().InstanceId)
+				break
 			} else {
+				s.Log(fmt.Sprintf("Unable to move %v -> %v", record.GetRelease().GetInstanceId(), rule))
 				miss++
 			}
 		}
@@ -148,34 +146,31 @@ func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error 
 	return nil
 }
 
-func (s *Server) canMove(ctx context.Context, r *pbrc.Record) bool {
+func (s *Server) canMove(ctx context.Context, r *pbrc.Record) error {
 	// Don't attempt to move a dirty record
 	if r.GetMetadata() != nil && r.GetMetadata().Dirty {
-		s.Log(fmt.Sprintf("No meta or dirty"))
-		return false
+		return fmt.Errorf("No meta or dirty")
 	}
 
 	// Can't move a record with no goal
 	if r.GetMetadata() != nil && r.GetMetadata().GoalFolder == 0 {
-		s.Log(fmt.Sprintf("No Goal"))
-		return false
+		return fmt.Errorf("No Goal")
 	}
 
 	//We can always move to digital
 	if r.GetMetadata() != nil && r.GetMetadata().GoalFolder == 268147 {
-		return true
+		return nil
 	}
 
 	for _, f := range r.GetRelease().GetFormats() {
 		if f.Name == "CD" || f.Name == "CDr" {
 			if len(r.GetMetadata().CdPath) == 0 {
-				s.Log(fmt.Sprintf("No CdPath"))
-				return false
+				return fmt.Errorf("No CDPath")
 			}
 		}
 	}
 
-	return true
+	return nil
 }
 
 func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (*pbrc.Record, string) {
@@ -195,8 +190,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (*pbrc.Record, 
 		return r, "RIP THEN SELL"
 	}
 
-	if !s.canMove(ctx, r) {
-		return nil, "CANNOT MOVE"
+	err := s.canMove(ctx, r)
+	if err != nil {
+		return nil, fmt.Sprintf("CANNOT MOVE: %v", err)
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PARENTS && (r.GetRelease().FolderId != 1727264 && r.GetMetadata().MoveFolder != 1727264) {

@@ -143,3 +143,8 @@ func (s *Server) ClearMove(ctx context.Context, in *pb.ClearRequest) (*pb.ClearR
 
 	return nil, fmt.Errorf("Unable to clear move: %v", in.InstanceId)
 }
+
+//ForceMove forces a move
+func (s *Server) ForceMove(ctx context.Context, in *pb.ForceRequest) (*pb.ForceResponse, error) {
+	return nil, s.moveRecordsHelper(ctx, in.InstanceId)
+}

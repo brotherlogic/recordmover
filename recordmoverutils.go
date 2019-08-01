@@ -124,7 +124,8 @@ func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error 
 	miss := 0
 	for _, record := range records {
 		if instanceID == 0 || record.GetRelease().InstanceId == instanceID {
-			update := s.moveRecord(ctx, record)
+			update, rule := s.moveRecord(ctx, record)
+			s.Log(fmt.Sprintf("Moving %v -> %v", update.GetRelease().InstanceId, rule))
 			if update != nil {
 				count++
 				err := s.getter.update(ctx, update)
@@ -174,104 +175,104 @@ func (s *Server) canMove(ctx context.Context, r *pbrc.Record) bool {
 	return true
 }
 
-func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) *pbrc.Record {
+func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (*pbrc.Record, string) {
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_GOOGLE_PLAY && (r.GetRelease().FolderId != 1433217 && r.GetMetadata().MoveFolder != 1433217) {
 		r.GetMetadata().MoveFolder = 1433217
-		return r
+		return r, "GPLAY"
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_DIGITAL && (r.GetRelease().FolderId != 268147 && r.GetMetadata().MoveFolder != 268147) {
 		r.GetMetadata().MoveFolder = 268147
-		return r
+		return r, "DIGITAL"
 	}
 
 	// We can always move something for processing.
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_RIP_THEN_SELL && (r.GetRelease().FolderId != 812802 && r.GetMetadata().MoveFolder != 812802) {
 		r.GetMetadata().MoveFolder = 812802
-		return r
+		return r, "RIP THEN SELL"
 	}
 
 	if !s.canMove(ctx, r) {
-		return nil
+		return nil, "CANNOT MOVE"
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PARENTS && (r.GetRelease().FolderId != 1727264 && r.GetMetadata().MoveFolder != 1727264) {
 		r.GetMetadata().MoveFolder = 1727264
-		return r
+		return r, "PARENTS"
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_ASSESS_FOR_SALE && (r.GetRelease().FolderId != 1362206 && r.GetMetadata().MoveFolder != 1362206) {
 		r.GetMetadata().MoveFolder = 1362206
 		r.GetMetadata().Purgatory = pbrc.Purgatory_NEEDS_STOCK_CHECK
-		return r
+		return r, "ASSESS FOR SALE"
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_ASSESS && (r.GetRelease().FolderId != 1362206 && r.GetMetadata().MoveFolder != 1362206) {
 		r.GetMetadata().MoveFolder = 1362206
 		r.GetMetadata().Purgatory = pbrc.Purgatory_NEEDS_STOCK_CHECK
-		return r
+		return r, "ASSESSING"
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_NO_LABELS && (r.GetRelease().FolderId != 1362206 && r.GetMetadata().MoveFolder != 1362206) {
 		r.GetMetadata().MoveFolder = 1362206
 		r.GetMetadata().Purgatory = pbrc.Purgatory_NEEDS_LABELS
-		return r
+		return r, "NO LABELS"
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_SOLD && r.GetRelease().FolderId != 488127 {
 		r.GetMetadata().MoveFolder = 488127
-		return r
+		return r, "SOLD"
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_SOLD_ARCHIVE && r.GetRelease().FolderId != 1613206 && r.GetMetadata().MoveFolder != 1613206 {
 		r.GetMetadata().MoveFolder = 1613206
-		return r
+		return r, "SOLD_ARCHI"
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_UNLISTENED && r.GetRelease().FolderId != 812802 {
 		r.GetMetadata().MoveFolder = 812802
-		return r
+		return r, "UNLISTE"
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_STAGED && r.GetRelease().FolderId != 673768 {
 		r.GetMetadata().MoveFolder = 673768
-		return r
+		return r, "STAGED"
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_STALE_SALE && r.GetRelease().FolderId != 1708299 {
 		r.GetMetadata().MoveFolder = 1708299
-		return r
+		return r, "STALE SALE"
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_HIGH_SCHOOL && r.GetRelease().FolderId != 673768 {
 		r.GetMetadata().MoveFolder = 673768
-		return r
+		return r, "HIGH SCHOOL"
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_HIGH_SCHOOL && r.GetRelease().FolderId != 673768 {
 		r.GetMetadata().MoveFolder = 673768
-		return r
+		return r, "PRE HIGH SCHOOL"
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_LISTED_TO_SELL && r.GetRelease().FolderId != 488127 {
 		r.GetMetadata().MoveFolder = 488127
-		return r
+		return r, "LSITEND TO SELL"
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_FRESHMAN && r.GetRelease().FolderId != 812802 {
 		r.GetMetadata().MoveFolder = 812802
-		return r
+		return r, "PRE FERSHMAN"
 	}
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_FRESHMAN {
 		if r.GetMetadata().GetGoalFolder() != 0 && (r.GetRelease().FolderId != r.GetMetadata().GetGoalFolder() && r.GetMetadata().MoveFolder != r.GetMetadata().GetGoalFolder()) {
 			r.GetMetadata().MoveFolder = r.GetMetadata().GetGoalFolder()
-			return r
+			return r, "FRESHMAN MOVE"
 		}
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_STAGED_TO_SELL && r.GetRelease().FolderId != 812802 && r.GetMetadata().MoveFolder != 812802 {
 		r.GetMetadata().MoveFolder = 812802
-		return r
+		return r, "STAGED TO SELL"
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PROFESSOR ||
@@ -284,9 +285,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) *pbrc.Record {
 		r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_SOPHMORE {
 		if r.GetMetadata().GetGoalFolder() != 0 && (r.GetRelease().FolderId != r.GetMetadata().GetGoalFolder() && r.GetMetadata().MoveFolder != r.GetMetadata().GetGoalFolder()) {
 			r.GetMetadata().MoveFolder = r.GetMetadata().GetGoalFolder()
-			return r
+			return r, "GOAL FOLDER"
 		}
 	}
 
-	return nil
+	return nil, "NO RULE"
 }

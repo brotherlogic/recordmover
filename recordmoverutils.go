@@ -125,7 +125,7 @@ func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error 
 	for _, record := range records {
 		if instanceID == 0 || record.GetRelease().InstanceId == instanceID {
 			update, rule := s.moveRecord(ctx, record)
-			s.Log(fmt.Sprintf("Moving %v -> %v", update.GetRelease().InstanceId, rule))
+			s.Log(fmt.Sprintf("Moving %v -> %v", record.GetRelease().GetInstanceId(), rule))
 			if update != nil {
 				count++
 				err := s.getter.update(ctx, update)

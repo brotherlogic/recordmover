@@ -161,7 +161,7 @@ func TestUpdateToStaged(t *testing.T) {
 
 func TestMoveUnripped(t *testing.T) {
 	s := InitTest()
-	val := s.moveRecord(context.Background(), &pbrc.Record{Release: &pbgd.Release{Id: 123, Formats: []*pbgd.Format{&pbgd.Format{Name: "CD"}}}, Metadata: &pbrc.ReleaseMetadata{}})
+	val, _ := s.moveRecord(context.Background(), &pbrc.Record{Release: &pbgd.Release{Id: 123, Formats: []*pbgd.Format{&pbgd.Format{Name: "CD"}}}, Metadata: &pbrc.ReleaseMetadata{}})
 
 	if val != nil {
 		t.Errorf("moved: %v", val)
@@ -170,7 +170,7 @@ func TestMoveUnripped(t *testing.T) {
 
 func TestMoveUnrippedButDigital(t *testing.T) {
 	s := InitTest()
-	val := s.moveRecord(context.Background(), &pbrc.Record{Metadata: &pbrc.ReleaseMetadata{GoalFolder: 268147}, Release: &pbgd.Release{Id: 123, Formats: []*pbgd.Format{&pbgd.Format{Name: "CD"}}}})
+	val, _ := s.moveRecord(context.Background(), &pbrc.Record{Metadata: &pbrc.ReleaseMetadata{GoalFolder: 268147}, Release: &pbgd.Release{Id: 123, Formats: []*pbgd.Format{&pbgd.Format{Name: "CD"}}}})
 
 	if val != nil {
 		t.Errorf("moved: %v", val)

@@ -211,10 +211,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("Error conv: %v", err)
 		}
-		_, err = client.ForceMove(ctx, &pb.ForceRequest{InstanceId: int32(val)})
-		if err != nil {
-			log.Fatalf("Error on Force: %v", err)
-		}
-
+		resp, err := client.ForceMove(ctx, &pb.ForceRequest{InstanceId: int32(val)})
+		log.Fatalf("Error on Force: %v -> %v", err, resp)
 	}
 }

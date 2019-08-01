@@ -151,11 +151,13 @@ func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error 
 func (s *Server) canMove(ctx context.Context, r *pbrc.Record) bool {
 	// Don't attempt to move a dirty record
 	if r.GetMetadata() != nil && r.GetMetadata().Dirty {
+		s.Log(fmt.Sprintf("No meta or dirty"))
 		return false
 	}
 
 	// Can't move a record with no goal
 	if r.GetMetadata() != nil && r.GetMetadata().GoalFolder == 0 {
+		s.Log(fmt.Sprintf("No Goal"))
 		return false
 	}
 
@@ -167,6 +169,7 @@ func (s *Server) canMove(ctx context.Context, r *pbrc.Record) bool {
 	for _, f := range r.GetRelease().GetFormats() {
 		if f.Name == "CD" || f.Name == "CDr" {
 			if len(r.GetMetadata().CdPath) == 0 {
+				s.Log(fmt.Sprintf("No CdPath"))
 				return false
 			}
 		}

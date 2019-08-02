@@ -130,12 +130,15 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 
 func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error {
 	records, err := s.getter.getRecords(ctx)
+	s.total = len(records)
 
 	if err != nil {
 		return err
 	}
 
+	s.count = 0
 	for _, record := range records {
+		s.count++
 		if instanceID == 0 || record.GetRelease().InstanceId == instanceID {
 			err := s.moveRecordInternal(ctx, record)
 			if err != nil {

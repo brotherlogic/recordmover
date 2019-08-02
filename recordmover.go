@@ -33,6 +33,8 @@ type Server struct {
 	lastArch         time.Duration
 	lastID           int32
 	lastIDCount      int
+	total            int
+	count            int
 }
 
 // Init builds the server
@@ -48,6 +50,8 @@ func Init() *Server {
 		&pb.Config{},
 		0,
 		int32(0),
+		0,
+		0,
 		0,
 	}
 	s.getter = &prodGetter{s.DialMaster}
@@ -238,6 +242,7 @@ func (s *Server) GetState() []*pbg.State {
 	}
 
 	return []*pbg.State{
+		&pbg.State{Key: "progress", Text: fmt.Sprintf("%v / %v", s.count, s.total)},
 		&pbg.State{Key: "last_id_count", Value: int64(s.lastIDCount)},
 		&pbg.State{Key: "last_id", Value: int64(s.lastID)},
 		&pbg.State{Key: "last_proc", TimeValue: s.lastProc.Unix()},

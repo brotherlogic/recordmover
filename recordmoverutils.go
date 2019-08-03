@@ -139,10 +139,12 @@ func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error 
 	s.count = 0
 	for _, record := range records {
 		s.count++
-		if instanceID == 0 || record.GetRelease().InstanceId == instanceID {
-			err := s.moveRecordInternal(ctx, record)
-			if err != nil {
-				return err
+		if record.GetMetadata() != nil && !record.GetMetadata().Dirty {
+			if instanceID == 0 || record.GetRelease().InstanceId == instanceID {
+				err := s.moveRecordInternal(ctx, record)
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}
@@ -151,11 +153,6 @@ func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error 
 }
 
 func (s *Server) canMove(ctx context.Context, r *pbrc.Record) error {
-	// Don't attempt to move a dirty record
-	if r.GetMetadata() != nil && r.GetMetadata().Dirty {
-		return fmt.Errorf("No meta or dirty")
-	}
-
 	// Can't move a record with no goal
 	if r.GetMetadata() != nil && r.GetMetadata().GoalFolder == 0 {
 		return fmt.Errorf("No Goal")

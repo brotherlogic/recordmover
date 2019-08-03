@@ -137,16 +137,21 @@ func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error 
 	}
 
 	s.count = 0
+	badRecords := []int32{}
 	for _, record := range records {
 		s.count++
 		if record.GetMetadata() != nil && !record.GetMetadata().Dirty {
 			if instanceID == 0 || record.GetRelease().InstanceId == instanceID {
 				err := s.moveRecordInternal(ctx, record)
 				if err != nil {
-					return err
+					badRecords = append(badRecords, record.GetRelease().InstanceId)
 				}
 			}
 		}
+	}
+
+	if len(badRecords) > 0 {
+		s.RaiseIssue(ctx, "Stuck Records", fmt.Sprintf("%v are all stuck", badRecords), false)
 	}
 
 	return nil

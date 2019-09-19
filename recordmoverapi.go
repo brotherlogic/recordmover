@@ -49,7 +49,7 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 			in.GetMove().GetBeforeContext().Slot = location.GetFoundLocation().GetReleasesLocation()[0].Slot
 
 			if i > 0 {
-				resp, err := s.recordcollection.getRecords(ctx, &pbrc.GetRecordsRequest{Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId}}})
+				resp, err := s.recordcollection.getRecords(ctx, &pbrc.GetRecordsRequest{Caller: "recordmover-api1", Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId}}})
 
 				if err != nil {
 					return &pb.MoveResponse{}, err
@@ -63,7 +63,7 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 			}
 
 			if i < len(location.GetFoundLocation().GetReleasesLocation())-1 {
-				resp, err := s.recordcollection.getRecords(ctx, &pbrc.GetRecordsRequest{Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: location.GetFoundLocation().GetReleasesLocation()[i+1].InstanceId}}})
+				resp, err := s.recordcollection.getRecords(ctx, &pbrc.GetRecordsRequest{Caller: "recordmover-api2", Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: location.GetFoundLocation().GetReleasesLocation()[i+1].InstanceId}}})
 
 				if err != nil {
 					return &pb.MoveResponse{}, err

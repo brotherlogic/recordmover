@@ -63,7 +63,7 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 			if i > 0 {
 				move.GetAfterContext().Location = location.GetFoundLocation().Name
 				move.GetAfterContext().Slot = location.GetFoundLocation().GetReleasesLocation()[i].Slot
-				resp, err := s.recordcollection.getRecords(ctx, &pbrc.GetRecordsRequest{Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId}}})
+				resp, err := s.recordcollection.getRecords(ctx, &pbrc.GetRecordsRequest{Caller: "recordmover-refresh", Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId}}})
 
 				if err != nil {
 					return err
@@ -82,7 +82,7 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 				move.GetAfterContext().Location = location.GetFoundLocation().Name
 				move.GetAfterContext().Slot = location.GetFoundLocation().GetReleasesLocation()[i].Slot
 
-				resp, err := s.recordcollection.getRecords(ctx, &pbrc.GetRecordsRequest{Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: location.GetFoundLocation().GetReleasesLocation()[i+1].InstanceId}}})
+				resp, err := s.recordcollection.getRecords(ctx, &pbrc.GetRecordsRequest{Caller: "recordmover-refresh2", Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: location.GetFoundLocation().GetReleasesLocation()[i+1].InstanceId}}})
 
 				if err != nil {
 					return err

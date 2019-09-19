@@ -176,7 +176,7 @@ func (p prodGetter) getRecords(ctx context.Context) ([]*pbrc.Record, error) {
 	defer conn.Close()
 
 	client := pbrc.NewRecordCollectionServiceClient(conn)
-	resp, err := client.GetRecords(ctx, &pbrc.GetRecordsRequest{Filter: &pbrc.Record{Metadata: &pbrc.ReleaseMetadata{Dirty: false, MoveFolder: 0}, Release: &pbgd.Release{}}}, grpc.MaxCallRecvMsgSize(1024*1024*1024))
+	resp, err := client.GetRecords(ctx, &pbrc.GetRecordsRequest{Caller: "recordmover", Filter: &pbrc.Record{Metadata: &pbrc.ReleaseMetadata{Dirty: false, MoveFolder: 0}, Release: &pbgd.Release{}}}, grpc.MaxCallRecvMsgSize(1024*1024*1024))
 	if err != nil {
 		return nil, err
 	}

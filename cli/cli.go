@@ -21,7 +21,7 @@ import (
 )
 
 func getRecord(ctx context.Context, instanceID int32) *pbrc.Record {
-	host, port, err := utils.Resolve("recordcollection")
+	host, port, err := utils.Resolve("recordcollection", "recordmovercli-getRecord")
 	if err != nil {
 		log.Fatalf("Unable to reach recordcollection: %v", err)
 	}
@@ -45,7 +45,7 @@ func getRecord(ctx context.Context, instanceID int32) *pbrc.Record {
 }
 
 func getFolder(ctx context.Context, folderID int32) (string, error) {
-	host, port, err := utils.Resolve("recordsorganiser")
+	host, port, err := utils.Resolve("recordsorganiser", "recordmovercli-getFolder")
 	if err != nil {
 		return "", err
 	}
@@ -66,7 +66,7 @@ func getFolder(ctx context.Context, folderID int32) (string, error) {
 }
 
 func getReleaseString(ctx context.Context, instanceID int32) string {
-	host, port, err := utils.Resolve("recordcollection")
+	host, port, err := utils.Resolve("recordcollection", "recordmovercli-getReleaseString")
 	if err != nil {
 		log.Fatalf("Unable to reach collection: %v", err)
 	}
@@ -86,7 +86,7 @@ func getReleaseString(ctx context.Context, instanceID int32) string {
 }
 
 func getLocation(ctx context.Context, rec *pbrc.Record) (string, error) {
-	host, port, err := utils.Resolve("recordsorganiser")
+	host, port, err := utils.Resolve("recordsorganiser", "recordmovercli-getLocation")
 	if err != nil {
 		return "", err
 	}
@@ -121,7 +121,7 @@ func getLocation(ctx context.Context, rec *pbrc.Record) (string, error) {
 }
 
 func main() {
-	host, port, err := utils.Resolve("recordmover")
+	host, port, err := utils.Resolve("recordmover", "recordmover-cli")
 	if err != nil {
 		log.Fatalf("Unable to reach organiser: %v", err)
 	}

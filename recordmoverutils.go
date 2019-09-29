@@ -144,6 +144,7 @@ func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error 
 			if instanceID == 0 || record.GetRelease().InstanceId == instanceID {
 				err := s.moveRecordInternal(ctx, record)
 				if err != nil {
+					s.Log(fmt.Sprintf("Unable to move %v -> %v", record.GetRelease().InstanceId, err))
 					badRecords = append(badRecords, record.GetRelease().InstanceId)
 				}
 			}

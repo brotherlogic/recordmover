@@ -195,6 +195,36 @@ func (s *Server) readMoves(ctx context.Context) error {
 
 	s.config = data.(*pb.Config)
 
+	// Convert
+	change := false
+	for _, move := range s.config.Moves {
+		if move.BeforeContext != nil {
+			if move.BeforeContext.Before != nil {
+				move.BeforeContext.BeforeInstance = move.BeforeContext.Before.GetRelease().InstanceId
+				change = true
+			}
+			if move.BeforeContext.After != nil {
+				move.BeforeContext.AfterInstance = move.BeforeContext.After.GetRelease().InstanceId
+				change = true
+			}
+		}
+
+		if move.AfterContext != nil {
+			if move.AfterContext.Before != nil {
+				move.AfterContext.BeforeInstance = move.AfterContext.Before.GetRelease().InstanceId
+				change = true
+			}
+			if move.AfterContext.After != nil {
+				move.AfterContext.AfterInstance = move.AfterContext.After.GetRelease().InstanceId
+				change = true
+			}
+		}
+	}
+
+	if !change {
+		s.RaiseIssue(ctx, "Moves are aligned", "You can remove the alignment path in readMoves", false)
+	}
+
 	return nil
 }
 

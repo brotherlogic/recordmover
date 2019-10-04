@@ -9,6 +9,7 @@ import (
 
 	"github.com/brotherlogic/goserver"
 	"github.com/brotherlogic/keystore/client"
+	"github.com/golang/protobuf/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
@@ -242,6 +243,7 @@ func (s *Server) GetState() []*pbg.State {
 	}
 
 	return []*pbg.State{
+		&pbg.State{Key: "config_size", Value: int64(proto.Size(s.config))},
 		&pbg.State{Key: "progress", Text: fmt.Sprintf("%v / %v", s.count, s.total)},
 		&pbg.State{Key: "last_id_count", Value: int64(s.lastIDCount)},
 		&pbg.State{Key: "last_id", Value: int64(s.lastID)},

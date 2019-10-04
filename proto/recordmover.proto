@@ -22,9 +22,11 @@ message Config {
 }
 
 message Context {
-  recordcollection.Record before = 1;
+  recordcollection.Record before = 1; // DEPRECATED
+  int32 before_instance = 5;
   string location = 2;
-  recordcollection.Record after = 3;
+  recordcollection.Record after = 3; // DEPRECATED
+  int32 after_instance = 6;
   int32 slot = 4;
 }
 
@@ -34,7 +36,7 @@ message RecordMove {
   int32 to_folder = 3;
   int64 move_date = 4;
 
-  recordcollection.Record record = 5;
+  recordcollection.Record record = 5; // DEPRECATED
   Context before_context = 6;
   Context after_context = 7;
 

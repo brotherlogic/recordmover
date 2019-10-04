@@ -243,6 +243,7 @@ func (s *Server) GetState() []*pbg.State {
 	}
 
 	return []*pbg.State{
+		&pbg.State{Key: "last_pull", TimeValue: s.config.LastPull},
 		&pbg.State{Key: "config_size", Value: int64(proto.Size(s.config))},
 		&pbg.State{Key: "progress", Text: fmt.Sprintf("%v / %v", s.count, s.total)},
 		&pbg.State{Key: "last_id_count", Value: int64(s.lastIDCount)},

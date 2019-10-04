@@ -30,6 +30,8 @@ func (s *Server) incrementCount(ctx context.Context, id int32) error {
 
 type getter interface {
 	getRecords(ctx context.Context) ([]*pbrc.Record, error)
+	getRecordsSince(ctx context.Context, since int64) ([]int32, error)
+	getRecord(ctx context.Context, instanceID int32) (*pbrc.Record, error)
 	update(ctx context.Context, rec *pbrc.Record) error
 }
 
@@ -129,7 +131,7 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 }
 
 func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error {
-	records, err := s.getter.getRecords(ctx)
+	records, err := s.getter.getRecordsSince(ctx, s.config.LastPull)
 	s.total = len(records)
 
 	if err != nil {
@@ -138,7 +140,11 @@ func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error 
 
 	s.count = 0
 	badRecords := []int32{}
-	for _, record := range records {
+	for _, id := range records {
+		record, err := s.getter.getRecord(ctx, id)
+		if err != nil {
+			return err
+		}
 		s.count++
 		if record.GetMetadata() != nil && !record.GetMetadata().Dirty {
 			if instanceID == 0 || record.GetRelease().InstanceId == instanceID {

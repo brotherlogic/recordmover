@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/brotherlogic/keystore/client"
@@ -21,7 +22,19 @@ func (t *testRipper) isRipped(ctx context.Context, ID int32) bool {
 }
 
 type testGetter struct {
-	rec *pbrc.Record
+	rec     *pbrc.Record
+	failGet bool
+}
+
+func (t *testGetter) getRecordsSince(ctx context.Context, since int64) ([]int32, error) {
+	return []int32{t.rec.GetRelease().InstanceId}, nil
+}
+
+func (t *testGetter) getRecord(ctx context.Context, instanceID int32) (*pbrc.Record, error) {
+	if t.failGet {
+		return nil, fmt.Errorf("Error getting record")
+	}
+	return t.rec, nil
 }
 
 func (t *testGetter) getRecords(ctx context.Context) ([]*pbrc.Record, error) {
@@ -38,14 +51,28 @@ type testFailGetter struct {
 	lastCategory pbrc.ReleaseMetadata_Category
 }
 
-func (t testFailGetter) getRecords(ctx context.Context) ([]*pbrc.Record, error) {
+func (t *testFailGetter) getRecordsSince(ctx context.Context, since int64) ([]int32, error) {
+	if t.grf {
+		return []int32{int32(12)}, nil
+	}
+	return []int32{}, fmt.Errorf("Built to fail")
+}
+
+func (t *testFailGetter) getRecord(ctx context.Context, instanceID int32) (*pbrc.Record, error) {
+	if t.grf {
+		return &pbrc.Record{Release: &pbgd.Release{FolderId: 1}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_UNLISTENED, GoalFolder: 123}}, nil
+	}
+	return nil, fmt.Errorf("Built to fail")
+}
+
+func (t *testFailGetter) getRecords(ctx context.Context) ([]*pbrc.Record, error) {
 	if t.grf {
 		return []*pbrc.Record{&pbrc.Record{Release: &pbgd.Release{FolderId: 1}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_UNLISTENED, GoalFolder: 123}}}, nil
 	}
 	return nil, errors.New("Built to fail")
 }
 
-func (t testFailGetter) update(ctx context.Context, r *pbrc.Record) error {
+func (t *testFailGetter) update(ctx context.Context, r *pbrc.Record) error {
 	if !t.grf {
 		t.lastCategory = r.GetMetadata().GetCategory()
 		return nil
@@ -56,7 +83,7 @@ func (t testFailGetter) update(ctx context.Context, r *pbrc.Record) error {
 func InitTest() *Server {
 	s := Init()
 	s.SkipLog = true
-	s.getter = &testGetter{}
+	s.getter = &testGetter{rec: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}
 	s.GoServer.KSclient = *keystoreclient.GetTestClient("./testing")
 	s.cdproc = &testRipper{}
 	s.organiser = &testOrg{failCount: 100}
@@ -72,7 +99,7 @@ func TestEmptyUpdate(t *testing.T) {
 
 func TestBadGetter(t *testing.T) {
 	s := InitTest()
-	tg := testFailGetter{}
+	tg := &testFailGetter{}
 	s.getter = tg
 	s.moveRecords(context.Background())
 }
@@ -110,7 +137,21 @@ func TestMoves(t *testing.T) {
 
 func TestUpdateFailOnUpdate(t *testing.T) {
 	s := InitTest()
-	tg := testFailGetter{grf: true}
+	tg := &testFailGetter{grf: true}
+	s.getter = tg
+	s.moveRecords(context.Background())
+}
+
+func TestUpdateFailOnUpdateRecordPull(t *testing.T) {
+	s := InitTest()
+	tg := &testGetter{failGet: true, rec: &pbrc.Record{Release: &pbgd.Release{InstanceId: 12}}}
+	s.getter = tg
+	s.moveRecords(context.Background())
+}
+
+func TestUpdateFailOnGet(t *testing.T) {
+	s := InitTest()
+	tg := &testFailGetter{grf: true}
 	s.getter = tg
 	s.moveRecords(context.Background())
 }

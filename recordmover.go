@@ -152,6 +152,39 @@ type prodGetter struct {
 	dial func(server string) (*grpc.ClientConn, error)
 }
 
+func (p *prodGetter) getRecordsSince(ctx context.Context, since int64) ([]int32, error) {
+	conn, err := p.dial("recordcollection")
+	if err != nil {
+		return []int32{}, err
+	}
+	defer conn.Close()
+
+	client := pbrc.NewRecordCollectionServiceClient(conn)
+	resp, err := client.QueryRecords(ctx, &pbrc.QueryRecordsRequest{Query: &pbrc.QueryRecordsRequest_UpdateTime{since}})
+
+	if err != nil {
+		return []int32{}, err
+	}
+
+	return resp.GetInstanceIds(), err
+}
+func (p *prodGetter) getRecord(ctx context.Context, instanceID int32) (*pbrc.Record, error) {
+	conn, err := p.dial("recordcollection")
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	client := pbrc.NewRecordCollectionServiceClient(conn)
+	resp, err := client.GetRecord(ctx, &pbrc.GetRecordRequest{InstanceId: instanceID})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return resp.GetRecord(), err
+}
+
 func (s *Server) readMoves(ctx context.Context) error {
 	config := &pb.Config{}
 	data, _, err := s.KSclient.Read(ctx, ConfigKey, config)

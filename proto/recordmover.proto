@@ -18,6 +18,7 @@ message RecordedMove {
 message Config {
   repeated RecordMove moves = 1;
   repeated RecordedMove move_archive = 2;
+  int64 last_pull = 3;
 }
 
 message Context {

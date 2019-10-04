@@ -155,6 +155,8 @@ func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error 
 		s.RaiseIssue(ctx, "Stuck Records", fmt.Sprintf("%v are all stuck", badRecords), false)
 	}
 
+	s.config.LastPull = time.Now().Unix()
+	s.saveMoves(ctx)
 	return nil
 }
 

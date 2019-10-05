@@ -96,7 +96,7 @@ func TestAddWithRecordPullFail(t *testing.T) {
 	s := InitTest()
 	s.recordcollection = &testCol{fail: true}
 
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}})
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
 	if err == nil {
 		t.Fatalf("Move did not fail")
 	}
@@ -106,7 +106,7 @@ func TestAddWithRecordPullFailOnSecond(t *testing.T) {
 	s := InitTest()
 	s.recordcollection = &testCol{failSecond: true}
 
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}})
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
 	if err == nil {
 		t.Fatalf("Move did not fail")
 	}
@@ -116,7 +116,7 @@ func TestAddWithLocateFail(t *testing.T) {
 	s := InitTest()
 	s.organiser = &testOrg{emptyLocate: true}
 
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}})
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
 	if err == nil {
 		t.Fatalf("Move did not fail")
 	}
@@ -126,7 +126,7 @@ func TestAddWithLocateFailOne(t *testing.T) {
 	s := InitTest()
 	s.organiser = &testOrg{failLocate: true}
 
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}})
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
 	if err == nil {
 		t.Fatalf("Move did not fail")
 	}
@@ -136,7 +136,7 @@ func TestAddWithLocateEmpty(t *testing.T) {
 	s := InitTest()
 	s.recordcollection = &testCol{noLocate: true}
 
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}})
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
 	if err == nil {
 		t.Fatalf("Move did not fail")
 	}
@@ -146,7 +146,7 @@ func TestAddWithLocateEmptySecond(t *testing.T) {
 	s := InitTest()
 	s.recordcollection = &testCol{noLocateSecond: true}
 
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}})
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
 	if err == nil {
 		t.Fatalf("Move did not fail")
 	}
@@ -157,7 +157,7 @@ func TestAddCausesUpdate(t *testing.T) {
 	testOrg := &testOrg{failCount: 100}
 	s.organiser = testOrg
 
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}})
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
 	if err != nil {
 		t.Fatalf("Error making move: %v", err)
 	}
@@ -172,7 +172,18 @@ func TestAddCausesUpdateMissingRecord(t *testing.T) {
 	testOrg := &testOrg{failCount: 100}
 	s.organiser = testOrg
 
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{FromFolder: 2, ToFolder: 3}})
+	if err == nil {
+		t.Fatalf("Move did not fail")
+	}
+}
+
+func TestAddCausesUpdateWithRecordSupplied(t *testing.T) {
+	s := InitTest()
+	testOrg := &testOrg{failCount: 100}
+	s.organiser = testOrg
+
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{Record: &pbrc.Record{}, FromFolder: 2, ToFolder: 3}})
 	if err == nil {
 		t.Fatalf("Move did not fail")
 	}
@@ -183,7 +194,7 @@ func TestAddCausesUpdateFail1(t *testing.T) {
 	testOrg := &testOrg{failCount: 1}
 	s.organiser = testOrg
 
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}})
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
 	if err == nil {
 		t.Fatalf("No error")
 	}
@@ -194,7 +205,7 @@ func TestAddCausesUpdateFail2(t *testing.T) {
 	testOrg := &testOrg{failCount: 2}
 	s.organiser = testOrg
 
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}})
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
 	if err == nil {
 		t.Fatalf("No error")
 	}
@@ -203,7 +214,7 @@ func TestAddCausesUpdateFail2(t *testing.T) {
 func TestAddDouble(t *testing.T) {
 	s := InitTest()
 
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 2, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}})
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 2}})
 	if err != nil {
 		t.Fatalf("Error moving record: %v", err)
 	}
@@ -221,7 +232,7 @@ func TestAddDouble(t *testing.T) {
 func TestRunThrough(t *testing.T) {
 	s := InitTest()
 
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3, Record: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}})
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
 
 	if err != nil {
 		t.Fatalf("Error moving record: %v", err)
@@ -233,7 +244,7 @@ func TestRunThrough(t *testing.T) {
 		t.Fatalf("Error listing records: %v", err)
 	}
 
-	if len(moves.GetMoves()) != 1 || moves.GetMoves()[0].MoveDate <= 0 || moves.GetMoves()[0].Record.Release.InstanceId != 1 {
+	if len(moves.GetMoves()) != 1 || moves.GetMoves()[0].MoveDate <= 0 || moves.GetMoves()[0].InstanceId != 1 {
 		t.Fatalf("Move is a problem: %v", moves)
 	}
 

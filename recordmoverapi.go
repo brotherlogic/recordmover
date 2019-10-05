@@ -5,8 +5,6 @@ import (
 	"time"
 
 	"golang.org/x/net/context"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	pbgd "github.com/brotherlogic/godiscogs"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
@@ -32,12 +30,13 @@ func (s *Server) updateArchive(move *pb.RecordedMove) {
 
 // RecordMove moves a record
 func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveResponse, error) {
-	if in.GetMove().Record == nil {
-		s.RaiseIssue(ctx, "RecordMove issue", fmt.Sprintf("Move with details %v is missing record", in.GetMove().InstanceId), false)
-		return &pb.MoveResponse{}, status.Errorf(codes.InvalidArgument, "Missing Record on call")
+	if in.GetMove().Record != nil {
+		return nil, fmt.Errorf("Do not specify the record in the move")
 	}
-
-	location, err := s.organiser.locate(ctx, &pbro.LocateRequest{InstanceId: in.GetMove().Record.GetRelease().InstanceId})
+	if in.GetMove().InstanceId == 0 {
+		return nil, fmt.Errorf("You need to supply an instance ID")
+	}
+	location, err := s.organiser.locate(ctx, &pbro.LocateRequest{InstanceId: in.GetMove().InstanceId})
 	if err != nil {
 		return &pb.MoveResponse{}, err
 	}
@@ -59,7 +58,7 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 					return &pb.MoveResponse{}, fmt.Errorf("Ambigous move")
 				}
 
-				in.GetMove().GetBeforeContext().Before = resp.GetRecords()[0]
+				in.GetMove().GetBeforeContext().BeforeInstance = resp.GetRecords()[0].GetRelease().InstanceId
 			}
 
 			if i < len(location.GetFoundLocation().GetReleasesLocation())-1 {
@@ -73,7 +72,7 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 					return &pb.MoveResponse{}, fmt.Errorf("Ambigous move")
 				}
 
-				in.GetMove().GetBeforeContext().After = resp.GetRecords()[0]
+				in.GetMove().GetBeforeContext().AfterInstance = resp.GetRecords()[0].GetRelease().InstanceId
 			}
 
 		}

@@ -50,7 +50,7 @@ func (s *Server) refreshMoves(ctx context.Context) error {
 }
 
 func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
-	location, err := s.organiser.locate(ctx, &pbro.LocateRequest{InstanceId: move.Record.GetRelease().InstanceId})
+	location, err := s.organiser.locate(ctx, &pbro.LocateRequest{InstanceId: move.InstanceId})
 
 	if err != nil {
 		return err
@@ -75,9 +75,9 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 					return fmt.Errorf("Ambigous move")
 				}
 
-				move.GetAfterContext().Before = resp.GetRecords()[0]
+				move.GetAfterContext().BeforeInstance = resp.GetRecords()[0].GetRelease().InstanceId
 			} else {
-				move.AfterContext.Before = &pbrc.Record{Release: &pbgd.Release{Title: "START_OF_SLOT"}}
+				move.AfterContext.BeforeInstance = -2
 			}
 
 			if i < len(location.GetFoundLocation().GetReleasesLocation())-1 {
@@ -93,10 +93,10 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 				if len(resp.GetRecords()) != 1 {
 					return fmt.Errorf("Ambigous move")
 				}
-				move.GetAfterContext().After = resp.GetRecords()[0]
+				move.GetAfterContext().AfterInstance = resp.GetRecords()[0].GetRelease().InstanceId
 
 			} else {
-				move.AfterContext.After = &pbrc.Record{Release: &pbgd.Release{Title: "END_OF_SLOT"}}
+				move.AfterContext.AfterInstance = -2
 			}
 		}
 	}

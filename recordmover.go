@@ -195,38 +195,6 @@ func (s *Server) readMoves(ctx context.Context) error {
 
 	s.config = data.(*pb.Config)
 
-	deleted := false
-
-	for _, m := range s.config.Moves {
-		if m.Record != nil {
-			m.Record = nil
-			deleted = true
-		}
-
-		if m.AfterContext.Before != nil {
-			m.AfterContext.Before = nil
-			deleted = true
-		}
-		if m.AfterContext.After != nil {
-			m.AfterContext.After = nil
-			deleted = true
-		}
-
-		if m.BeforeContext.Before != nil {
-			m.BeforeContext.Before = nil
-			deleted = true
-		}
-
-		if m.BeforeContext.After != nil {
-			m.BeforeContext.After = nil
-			deleted = true
-		}
-	}
-
-	if !deleted {
-		s.RaiseIssue(ctx, "Remove delete", "You can removes the data stanza now", false)
-	}
-
 	return nil
 }
 

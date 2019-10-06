@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	pbgd "github.com/brotherlogic/godiscogs"
 	pb "github.com/brotherlogic/recordmover/proto"
 	pbro "github.com/brotherlogic/recordsorganiser/proto"
 	"golang.org/x/net/context"
@@ -65,17 +64,7 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 			if i > 0 {
 				move.GetAfterContext().Location = location.GetFoundLocation().Name
 				move.GetAfterContext().Slot = location.GetFoundLocation().GetReleasesLocation()[i].Slot
-				resp, err := s.recordcollection.getRecords(ctx, &pbrc.GetRecordsRequest{Caller: "recordmover-refresh", Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId}}})
-
-				if err != nil {
-					return err
-				}
-
-				if len(resp.GetRecords()) != 1 {
-					return fmt.Errorf("Ambigous move")
-				}
-
-				move.GetAfterContext().BeforeInstance = resp.GetRecords()[0].GetRelease().InstanceId
+				move.GetAfterContext().BeforeInstance = location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId
 			} else {
 				move.AfterContext.BeforeInstance = -2
 			}
@@ -83,17 +72,7 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 			if i < len(location.GetFoundLocation().GetReleasesLocation())-1 {
 				move.GetAfterContext().Location = location.GetFoundLocation().Name
 				move.GetAfterContext().Slot = location.GetFoundLocation().GetReleasesLocation()[i].Slot
-
-				resp, err := s.recordcollection.getRecords(ctx, &pbrc.GetRecordsRequest{Caller: "recordmover-refresh2", Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: location.GetFoundLocation().GetReleasesLocation()[i+1].InstanceId}}})
-
-				if err != nil {
-					return err
-				}
-
-				if len(resp.GetRecords()) != 1 {
-					return fmt.Errorf("Ambigous move")
-				}
-				move.GetAfterContext().AfterInstance = resp.GetRecords()[0].GetRelease().InstanceId
+				move.GetAfterContext().AfterInstance = location.GetFoundLocation().GetReleasesLocation()[i+1].InstanceId
 
 			} else {
 				move.AfterContext.AfterInstance = -2

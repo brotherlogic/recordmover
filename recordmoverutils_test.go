@@ -319,54 +319,6 @@ func TestUpdateMoveFailLocate(t *testing.T) {
 	}
 }
 
-func TestUpdateMoveFailGetRecords(t *testing.T) {
-	s := InitTest()
-	s.recordcollection = &testCol{fail: true}
-	s.config.Moves = append(s.config.Moves, &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3})
-
-	s.refreshMoves(context.Background())
-
-	if s.config.Moves[0].AfterContext.AfterInstance != 0 {
-		t.Errorf("Update run: %v", s.config.Moves[0].AfterContext)
-	}
-}
-
-func TestUpdateMoveFailGetRecordsSecond(t *testing.T) {
-	s := InitTest()
-	s.recordcollection = &testCol{failSecond: true}
-	s.config.Moves = append(s.config.Moves, &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3})
-
-	s.refreshMoves(context.Background())
-
-	if s.config.Moves[0].AfterContext.AfterInstance != 0 {
-		t.Errorf("Update run: %v", s.config.Moves[0].AfterContext)
-	}
-}
-
-func TestUpdateMoveGetRecordsReturnsNone(t *testing.T) {
-	s := InitTest()
-	s.recordcollection = &testCol{noLocate: true}
-	s.config.Moves = append(s.config.Moves, &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3})
-
-	s.refreshMoves(context.Background())
-
-	if s.config.Moves[0].AfterContext.AfterInstance != 0 {
-		t.Errorf("Update run")
-	}
-}
-
-func TestUpdateMoveGetRecordsReturnsNoneSecond(t *testing.T) {
-	s := InitTest()
-	s.recordcollection = &testCol{noLocateSecond: true}
-	s.config.Moves = append(s.config.Moves, &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3})
-
-	s.refreshMoves(context.Background())
-
-	if s.config.Moves[0].AfterContext.AfterInstance != 0 {
-		t.Errorf("Update run")
-	}
-}
-
 func TestTriggerIncrement(t *testing.T) {
 	s := InitTest()
 

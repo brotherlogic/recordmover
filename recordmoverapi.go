@@ -30,9 +30,6 @@ func (s *Server) updateArchive(move *pb.RecordedMove) {
 
 // RecordMove moves a record
 func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveResponse, error) {
-	if in.GetMove().Record != nil {
-		return nil, fmt.Errorf("Do not specify the record in the move")
-	}
 	if in.GetMove().InstanceId == 0 {
 		return nil, fmt.Errorf("You need to supply an instance ID")
 	}

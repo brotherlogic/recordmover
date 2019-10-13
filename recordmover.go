@@ -14,7 +14,6 @@ import (
 	"google.golang.org/grpc"
 
 	pbcdp "github.com/brotherlogic/cdprocessor/proto"
-	pbgd "github.com/brotherlogic/godiscogs"
 	pbg "github.com/brotherlogic/goserver/proto"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pb "github.com/brotherlogic/recordmover/proto"
@@ -24,18 +23,17 @@ import (
 //Server main server type
 type Server struct {
 	*goserver.GoServer
-	getter           getter
-	lastProc         time.Time
-	lastCount        int64
-	cdproc           cdproc
-	organiser        organiser
-	recordcollection recordcollection
-	config           *pb.Config
-	lastArch         time.Duration
-	lastID           int32
-	lastIDCount      int
-	total            int
-	count            int
+	getter      getter
+	lastProc    time.Time
+	lastCount   int64
+	cdproc      cdproc
+	organiser   organiser
+	config      *pb.Config
+	lastArch    time.Duration
+	lastID      int32
+	lastIDCount int
+	total       int
+	count       int
 }
 
 // Init builds the server
@@ -47,7 +45,6 @@ func Init() *Server {
 		0,
 		&cdprocProd{},
 		&prodOrganiser{},
-		&prodRecordcollection{},
 		&pb.Config{},
 		0,
 		int32(0),
@@ -58,7 +55,6 @@ func Init() *Server {
 	s.getter = &prodGetter{s.DialMaster}
 	s.cdproc = &cdprocProd{s.DialMaster}
 	s.organiser = &prodOrganiser{s.DialMaster}
-	s.recordcollection = &prodRecordcollection{s.DialMaster}
 	return s
 }
 
@@ -66,25 +62,6 @@ const (
 	//ConfigKey is where we store the overall config
 	ConfigKey = "github.com/brotherlogic/recordmover/config"
 )
-
-type recordcollection interface {
-	getRecords(ctx context.Context, rec *pbrc.GetRecordsRequest) (*pbrc.GetRecordsResponse, error)
-}
-
-type prodRecordcollection struct {
-	dial func(server string) (*grpc.ClientConn, error)
-}
-
-func (p *prodRecordcollection) getRecords(ctx context.Context, req *pbrc.GetRecordsRequest) (*pbrc.GetRecordsResponse, error) {
-	conn, err := p.dial("recordcollection")
-	if err != nil {
-		return &pbrc.GetRecordsResponse{}, err
-	}
-	defer conn.Close()
-
-	client := pbrc.NewRecordCollectionServiceClient(conn)
-	return client.GetRecords(ctx, req)
-}
 
 type organiser interface {
 	reorgLocation(ctx context.Context, folder int32) error
@@ -200,21 +177,6 @@ func (s *Server) readMoves(ctx context.Context) error {
 
 func (s *Server) saveMoves(ctx context.Context) {
 	s.KSclient.Save(ctx, ConfigKey, s.config)
-}
-
-func (p prodGetter) getRecords(ctx context.Context) ([]*pbrc.Record, error) {
-	conn, err := p.dial("recordcollection")
-	if err != nil {
-		return nil, err
-	}
-	defer conn.Close()
-
-	client := pbrc.NewRecordCollectionServiceClient(conn)
-	resp, err := client.GetRecords(ctx, &pbrc.GetRecordsRequest{Caller: "recordmover", Filter: &pbrc.Record{Metadata: &pbrc.ReleaseMetadata{Dirty: false, MoveFolder: 0}, Release: &pbgd.Release{}}}, grpc.MaxCallRecvMsgSize(1024*1024*1024))
-	if err != nil {
-		return nil, err
-	}
-	return resp.GetRecords(), nil
 }
 
 func (p prodGetter) update(ctx context.Context, r *pbrc.Record) error {

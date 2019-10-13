@@ -6,8 +6,6 @@ import (
 
 	"golang.org/x/net/context"
 
-	pbgd "github.com/brotherlogic/godiscogs"
-	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pb "github.com/brotherlogic/recordmover/proto"
 	pbro "github.com/brotherlogic/recordsorganiser/proto"
 )
@@ -45,31 +43,11 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 			in.GetMove().GetBeforeContext().Slot = location.GetFoundLocation().GetReleasesLocation()[0].Slot
 
 			if i > 0 {
-				resp, err := s.recordcollection.getRecords(ctx, &pbrc.GetRecordsRequest{Caller: "recordmover-api1", Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId}}})
-
-				if err != nil {
-					return &pb.MoveResponse{}, err
-				}
-
-				if len(resp.GetRecords()) != 1 {
-					return &pb.MoveResponse{}, fmt.Errorf("Ambigous move")
-				}
-
-				in.GetMove().GetBeforeContext().BeforeInstance = resp.GetRecords()[0].GetRelease().InstanceId
+				in.GetMove().GetBeforeContext().BeforeInstance = location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId
 			}
 
 			if i < len(location.GetFoundLocation().GetReleasesLocation())-1 {
-				resp, err := s.recordcollection.getRecords(ctx, &pbrc.GetRecordsRequest{Caller: "recordmover-api2", Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: location.GetFoundLocation().GetReleasesLocation()[i+1].InstanceId}}})
-
-				if err != nil {
-					return &pb.MoveResponse{}, err
-				}
-
-				if len(resp.GetRecords()) != 1 {
-					return &pb.MoveResponse{}, fmt.Errorf("Ambigous move")
-				}
-
-				in.GetMove().GetBeforeContext().AfterInstance = resp.GetRecords()[0].GetRelease().InstanceId
+				in.GetMove().GetBeforeContext().AfterInstance = location.GetFoundLocation().GetReleasesLocation()[i+1].InstanceId
 			}
 
 		}

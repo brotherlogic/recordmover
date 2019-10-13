@@ -92,26 +92,6 @@ func (t *testOrg) locate(ctx context.Context, req *pbro.LocateRequest) (*pbro.Lo
 		}}}, nil
 }
 
-func TestAddWithRecordPullFail(t *testing.T) {
-	s := InitTest()
-	s.recordcollection = &testCol{fail: true}
-
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
-	if err == nil {
-		t.Fatalf("Move did not fail")
-	}
-}
-
-func TestAddWithRecordPullFailOnSecond(t *testing.T) {
-	s := InitTest()
-	s.recordcollection = &testCol{failSecond: true}
-
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
-	if err == nil {
-		t.Fatalf("Move did not fail")
-	}
-}
-
 func TestAddWithLocateFail(t *testing.T) {
 	s := InitTest()
 	s.organiser = &testOrg{emptyLocate: true}
@@ -125,26 +105,6 @@ func TestAddWithLocateFail(t *testing.T) {
 func TestAddWithLocateFailOne(t *testing.T) {
 	s := InitTest()
 	s.organiser = &testOrg{failLocate: true}
-
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
-	if err == nil {
-		t.Fatalf("Move did not fail")
-	}
-}
-
-func TestAddWithLocateEmpty(t *testing.T) {
-	s := InitTest()
-	s.recordcollection = &testCol{noLocate: true}
-
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
-	if err == nil {
-		t.Fatalf("Move did not fail")
-	}
-}
-
-func TestAddWithLocateEmptySecond(t *testing.T) {
-	s := InitTest()
-	s.recordcollection = &testCol{noLocateSecond: true}
 
 	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
 	if err == nil {

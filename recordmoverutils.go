@@ -28,7 +28,6 @@ func (s *Server) incrementCount(ctx context.Context, id int32) error {
 }
 
 type getter interface {
-	getRecords(ctx context.Context) ([]*pbrc.Record, error)
 	getRecordsSince(ctx context.Context, since int64) ([]int32, error)
 	getRecord(ctx context.Context, instanceID int32) (*pbrc.Record, error)
 	update(ctx context.Context, rec *pbrc.Record) error

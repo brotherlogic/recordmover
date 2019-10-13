@@ -10,7 +10,6 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
-	pbgd "github.com/brotherlogic/godiscogs"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pb "github.com/brotherlogic/recordmover/proto"
 	pbro "github.com/brotherlogic/recordsorganiser/proto"
@@ -32,15 +31,12 @@ func getRecord(ctx context.Context, instanceID int32) *pbrc.Record {
 	}
 
 	client := pbrc.NewRecordCollectionServiceClient(conn)
-	r, err := client.GetRecords(ctx, &pbrc.GetRecordsRequest{Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: instanceID}}})
+	r, err := client.GetRecord(ctx, &pbrc.GetRecordRequest{InstanceId: instanceID})
 	if err != nil {
 		log.Fatalf("Unable to get records: %v", err)
 	}
 
-	if len(r.GetRecords()) == 0 {
-		log.Fatalf("Unable to get record: %v", instanceID)
-	}
-	return r.GetRecords()[0]
+	return r.GetRecord()
 }
 
 func getFolder(ctx context.Context, folderID int32) (string, error) {
@@ -77,11 +73,11 @@ func getReleaseString(ctx context.Context, instanceID int32) string {
 	}
 
 	client := pbrc.NewRecordCollectionServiceClient(conn)
-	rel, err := client.GetRecords(ctx, &pbrc.GetRecordsRequest{Force: true, Filter: &pbrc.Record{Release: &pbgd.Release{InstanceId: instanceID}}})
+	rel, err := client.GetRecord(ctx, &pbrc.GetRecordRequest{InstanceId: instanceID})
 	if err != nil {
 		log.Fatalf("unable to get record: %v", err)
 	}
-	return rel.GetRecords()[0].GetRelease().Title + " [" + strconv.Itoa(int(instanceID)) + "]"
+	return rel.GetRecord().GetRelease().Title + " [" + strconv.Itoa(int(instanceID)) + "]"
 }
 
 func getLocation(ctx context.Context, rec *pbrc.Record) (string, error) {

@@ -147,7 +147,7 @@ func main() {
 		}
 		for _, move := range res.GetMoves() {
 			if len(os.Args) == 2 || strconv.Itoa(int(move.InstanceId)) == os.Args[2] {
-				fmt.Printf("Move %v\n", move.InstanceId)
+				fmt.Printf("Move %v\n", move)
 				fmt.Printf("BEFORE %v %v %v\n", move.BeforeContext.Location, move.BeforeContext.Before == nil, move.BeforeContext.After == nil)
 				fmt.Printf("AFTER %v %v %v\n", move.AfterContext.Location, move.AfterContext.Before == nil, move.AfterContext.After == nil)
 				if move.AfterContext.Before != nil {

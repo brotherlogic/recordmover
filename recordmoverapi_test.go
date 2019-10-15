@@ -112,65 +112,6 @@ func TestAddWithLocateFailOne(t *testing.T) {
 	}
 }
 
-func TestAddCausesUpdate(t *testing.T) {
-	s := InitTest()
-	testOrg := &testOrg{failCount: 100}
-	s.organiser = testOrg
-
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
-	if err != nil {
-		t.Fatalf("Error making move: %v", err)
-	}
-
-	if testOrg.reorgs != 2 {
-		t.Errorf("Moves have not caused reorgs")
-	}
-}
-
-func TestAddCausesUpdateMissingRecord(t *testing.T) {
-	s := InitTest()
-	testOrg := &testOrg{failCount: 100}
-	s.organiser = testOrg
-
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{FromFolder: 2, ToFolder: 3}})
-	if err == nil {
-		t.Fatalf("Move did not fail")
-	}
-}
-
-func TestAddCausesUpdateWithRecordSupplied(t *testing.T) {
-	s := InitTest()
-	testOrg := &testOrg{failCount: 100}
-	s.organiser = testOrg
-
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{Record: &pbrc.Record{}, FromFolder: 2, ToFolder: 3}})
-	if err == nil {
-		t.Fatalf("Move did not fail")
-	}
-}
-
-func TestAddCausesUpdateFail1(t *testing.T) {
-	s := InitTest()
-	testOrg := &testOrg{failCount: 1}
-	s.organiser = testOrg
-
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
-	if err == nil {
-		t.Fatalf("No error")
-	}
-}
-
-func TestAddCausesUpdateFail2(t *testing.T) {
-	s := InitTest()
-	testOrg := &testOrg{failCount: 2}
-	s.organiser = testOrg
-
-	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
-	if err == nil {
-		t.Fatalf("No error")
-	}
-}
-
 func TestAddDouble(t *testing.T) {
 	s := InitTest()
 
@@ -247,5 +188,16 @@ func TestForceUpdate(t *testing.T) {
 	_, err := s.ForceMove(context.Background(), &pb.ForceRequest{})
 	if err != nil {
 		t.Errorf("Bad force")
+	}
+}
+
+func TestAddCausesUpdateMissingRecord(t *testing.T) {
+	s := InitTest()
+	testOrg := &testOrg{failCount: 100}
+	s.organiser = testOrg
+
+	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{FromFolder: 2, ToFolder: 3}})
+	if err == nil {
+		t.Fatalf("Move did not fail")
 	}
 }

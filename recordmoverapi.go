@@ -61,15 +61,6 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 		return &pb.MoveResponse{}, nil
 	}
 
-	err = s.organiser.reorgLocation(ctx, in.Move.ToFolder)
-	if err != nil {
-		return &pb.MoveResponse{}, err
-	}
-	err = s.organiser.reorgLocation(ctx, in.Move.FromFolder)
-	if err != nil {
-		return &pb.MoveResponse{}, err
-	}
-
 	in.GetMove().MoveDate = time.Now().Unix()
 
 	// Overwrite existing move or create a new one

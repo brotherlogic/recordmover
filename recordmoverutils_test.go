@@ -83,6 +83,7 @@ func (t *testFailGetter) update(ctx context.Context, r *pbrc.Record) error {
 func InitTest() *Server {
 	s := Init()
 	s.SkipLog = true
+	s.SkipIssue = true
 	s.getter = &testGetter{rec: &pbrc.Record{Release: &pbgd.Release{InstanceId: 1}}}
 	s.GoServer.KSclient = *keystoreclient.GetTestClient("./testing")
 	s.cdproc = &testRipper{}

@@ -110,6 +110,7 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 
 func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error {
 	records, err := s.getter.getRecordsSince(ctx, s.config.LastPull)
+	s.Log(fmt.Sprintf("Found %v records since %v", len(records), time.Unix(s.config.LastPull, 0)))
 	s.total = len(records)
 
 	if err != nil {

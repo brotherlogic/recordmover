@@ -103,5 +103,10 @@ func (s *Server) ClearMove(ctx context.Context, in *pb.ClearRequest) (*pb.ClearR
 
 //ForceMove forces a move
 func (s *Server) ForceMove(ctx context.Context, in *pb.ForceRequest) (*pb.ForceResponse, error) {
-	return &pb.ForceResponse{}, s.moveRecordsHelper(ctx, in.InstanceId)
+	record, err := s.getter.getRecord(ctx, in.InstanceId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ForceResponse{}, s.moveRecordInternal(ctx, record)
 }

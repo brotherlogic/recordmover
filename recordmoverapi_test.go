@@ -190,6 +190,14 @@ func TestForceUpdate(t *testing.T) {
 		t.Errorf("Bad force")
 	}
 }
+func TestForceUpdateFail(t *testing.T) {
+	s := InitTest()
+	s.getter = &testGetter{failGet: true}
+	_, err := s.ForceMove(context.Background(), &pb.ForceRequest{})
+	if err == nil {
+		t.Errorf("Bad force")
+	}
+}
 
 func TestAddCausesUpdateMissingRecord(t *testing.T) {
 	s := InitTest()

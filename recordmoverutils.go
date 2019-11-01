@@ -34,16 +34,19 @@ type getter interface {
 }
 
 func (s *Server) refreshMoves(ctx context.Context) error {
+	save := false
 	for _, r := range s.config.Moves {
 		if time.Now().Sub(time.Unix(r.LastUpdate, 0)) > time.Hour {
 			err := s.refreshMove(ctx, r)
 			if err == nil {
-				s.saveMoves(ctx)
-				return nil
+				save = true
 			}
 		}
 	}
 
+	if save {
+		s.saveMoves(ctx)
+	}
 	return nil
 }
 

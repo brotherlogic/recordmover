@@ -152,6 +152,8 @@ func main() {
 				if move.AfterContext != nil {
 					fmt.Printf("AFTER %v %v %v\n", move.AfterContext.Location, move.AfterContext.Before == nil, move.AfterContext.After == nil)
 				}
+				move.Record = &pbrc.Record{}
+				fmt.Printf("RAW: %v\n", move)
 			}
 		}
 	case "getclear":

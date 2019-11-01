@@ -48,7 +48,7 @@ func (s *Server) refreshMoves(ctx context.Context) error {
 }
 
 func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
-	s.Log(fmt.Sprintf("Refreshing: %b", move.InstanceId))
+	s.Log(fmt.Sprintf("Refreshing: %v", move.InstanceId))
 	location, err := s.organiser.locate(ctx, &pbro.LocateRequest{InstanceId: move.InstanceId})
 
 	if err != nil {

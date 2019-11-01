@@ -93,6 +93,7 @@ func (s *Server) moveRecords(ctx context.Context) error {
 
 func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) error {
 	update, rule := s.moveRecord(ctx, record)
+	s.Log(fmt.Sprintf("MOVED: %v, %v", update, rule))
 	if update != nil {
 		err := s.getter.update(ctx, update)
 		if err != nil {

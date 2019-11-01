@@ -187,7 +187,7 @@ func TestForceUpdate(t *testing.T) {
 	s := InitTest()
 	_, err := s.ForceMove(context.Background(), &pb.ForceRequest{})
 	if err != nil {
-		t.Errorf("Bad force")
+		t.Errorf("Bad force: %v", err)
 	}
 }
 func TestForceUpdateFail(t *testing.T) {

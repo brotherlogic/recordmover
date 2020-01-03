@@ -267,7 +267,11 @@ func main() {
 	server.PrepServer()
 	server.Register = server
 
-	server.RegisterServer("recordmover", false)
+	err := server.RegisterServerV2("recordmover", false, false)
+	if err != nil {
+		return
+	}
+
 	server.RegisterRepeatingTask(server.moveRecords, "move_records", time.Minute*5)
 	server.RegisterRepeatingTask(server.refreshMoves, "refresh_moves", time.Minute)
 

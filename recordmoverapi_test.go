@@ -86,9 +86,9 @@ func (t *testOrg) locate(ctx context.Context, req *pbro.LocateRequest) (*pbro.Lo
 
 	return &pbro.LocateResponse{FoundLocation: &pbro.Location{Name: "madeup",
 		ReleasesLocation: []*pbro.ReleasePlacement{
-			&pbro.ReleasePlacement{InstanceId: 10},
-			&pbro.ReleasePlacement{InstanceId: 1},
-			&pbro.ReleasePlacement{InstanceId: 20},
+			&pbro.ReleasePlacement{InstanceId: 10, Slot: 1},
+			&pbro.ReleasePlacement{InstanceId: 1, Slot: 2},
+			&pbro.ReleasePlacement{InstanceId: 20, Slot: 3},
 		}}}, nil
 }
 

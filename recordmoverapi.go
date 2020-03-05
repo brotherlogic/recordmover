@@ -36,24 +36,23 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 		return &pb.MoveResponse{}, err
 	}
 
+	newBefore := &pb.Context{}
 	for i, r := range location.GetFoundLocation().GetReleasesLocation() {
 		if r.GetInstanceId() == in.GetMove().InstanceId {
-			in.GetMove().BeforeContext = &pb.Context{}
-			in.GetMove().GetBeforeContext().Location = location.GetFoundLocation().Name
-			in.GetMove().GetBeforeContext().Slot = location.GetFoundLocation().GetReleasesLocation()[0].Slot
+			newBefore.Location = location.GetFoundLocation().Name
+			newBefore.Slot = location.GetFoundLocation().GetReleasesLocation()[0].Slot
 
 			if i > 0 {
-				in.GetMove().GetBeforeContext().BeforeInstance = location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId
+				newBefore.BeforeInstance = location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId
 			}
 
 			if i < len(location.GetFoundLocation().GetReleasesLocation())-1 {
-				in.GetMove().GetBeforeContext().AfterInstance = location.GetFoundLocation().GetReleasesLocation()[i+1].InstanceId
+				newBefore.AfterInstance = location.GetFoundLocation().GetReleasesLocation()[i+1].InstanceId
 			}
-
 		}
 	}
 
-	if in.GetMove().GetBeforeContext() == nil {
+	if newBefore.GetSlot() == 0 {
 		return &pb.MoveResponse{}, fmt.Errorf("Unable to define before context: %v, given %v locations", in.GetMove().InstanceId, len(location.GetFoundLocation().GetReleasesLocation()))
 	}
 
@@ -71,7 +70,9 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 			s.config.Moves[i] = in.GetMove()
 		}
 	}
+
 	if !found {
+		in.GetMove().BeforeContext = newBefore
 		s.config.Moves = append(s.config.Moves, in.GetMove())
 	}
 

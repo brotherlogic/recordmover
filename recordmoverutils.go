@@ -52,6 +52,19 @@ func (s *Server) refreshMoves(ctx context.Context) error {
 
 func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 	s.Log(fmt.Sprintf("Refreshing: %v", move.InstanceId))
+
+	//Hydrate the origin
+	if move.GetBeforeContext().GetLocation() == "" {
+		loc, err := s.organiser.locate(ctx, &pbro.LocateRequest{FolderId: move.GetToFolder()})
+		if err != nil {
+			return err
+		}
+		if move.GetBeforeContext() == nil {
+			move.BeforeContext = &pb.Context{}
+		}
+		move.GetBeforeContext().Location = loc.GetFoundLocation().GetName()
+	}
+
 	location, err := s.organiser.locate(ctx, &pbro.LocateRequest{InstanceId: move.InstanceId})
 
 	if err != nil {

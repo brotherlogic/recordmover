@@ -194,7 +194,7 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (*pbrc.Record, 
 		return r, "GPLAY"
 	}
 
-	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_DIGITAL && (r.GetRelease().FolderId != 268147 && r.GetMetadata().MoveFolder != 268147) {
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_DIGITAL && (r.GetRelease().FolderId != 268147 && r.GetMetadata().MoveFolder != 268147) && r.GetRelease().FolderId != 1433217 {
 		r.GetMetadata().MoveFolder = 268147
 		return r, "DIGITAL"
 	}

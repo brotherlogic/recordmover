@@ -374,3 +374,12 @@ func TestCanMoveCD(t *testing.T) {
 		t.Errorf("Should not be able to move dirty record")
 	}
 }
+
+func TestMoveFailOnAfterLocatePull(t *testing.T) {
+	s := InitTest()
+	s.organiser = &testOrg{failLocate: true}
+	err := s.refreshMove(context.Background(), &pb.RecordMove{InstanceId: 12, BeforeContext: &pb.Context{Location: "blah"}})
+	if err == nil {
+		t.Errorf("Should have failed")
+	}
+}

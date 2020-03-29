@@ -96,10 +96,6 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 		}
 	}
 
-	if move.GetAfterContext() != nil && move.GetAfterContext().Location != "" {
-		s.updateArchive(&pb.RecordedMove{InstanceId: move.InstanceId, MoveLocation: move.GetAfterContext().Location, MoveTime: time.Now().Unix()})
-	}
-
 	move.LastUpdate = time.Now().Unix()
 	return nil
 }
@@ -111,6 +107,13 @@ func (s *Server) moveRecords(ctx context.Context) error {
 func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) error {
 	update, rule := s.moveRecord(ctx, record)
 	s.Log(fmt.Sprintf("MOVED: %v, %v", update, rule))
+	s.updateArchive(ctx, &pb.RecordedMove{
+		InstanceId: record.GetRelease().GetInstanceId(),
+		From:       record.GetRelease().GetFolderId(),
+		To:         update.GetMetadata().GetMoveFolder(),
+		MoveTime:   time.Now().Unix(),
+		Rule:       rule,
+	})
 	if update != nil {
 		err := s.getter.update(ctx, update)
 		if err != nil {

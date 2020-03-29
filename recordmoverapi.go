@@ -10,7 +10,7 @@ import (
 	pbro "github.com/brotherlogic/recordsorganiser/proto"
 )
 
-func (s *Server) updateArchive(move *pb.RecordedMove) {
+func (s *Server) updateArchive(ctx context.Context, move *pb.RecordedMove) {
 	t := time.Now()
 	newMove := true
 	for _, archMove := range s.config.MoveArchive {
@@ -24,6 +24,7 @@ func (s *Server) updateArchive(move *pb.RecordedMove) {
 	}
 
 	s.lastArch = time.Now().Sub(t)
+	s.saveMoves(ctx)
 }
 
 // RecordMove moves a record

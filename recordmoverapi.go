@@ -11,19 +11,7 @@ import (
 )
 
 func (s *Server) updateArchive(ctx context.Context, move *pb.RecordedMove) {
-	t := time.Now()
-	newMove := true
-	for _, archMove := range s.config.MoveArchive {
-		if archMove.InstanceId == move.InstanceId && archMove.MoveLocation == move.MoveLocation {
-			newMove = false
-		}
-	}
-
-	if newMove {
-		s.config.MoveArchive = append(s.config.MoveArchive, move)
-	}
-
-	s.lastArch = time.Now().Sub(t)
+	s.config.MoveArchive = append(s.config.MoveArchive, move)
 	s.saveMoves(ctx)
 }
 

@@ -62,7 +62,9 @@ message MoveRequest {
 
 message MoveResponse {}
 
-message ListRequest {}
+message ListRequest {
+  int32 instance_id = 1;
+}
 
 message ListResponse {
   repeated RecordMove moves = 1;

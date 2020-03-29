@@ -71,9 +71,16 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 
 // ListMoves list the moves made
 func (s *Server) ListMoves(ctx context.Context, in *pb.ListRequest) (*pb.ListResponse, error) {
-	resp := &pb.ListResponse{Moves: make([]*pb.RecordMove, 0), Archives: s.config.MoveArchive}
+	resp := &pb.ListResponse{Moves: make([]*pb.RecordMove, 0), Archives: make([]*pb.RecordedMove, 0)}
 	for _, move := range s.config.Moves {
-		resp.Moves = append(resp.Moves, move)
+		if move.GetInstanceId() == in.GetInstanceId() {
+			resp.Moves = append(resp.Moves, move)
+		}
+	}
+	for _, move := range s.config.MoveArchive {
+		if move.GetInstanceId() == in.GetInstanceId() {
+			resp.Archives = append(resp.Archives, move)
+		}
 	}
 	return resp, nil
 }

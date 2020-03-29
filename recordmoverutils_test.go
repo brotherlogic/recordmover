@@ -253,12 +253,20 @@ func TestUpdateFreshmanToFilled(t *testing.T) {
 
 func TestUpdateRipThenSellToListeningPile(t *testing.T) {
 	s := InitTest()
-	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{GoalFolder: 820, Category: pbrc.ReleaseMetadata_RIP_THEN_SELL}}}
+	tg := testGetter{rec: &pbrc.Record{Release: &pbgd.Release{InstanceId: 12, FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{GoalFolder: 820, Category: pbrc.ReleaseMetadata_RIP_THEN_SELL}}}
 	s.getter = &tg
 	s.moveRecords(context.Background())
 
 	if tg.rec.GetMetadata().MoveFolder != 812802 {
 		t.Errorf("RIP THEN SELL has not been moved correctly: %v", tg.rec)
+	}
+
+	moves, err := s.ListMoves(context.Background(), &pb.ListRequest{InstanceId: 12})
+	if err != nil {
+		t.Fatalf("ERR: %v", err)
+	}
+	if len(moves.GetArchives()) == 0 {
+		t.Errorf("Bad archival recording: %v", moves)
 	}
 }
 

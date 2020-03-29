@@ -139,7 +139,7 @@ func TestRunThrough(t *testing.T) {
 		t.Fatalf("Error moving record: %v", err)
 	}
 
-	moves, err := s.ListMoves(context.Background(), &pb.ListRequest{})
+	moves, err := s.ListMoves(context.Background(), &pb.ListRequest{InstanceId: 1})
 
 	if err != nil {
 		t.Fatalf("Error listing records: %v", err)

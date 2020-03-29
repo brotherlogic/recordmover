@@ -12,7 +12,7 @@ func TestUpdatingMove(t *testing.T) {
 
 	_, err := s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3}})
 
-	moves, err := s.ListMoves(context.Background(), &pb.ListRequest{})
+	moves, err := s.ListMoves(context.Background(), &pb.ListRequest{InstanceId: 1})
 
 	if err != nil {
 		t.Fatalf("Error listing records: %v", err)
@@ -25,7 +25,7 @@ func TestUpdatingMove(t *testing.T) {
 	//Move this record to a different folder
 	_, err = s.RecordMove(context.Background(), &pb.MoveRequest{Move: &pb.RecordMove{InstanceId: 1, FromFolder: 3, ToFolder: 5}})
 
-	moves, err = s.ListMoves(context.Background(), &pb.ListRequest{})
+	moves, err = s.ListMoves(context.Background(), &pb.ListRequest{InstanceId: 1})
 
 	if err != nil {
 		t.Fatalf("Error listing records: %v", err)
@@ -34,5 +34,4 @@ func TestUpdatingMove(t *testing.T) {
 	if len(moves.GetMoves()) != 1 || moves.GetMoves()[0].MoveDate <= 0 || moves.GetMoves()[0].InstanceId != 1 {
 		t.Fatalf("Move has not been updated problem: %v", moves)
 	}
-
 }

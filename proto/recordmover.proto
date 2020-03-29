@@ -13,6 +13,15 @@ message RecordedMove {
 
   // The eventual destination of the move
   string move_location = 3;
+
+  // The initial location of the move
+  string move_start = 4;
+
+  // The rule applied to make the move
+  string rule = 5;
+
+  int32 from = 6;
+  int32 to = 7;
 }
 
 message Config {

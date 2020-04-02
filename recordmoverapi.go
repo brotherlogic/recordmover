@@ -73,7 +73,7 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 func (s *Server) ListMoves(ctx context.Context, in *pb.ListRequest) (*pb.ListResponse, error) {
 	resp := &pb.ListResponse{Moves: make([]*pb.RecordMove, 0), Archives: make([]*pb.RecordedMove, 0)}
 	for _, move := range s.config.Moves {
-		if move.GetInstanceId() == in.GetInstanceId() {
+		if in.GetInstanceId() == 0 || move.GetInstanceId() == in.GetInstanceId() {
 			resp.Moves = append(resp.Moves, move)
 		}
 	}

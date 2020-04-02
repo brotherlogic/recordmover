@@ -55,7 +55,7 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 
 	//Hydrate the origin
 	if move.GetBeforeContext().GetLocation() == "" {
-		loc, err := s.organiser.locate(ctx, &pbro.LocateRequest{FolderId: move.GetToFolder()})
+		loc, err := s.organiser.locate(ctx, &pbro.LocateRequest{FolderId: move.GetFromFolder()})
 		if err != nil {
 			return err
 		}

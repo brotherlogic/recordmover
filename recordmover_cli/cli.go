@@ -132,16 +132,12 @@ func main() {
 	defer cancel()
 
 	switch os.Args[1] {
-	case "archive":
-		res, err := client.ListMoves(ctx, &pb.ListRequest{})
-		if err != nil {
-			log.Fatalf("Error on GET: %v", err)
-		}
-		for _, move := range res.GetArchives() {
-			fmt.Printf("%v", move)
-		}
 	case "get":
-		res, err := client.ListMoves(ctx, &pb.ListRequest{})
+		v, err := strconv.Atoi(os.Args[2])
+		if err != nil {
+			log.Fatalf("%v", err)
+		}
+		res, err := client.ListMoves(ctx, &pb.ListRequest{InstanceId: int32(v)})
 		if err != nil {
 			log.Fatalf("Error on GET: %v", err)
 		}
@@ -155,6 +151,9 @@ func main() {
 				move.Record = &pbrc.Record{}
 				fmt.Printf("RAW: %v\n", move)
 			}
+		}
+		for _, move := range res.GetArchives() {
+			fmt.Printf("%v\n", move)
 		}
 	case "getclear":
 		foldermap := make(map[int32]string)

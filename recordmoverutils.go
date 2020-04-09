@@ -177,6 +177,11 @@ func (s *Server) canMove(ctx context.Context, r *pbrc.Record) error {
 		return nil
 	}
 
+	if r.GetMetadata().GetMatch() == pbrc.ReleaseMetadata_MATCH_UNKNOWN {
+		s.RaiseIssue(ctx, "Missing match", fmt.Sprintf("%v is missing match information", r.GetRelease().GetInstanceId()), false)
+		return fmt.Errorf("Missing match: %v", r.GetRelease().GetInstanceId())
+	}
+
 	// Only check for non GOOGLE_PLAY releases
 	if r.GetMetadata().GetCategory() != pbrc.ReleaseMetadata_GOOGLE_PLAY && r.GetMetadata().GetCategory() != pbrc.ReleaseMetadata_BANDCAMP {
 		for _, f := range r.GetRelease().GetFormats() {

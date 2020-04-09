@@ -29,7 +29,7 @@ func (t *testCol) getRecords(ctx context.Context, rec *pbrc.GetRecordsRequest) (
 	}
 
 	t.count++
-	return &pbrc.GetRecordsResponse{Records: []*pbrc.Record{&pbrc.Record{Release: &pbgd.Release{InstanceId: rec.Filter.Release.InstanceId}}}}, nil
+	return &pbrc.GetRecordsResponse{Records: []*pbrc.Record{&pbrc.Record{Release: &pbgd.Release{InstanceId: rec.Filter.Release.InstanceId}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH}}}}, nil
 
 }
 

@@ -139,7 +139,6 @@ func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error 
 	}
 
 	s.count = 0
-	badRecords := []int32{}
 	for _, id := range records {
 		record, err := s.getter.getRecord(ctx, id)
 		if err != nil {
@@ -151,14 +150,9 @@ func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error 
 				err := s.moveRecordInternal(ctx, record)
 				if err != nil {
 					s.Log(fmt.Sprintf("Unable to move %v -> %v", record.GetRelease().InstanceId, err))
-					badRecords = append(badRecords, record.GetRelease().InstanceId)
 				}
 			}
 		}
-	}
-
-	if len(badRecords) > 0 {
-		s.RaiseIssue(ctx, "Stuck Records", fmt.Sprintf("%v are all stuck", badRecords), false)
 	}
 
 	s.config.LastPull = time.Now().Unix()

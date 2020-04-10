@@ -16,6 +16,7 @@ import (
 	pbcdp "github.com/brotherlogic/cdprocessor/proto"
 	pbg "github.com/brotherlogic/goserver/proto"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
+	rmpb "github.com/brotherlogic/recordmatcher/proto"
 	pb "github.com/brotherlogic/recordmover/proto"
 	pbro "github.com/brotherlogic/recordsorganiser/proto"
 )
@@ -34,6 +35,7 @@ type Server struct {
 	lastIDCount int
 	total       int
 	count       int
+	testing     bool
 }
 
 // Init builds the server
@@ -51,6 +53,7 @@ func Init() *Server {
 		0,
 		0,
 		0,
+		false,
 	}
 	s.getter = &prodGetter{s.DialMaster}
 	s.cdproc = &cdprocProd{s.DialMaster}
@@ -160,6 +163,20 @@ func (p *prodGetter) getRecord(ctx context.Context, instanceID int32) (*pbrc.Rec
 	}
 
 	return resp.GetRecord(), err
+}
+
+func (s *Server) forceMatch(ctx context.Context, ID int32) {
+	if s.testing {
+		return
+	}
+	conn, err := s.NewBaseDial("recordmatcher")
+	if err != nil {
+		return
+	}
+	defer conn.Close()
+
+	client := rmpb.NewRecordMatcherServiceClient(conn)
+	client.Match(ctx, &rmpb.MatchRequest{InstanceId: ID})
 }
 
 func (s *Server) readMoves(ctx context.Context) error {

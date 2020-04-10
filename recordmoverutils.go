@@ -178,7 +178,7 @@ func (s *Server) canMove(ctx context.Context, r *pbrc.Record) error {
 	}
 
 	if r.GetMetadata().GetMatch() == pbrc.ReleaseMetadata_MATCH_UNKNOWN {
-		s.RaiseIssue(ctx, "Missing match", fmt.Sprintf("%v is missing match information", r.GetRelease().GetInstanceId()), false)
+		s.forceMatch(ctx, r.GetRelease().GetInstanceId())
 		return fmt.Errorf("Missing match: %v", r.GetRelease().GetInstanceId())
 	}
 

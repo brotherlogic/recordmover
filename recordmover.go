@@ -58,6 +58,7 @@ func Init() *Server {
 	s.getter = &prodGetter{s.DialMaster}
 	s.cdproc = &cdprocProd{s.DialMaster}
 	s.organiser = &prodOrganiser{s.DialMaster}
+	s.config.NextUpdateTime = make(map[int32]int64)
 	return s
 }
 
@@ -192,8 +193,8 @@ func (s *Server) readMoves(ctx context.Context) error {
 	return nil
 }
 
-func (s *Server) saveMoves(ctx context.Context) {
-	s.KSclient.Save(ctx, ConfigKey, s.config)
+func (s *Server) saveMoves(ctx context.Context) error {
+	return s.KSclient.Save(ctx, ConfigKey, s.config)
 }
 
 func (p prodGetter) update(ctx context.Context, r *pbrc.Record) error {
@@ -256,6 +257,7 @@ func (s *Server) GetState() []*pbg.State {
 
 	return []*pbg.State{
 		&pbg.State{Key: "last_pull", TimeValue: s.config.LastPull},
+		&pbg.State{Key: "moves", Text: fmt.Sprintf("%v", s.config.GetNextUpdateTime())},
 		&pbg.State{Key: "config_size", Value: int64(proto.Size(s.config))},
 		&pbg.State{Key: "progress", Text: fmt.Sprintf("%v / %v", s.count, s.total)},
 		&pbg.State{Key: "last_id_count", Value: int64(s.lastIDCount)},
@@ -290,6 +292,7 @@ func main() {
 	}
 
 	server.RegisterRepeatingTask(server.moveRecords, "move_records", time.Minute*5)
+	server.RegisterRepeatingTask(server.doTheMove, "do_the_move", time.Minute)
 	server.RegisterRepeatingTask(server.refreshMoves, "refresh_moves", time.Minute)
 
 	fmt.Printf("%v\n", server.Serve())

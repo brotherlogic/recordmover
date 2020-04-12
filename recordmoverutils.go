@@ -161,7 +161,7 @@ func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error 
 		s.count++
 		if record.GetMetadata() != nil && !record.GetMetadata().Dirty {
 			if instanceID == 0 || record.GetRelease().InstanceId == instanceID {
-				s.config.NextUpdateTime[instanceID] = time.Now().Unix()
+				s.config.NextUpdateTime[record.GetRelease().GetInstanceId()] = time.Now().Unix()
 			}
 		}
 	}

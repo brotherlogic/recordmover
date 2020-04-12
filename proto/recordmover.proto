@@ -28,6 +28,7 @@ message Config {
   repeated RecordMove moves = 1;
   repeated RecordedMove move_archive = 2;
   int64 last_pull = 3;
+  map<int32, int64> next_update_time = 4;
 }
 
 message Context {

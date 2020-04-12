@@ -120,6 +120,7 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 			return err
 		}
 		s.incrementCount(ctx, record.GetRelease().InstanceId)
+		delete(s.config.GetNextUpdateTime(), record.GetRelease().GetInstanceId())
 	} else {
 		if len(rule) > 0 {
 			return fmt.Errorf("Unable to move record: %v", rule)
@@ -127,6 +128,19 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 	}
 
 	return nil
+}
+
+func (s *Server) doTheMove(ctx context.Context) error {
+	for iid, tim := range s.config.GetNextUpdateTime() {
+		if time.Unix(tim, 0).Before(time.Now()) {
+			record, err := s.getter.getRecord(ctx, iid)
+			if err == nil {
+				return s.moveRecordInternal(ctx, record)
+			}
+		}
+	}
+
+	return s.saveMoves(ctx)
 }
 
 func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error {
@@ -147,10 +161,7 @@ func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error 
 		s.count++
 		if record.GetMetadata() != nil && !record.GetMetadata().Dirty {
 			if instanceID == 0 || record.GetRelease().InstanceId == instanceID {
-				err := s.moveRecordInternal(ctx, record)
-				if err != nil {
-					s.Log(fmt.Sprintf("Unable to move %v -> %v", record.GetRelease().InstanceId, err))
-				}
+				s.config.NextUpdateTime[instanceID] = time.Now().Unix()
 			}
 		}
 	}

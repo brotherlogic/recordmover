@@ -192,6 +192,7 @@ func (s *Server) readMoves(ctx context.Context) error {
 	if s.config.GetNextUpdateTime() == nil {
 		s.config.NextUpdateTime = make(map[int32]int64)
 	}
+	delete(s.config.NextUpdateTime, 0)
 
 	return nil
 }

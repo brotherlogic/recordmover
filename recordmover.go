@@ -292,7 +292,7 @@ func main() {
 	}
 
 	server.RegisterRepeatingTask(server.moveRecords, "move_records", time.Minute*5)
-	server.RegisterRepeatingTask(server.doTheMove, "do_the_move", time.Minute)
+	//server.RegisterRepeatingTask(server.doTheMove, "do_the_move", time.Minute)
 	server.RegisterRepeatingTask(server.refreshMoves, "refresh_moves", time.Minute)
 
 	fmt.Printf("%v\n", server.Serve())

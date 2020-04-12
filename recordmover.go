@@ -189,6 +189,9 @@ func (s *Server) readMoves(ctx context.Context) error {
 	}
 
 	s.config = data.(*pb.Config)
+	if s.config.GetNextUpdateTime() == nil {
+		s.config.NextUpdateTime = make(map[int32]int64)
+	}
 
 	return nil
 }

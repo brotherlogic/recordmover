@@ -4,6 +4,8 @@ package recordmover;
 
 import "github.com/brotherlogic/recordcollection/proto/recordcollection.proto";
 
+option go_package = ".;recordmover";
+
 message RecordedMove {
   // The record being moved
   int32 instance_id = 1;

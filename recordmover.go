@@ -14,6 +14,7 @@ import (
 	"google.golang.org/grpc"
 
 	pbcdp "github.com/brotherlogic/cdprocessor/proto"
+	gdpb "github.com/brotherlogic/godiscogs"
 	pbg "github.com/brotherlogic/goserver/proto"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 	rmpb "github.com/brotherlogic/recordmatcher/proto"
@@ -201,7 +202,7 @@ func (s *Server) saveMoves(ctx context.Context) error {
 	return s.KSclient.Save(ctx, ConfigKey, s.config)
 }
 
-func (p prodGetter) update(ctx context.Context, r *pbrc.Record) error {
+func (p prodGetter) update(ctx context.Context, instanceID int32, reason string, folder int32) error {
 	conn, err := p.dial("recordcollection")
 	if err != nil {
 		return err
@@ -209,7 +210,7 @@ func (p prodGetter) update(ctx context.Context, r *pbrc.Record) error {
 	defer conn.Close()
 
 	client := pbrc.NewRecordCollectionServiceClient(conn)
-	_, err = client.UpdateRecord(ctx, &pbrc.UpdateRecordRequest{Requestor: "recordmover", Update: r})
+	_, err = client.UpdateRecord(ctx, &pbrc.UpdateRecordRequest{Reason: fmt.Sprintf("recordmover-%v", reason), Update: &pbrc.Record{Release: &gdpb.Release{InstanceId: instanceID}, Metadata: &pbrc.ReleaseMetadata{MoveFolder: folder}}})
 	if err != nil {
 		return err
 	}

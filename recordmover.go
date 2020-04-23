@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"sync"
 	"time"
 
 	"github.com/brotherlogic/goserver"
@@ -37,6 +38,7 @@ type Server struct {
 	total       int
 	count       int
 	testing     bool
+	configMutex *sync.Mutex
 }
 
 // Init builds the server
@@ -55,6 +57,7 @@ func Init() *Server {
 		0,
 		0,
 		false,
+		&sync.Mutex{},
 	}
 	s.getter = &prodGetter{s.DialMaster}
 	s.cdproc = &cdprocProd{s.DialMaster}

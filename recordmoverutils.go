@@ -101,6 +101,8 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 }
 
 func (s *Server) moveRecords(ctx context.Context) error {
+	s.configMutex.Lock()
+	defer s.configMutex.Unlock()
 	return s.moveRecordsHelper(ctx, 0)
 }
 
@@ -131,6 +133,9 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 }
 
 func (s *Server) doTheMove(ctx context.Context) error {
+	s.configMutex.Lock()
+	defer s.configMutex.Unlock()
+
 	for iid, tim := range s.config.GetNextUpdateTime() {
 		if time.Unix(tim, 0).Before(time.Now()) {
 			record, err := s.getter.getRecord(ctx, iid)

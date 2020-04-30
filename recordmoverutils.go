@@ -4,16 +4,18 @@ import (
 	"fmt"
 	"time"
 
-	pb "github.com/brotherlogic/recordmover/proto"
-	pbro "github.com/brotherlogic/recordsorganiser/proto"
 	"golang.org/x/net/context"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	pbrc "github.com/brotherlogic/recordcollection/proto"
+	pb "github.com/brotherlogic/recordmover/proto"
+	pbro "github.com/brotherlogic/recordsorganiser/proto"
 )
 
 func (s *Server) addToArchive(ctx context.Context, move *pb.RecordedMove) error {
 	moves, err := s.readMoveArchive(ctx, move.GetInstanceId())
-	if err != nil {
+	if status.Convert(err).Code() != codes.NotFound {
 		return err
 	}
 

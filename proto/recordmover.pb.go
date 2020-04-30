@@ -201,6 +201,53 @@ func (x *Config) GetNextUpdateTime() map[int32]int64 {
 	return nil
 }
 
+type MoveArchive struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Moves []*RecordedMove `protobuf:"bytes,1,rep,name=moves,proto3" json:"moves,omitempty"`
+}
+
+func (x *MoveArchive) Reset() {
+	*x = MoveArchive{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_recordmover_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MoveArchive) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MoveArchive) ProtoMessage() {}
+
+func (x *MoveArchive) ProtoReflect() protoreflect.Message {
+	mi := &file_recordmover_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MoveArchive.ProtoReflect.Descriptor instead.
+func (*MoveArchive) Descriptor() ([]byte, []int) {
+	return file_recordmover_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *MoveArchive) GetMoves() []*RecordedMove {
+	if x != nil {
+		return x.Moves
+	}
+	return nil
+}
+
 type Context struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -217,7 +264,7 @@ type Context struct {
 func (x *Context) Reset() {
 	*x = Context{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_recordmover_proto_msgTypes[2]
+		mi := &file_recordmover_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -230,7 +277,7 @@ func (x *Context) String() string {
 func (*Context) ProtoMessage() {}
 
 func (x *Context) ProtoReflect() protoreflect.Message {
-	mi := &file_recordmover_proto_msgTypes[2]
+	mi := &file_recordmover_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -243,7 +290,7 @@ func (x *Context) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Context.ProtoReflect.Descriptor instead.
 func (*Context) Descriptor() ([]byte, []int) {
-	return file_recordmover_proto_rawDescGZIP(), []int{2}
+	return file_recordmover_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *Context) GetBefore() *proto1.Record {
@@ -306,7 +353,7 @@ type RecordMove struct {
 func (x *RecordMove) Reset() {
 	*x = RecordMove{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_recordmover_proto_msgTypes[3]
+		mi := &file_recordmover_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -319,7 +366,7 @@ func (x *RecordMove) String() string {
 func (*RecordMove) ProtoMessage() {}
 
 func (x *RecordMove) ProtoReflect() protoreflect.Message {
-	mi := &file_recordmover_proto_msgTypes[3]
+	mi := &file_recordmover_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -332,7 +379,7 @@ func (x *RecordMove) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RecordMove.ProtoReflect.Descriptor instead.
 func (*RecordMove) Descriptor() ([]byte, []int) {
-	return file_recordmover_proto_rawDescGZIP(), []int{3}
+	return file_recordmover_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *RecordMove) GetInstanceId() int32 {
@@ -402,7 +449,7 @@ type Moves struct {
 func (x *Moves) Reset() {
 	*x = Moves{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_recordmover_proto_msgTypes[4]
+		mi := &file_recordmover_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -415,7 +462,7 @@ func (x *Moves) String() string {
 func (*Moves) ProtoMessage() {}
 
 func (x *Moves) ProtoReflect() protoreflect.Message {
-	mi := &file_recordmover_proto_msgTypes[4]
+	mi := &file_recordmover_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -428,7 +475,7 @@ func (x *Moves) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Moves.ProtoReflect.Descriptor instead.
 func (*Moves) Descriptor() ([]byte, []int) {
-	return file_recordmover_proto_rawDescGZIP(), []int{4}
+	return file_recordmover_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *Moves) GetMoves() []*RecordMove {
@@ -449,7 +496,7 @@ type MoveRequest struct {
 func (x *MoveRequest) Reset() {
 	*x = MoveRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_recordmover_proto_msgTypes[5]
+		mi := &file_recordmover_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -462,7 +509,7 @@ func (x *MoveRequest) String() string {
 func (*MoveRequest) ProtoMessage() {}
 
 func (x *MoveRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_recordmover_proto_msgTypes[5]
+	mi := &file_recordmover_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -475,7 +522,7 @@ func (x *MoveRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MoveRequest.ProtoReflect.Descriptor instead.
 func (*MoveRequest) Descriptor() ([]byte, []int) {
-	return file_recordmover_proto_rawDescGZIP(), []int{5}
+	return file_recordmover_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *MoveRequest) GetMove() *RecordMove {
@@ -494,7 +541,7 @@ type MoveResponse struct {
 func (x *MoveResponse) Reset() {
 	*x = MoveResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_recordmover_proto_msgTypes[6]
+		mi := &file_recordmover_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -507,7 +554,7 @@ func (x *MoveResponse) String() string {
 func (*MoveResponse) ProtoMessage() {}
 
 func (x *MoveResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_recordmover_proto_msgTypes[6]
+	mi := &file_recordmover_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -520,7 +567,7 @@ func (x *MoveResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MoveResponse.ProtoReflect.Descriptor instead.
 func (*MoveResponse) Descriptor() ([]byte, []int) {
-	return file_recordmover_proto_rawDescGZIP(), []int{6}
+	return file_recordmover_proto_rawDescGZIP(), []int{7}
 }
 
 type ListRequest struct {
@@ -534,7 +581,7 @@ type ListRequest struct {
 func (x *ListRequest) Reset() {
 	*x = ListRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_recordmover_proto_msgTypes[7]
+		mi := &file_recordmover_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -547,7 +594,7 @@ func (x *ListRequest) String() string {
 func (*ListRequest) ProtoMessage() {}
 
 func (x *ListRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_recordmover_proto_msgTypes[7]
+	mi := &file_recordmover_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -560,7 +607,7 @@ func (x *ListRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRequest.ProtoReflect.Descriptor instead.
 func (*ListRequest) Descriptor() ([]byte, []int) {
-	return file_recordmover_proto_rawDescGZIP(), []int{7}
+	return file_recordmover_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ListRequest) GetInstanceId() int32 {
@@ -582,7 +629,7 @@ type ListResponse struct {
 func (x *ListResponse) Reset() {
 	*x = ListResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_recordmover_proto_msgTypes[8]
+		mi := &file_recordmover_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -595,7 +642,7 @@ func (x *ListResponse) String() string {
 func (*ListResponse) ProtoMessage() {}
 
 func (x *ListResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_recordmover_proto_msgTypes[8]
+	mi := &file_recordmover_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -608,7 +655,7 @@ func (x *ListResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListResponse.ProtoReflect.Descriptor instead.
 func (*ListResponse) Descriptor() ([]byte, []int) {
-	return file_recordmover_proto_rawDescGZIP(), []int{8}
+	return file_recordmover_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ListResponse) GetMoves() []*RecordMove {
@@ -636,7 +683,7 @@ type ClearRequest struct {
 func (x *ClearRequest) Reset() {
 	*x = ClearRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_recordmover_proto_msgTypes[9]
+		mi := &file_recordmover_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -649,7 +696,7 @@ func (x *ClearRequest) String() string {
 func (*ClearRequest) ProtoMessage() {}
 
 func (x *ClearRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_recordmover_proto_msgTypes[9]
+	mi := &file_recordmover_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -662,7 +709,7 @@ func (x *ClearRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClearRequest.ProtoReflect.Descriptor instead.
 func (*ClearRequest) Descriptor() ([]byte, []int) {
-	return file_recordmover_proto_rawDescGZIP(), []int{9}
+	return file_recordmover_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ClearRequest) GetInstanceId() int32 {
@@ -681,7 +728,7 @@ type ClearResponse struct {
 func (x *ClearResponse) Reset() {
 	*x = ClearResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_recordmover_proto_msgTypes[10]
+		mi := &file_recordmover_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -694,7 +741,7 @@ func (x *ClearResponse) String() string {
 func (*ClearResponse) ProtoMessage() {}
 
 func (x *ClearResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_recordmover_proto_msgTypes[10]
+	mi := &file_recordmover_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -707,7 +754,7 @@ func (x *ClearResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClearResponse.ProtoReflect.Descriptor instead.
 func (*ClearResponse) Descriptor() ([]byte, []int) {
-	return file_recordmover_proto_rawDescGZIP(), []int{10}
+	return file_recordmover_proto_rawDescGZIP(), []int{11}
 }
 
 type ForceRequest struct {
@@ -721,7 +768,7 @@ type ForceRequest struct {
 func (x *ForceRequest) Reset() {
 	*x = ForceRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_recordmover_proto_msgTypes[11]
+		mi := &file_recordmover_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -734,7 +781,7 @@ func (x *ForceRequest) String() string {
 func (*ForceRequest) ProtoMessage() {}
 
 func (x *ForceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_recordmover_proto_msgTypes[11]
+	mi := &file_recordmover_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -747,7 +794,7 @@ func (x *ForceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ForceRequest.ProtoReflect.Descriptor instead.
 func (*ForceRequest) Descriptor() ([]byte, []int) {
-	return file_recordmover_proto_rawDescGZIP(), []int{11}
+	return file_recordmover_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ForceRequest) GetInstanceId() int32 {
@@ -766,7 +813,7 @@ type ForceResponse struct {
 func (x *ForceResponse) Reset() {
 	*x = ForceResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_recordmover_proto_msgTypes[12]
+		mi := &file_recordmover_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -779,7 +826,7 @@ func (x *ForceResponse) String() string {
 func (*ForceResponse) ProtoMessage() {}
 
 func (x *ForceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_recordmover_proto_msgTypes[12]
+	mi := &file_recordmover_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -792,7 +839,7 @@ func (x *ForceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ForceResponse.ProtoReflect.Descriptor instead.
 func (*ForceResponse) Descriptor() ([]byte, []int) {
-	return file_recordmover_proto_rawDescGZIP(), []int{12}
+	return file_recordmover_proto_rawDescGZIP(), []int{13}
 }
 
 var File_recordmover_proto protoreflect.FileDescriptor
@@ -835,7 +882,11 @@ var file_recordmover_proto_rawDesc = []byte{
 	0x78, 0x74, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x69, 0x6d, 0x65, 0x45, 0x6e, 0x74, 0x72,
 	0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x03,
 	0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01,
-	0x28, 0x03, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x22, 0xeb, 0x01,
+	0x28, 0x03, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x22, 0x3e, 0x0a,
+	0x0b, 0x4d, 0x6f, 0x76, 0x65, 0x41, 0x72, 0x63, 0x68, 0x69, 0x76, 0x65, 0x12, 0x2f, 0x0a, 0x05,
+	0x6d, 0x6f, 0x76, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x72, 0x65,
+	0x63, 0x6f, 0x72, 0x64, 0x6d, 0x6f, 0x76, 0x65, 0x72, 0x2e, 0x52, 0x65, 0x63, 0x6f, 0x72, 0x64,
+	0x65, 0x64, 0x4d, 0x6f, 0x76, 0x65, 0x52, 0x05, 0x6d, 0x6f, 0x76, 0x65, 0x73, 0x22, 0xeb, 0x01,
 	0x0a, 0x07, 0x43, 0x6f, 0x6e, 0x74, 0x65, 0x78, 0x74, 0x12, 0x30, 0x0a, 0x06, 0x62, 0x65, 0x66,
 	0x6f, 0x72, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x72, 0x65, 0x63, 0x6f,
 	0x72, 0x64, 0x63, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x2e, 0x52, 0x65, 0x63,
@@ -933,50 +984,52 @@ func file_recordmover_proto_rawDescGZIP() []byte {
 	return file_recordmover_proto_rawDescData
 }
 
-var file_recordmover_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_recordmover_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_recordmover_proto_goTypes = []interface{}{
 	(*RecordedMove)(nil),  // 0: recordmover.RecordedMove
 	(*Config)(nil),        // 1: recordmover.Config
-	(*Context)(nil),       // 2: recordmover.Context
-	(*RecordMove)(nil),    // 3: recordmover.RecordMove
-	(*Moves)(nil),         // 4: recordmover.Moves
-	(*MoveRequest)(nil),   // 5: recordmover.MoveRequest
-	(*MoveResponse)(nil),  // 6: recordmover.MoveResponse
-	(*ListRequest)(nil),   // 7: recordmover.ListRequest
-	(*ListResponse)(nil),  // 8: recordmover.ListResponse
-	(*ClearRequest)(nil),  // 9: recordmover.ClearRequest
-	(*ClearResponse)(nil), // 10: recordmover.ClearResponse
-	(*ForceRequest)(nil),  // 11: recordmover.ForceRequest
-	(*ForceResponse)(nil), // 12: recordmover.ForceResponse
-	nil, // 13: recordmover.Config.NextUpdateTimeEntry
-	(*proto1.Record)(nil), // 14: recordcollection.Record
+	(*MoveArchive)(nil),   // 2: recordmover.MoveArchive
+	(*Context)(nil),       // 3: recordmover.Context
+	(*RecordMove)(nil),    // 4: recordmover.RecordMove
+	(*Moves)(nil),         // 5: recordmover.Moves
+	(*MoveRequest)(nil),   // 6: recordmover.MoveRequest
+	(*MoveResponse)(nil),  // 7: recordmover.MoveResponse
+	(*ListRequest)(nil),   // 8: recordmover.ListRequest
+	(*ListResponse)(nil),  // 9: recordmover.ListResponse
+	(*ClearRequest)(nil),  // 10: recordmover.ClearRequest
+	(*ClearResponse)(nil), // 11: recordmover.ClearResponse
+	(*ForceRequest)(nil),  // 12: recordmover.ForceRequest
+	(*ForceResponse)(nil), // 13: recordmover.ForceResponse
+	nil, // 14: recordmover.Config.NextUpdateTimeEntry
+	(*proto1.Record)(nil), // 15: recordcollection.Record
 }
 var file_recordmover_proto_depIdxs = []int32{
-	3,  // 0: recordmover.Config.moves:type_name -> recordmover.RecordMove
+	4,  // 0: recordmover.Config.moves:type_name -> recordmover.RecordMove
 	0,  // 1: recordmover.Config.move_archive:type_name -> recordmover.RecordedMove
-	13, // 2: recordmover.Config.next_update_time:type_name -> recordmover.Config.NextUpdateTimeEntry
-	14, // 3: recordmover.Context.before:type_name -> recordcollection.Record
-	14, // 4: recordmover.Context.after:type_name -> recordcollection.Record
-	14, // 5: recordmover.RecordMove.record:type_name -> recordcollection.Record
-	2,  // 6: recordmover.RecordMove.before_context:type_name -> recordmover.Context
-	2,  // 7: recordmover.RecordMove.after_context:type_name -> recordmover.Context
-	3,  // 8: recordmover.Moves.moves:type_name -> recordmover.RecordMove
-	3,  // 9: recordmover.MoveRequest.move:type_name -> recordmover.RecordMove
-	3,  // 10: recordmover.ListResponse.moves:type_name -> recordmover.RecordMove
-	0,  // 11: recordmover.ListResponse.archives:type_name -> recordmover.RecordedMove
-	5,  // 12: recordmover.MoveService.RecordMove:input_type -> recordmover.MoveRequest
-	7,  // 13: recordmover.MoveService.ListMoves:input_type -> recordmover.ListRequest
-	9,  // 14: recordmover.MoveService.ClearMove:input_type -> recordmover.ClearRequest
-	11, // 15: recordmover.MoveService.ForceMove:input_type -> recordmover.ForceRequest
-	6,  // 16: recordmover.MoveService.RecordMove:output_type -> recordmover.MoveResponse
-	8,  // 17: recordmover.MoveService.ListMoves:output_type -> recordmover.ListResponse
-	10, // 18: recordmover.MoveService.ClearMove:output_type -> recordmover.ClearResponse
-	12, // 19: recordmover.MoveService.ForceMove:output_type -> recordmover.ForceResponse
-	16, // [16:20] is the sub-list for method output_type
-	12, // [12:16] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	14, // 2: recordmover.Config.next_update_time:type_name -> recordmover.Config.NextUpdateTimeEntry
+	0,  // 3: recordmover.MoveArchive.moves:type_name -> recordmover.RecordedMove
+	15, // 4: recordmover.Context.before:type_name -> recordcollection.Record
+	15, // 5: recordmover.Context.after:type_name -> recordcollection.Record
+	15, // 6: recordmover.RecordMove.record:type_name -> recordcollection.Record
+	3,  // 7: recordmover.RecordMove.before_context:type_name -> recordmover.Context
+	3,  // 8: recordmover.RecordMove.after_context:type_name -> recordmover.Context
+	4,  // 9: recordmover.Moves.moves:type_name -> recordmover.RecordMove
+	4,  // 10: recordmover.MoveRequest.move:type_name -> recordmover.RecordMove
+	4,  // 11: recordmover.ListResponse.moves:type_name -> recordmover.RecordMove
+	0,  // 12: recordmover.ListResponse.archives:type_name -> recordmover.RecordedMove
+	6,  // 13: recordmover.MoveService.RecordMove:input_type -> recordmover.MoveRequest
+	8,  // 14: recordmover.MoveService.ListMoves:input_type -> recordmover.ListRequest
+	10, // 15: recordmover.MoveService.ClearMove:input_type -> recordmover.ClearRequest
+	12, // 16: recordmover.MoveService.ForceMove:input_type -> recordmover.ForceRequest
+	7,  // 17: recordmover.MoveService.RecordMove:output_type -> recordmover.MoveResponse
+	9,  // 18: recordmover.MoveService.ListMoves:output_type -> recordmover.ListResponse
+	11, // 19: recordmover.MoveService.ClearMove:output_type -> recordmover.ClearResponse
+	13, // 20: recordmover.MoveService.ForceMove:output_type -> recordmover.ForceResponse
+	17, // [17:21] is the sub-list for method output_type
+	13, // [13:17] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_recordmover_proto_init() }
@@ -1010,7 +1063,7 @@ func file_recordmover_proto_init() {
 			}
 		}
 		file_recordmover_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Context); i {
+			switch v := v.(*MoveArchive); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1022,7 +1075,7 @@ func file_recordmover_proto_init() {
 			}
 		}
 		file_recordmover_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RecordMove); i {
+			switch v := v.(*Context); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1034,7 +1087,7 @@ func file_recordmover_proto_init() {
 			}
 		}
 		file_recordmover_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Moves); i {
+			switch v := v.(*RecordMove); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1046,7 +1099,7 @@ func file_recordmover_proto_init() {
 			}
 		}
 		file_recordmover_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MoveRequest); i {
+			switch v := v.(*Moves); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1058,7 +1111,7 @@ func file_recordmover_proto_init() {
 			}
 		}
 		file_recordmover_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MoveResponse); i {
+			switch v := v.(*MoveRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1070,7 +1123,7 @@ func file_recordmover_proto_init() {
 			}
 		}
 		file_recordmover_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListRequest); i {
+			switch v := v.(*MoveResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1082,7 +1135,7 @@ func file_recordmover_proto_init() {
 			}
 		}
 		file_recordmover_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListResponse); i {
+			switch v := v.(*ListRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1094,7 +1147,7 @@ func file_recordmover_proto_init() {
 			}
 		}
 		file_recordmover_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ClearRequest); i {
+			switch v := v.(*ListResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1106,7 +1159,7 @@ func file_recordmover_proto_init() {
 			}
 		}
 		file_recordmover_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ClearResponse); i {
+			switch v := v.(*ClearRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1118,7 +1171,7 @@ func file_recordmover_proto_init() {
 			}
 		}
 		file_recordmover_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ForceRequest); i {
+			switch v := v.(*ClearResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1130,6 +1183,18 @@ func file_recordmover_proto_init() {
 			}
 		}
 		file_recordmover_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ForceRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_recordmover_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ForceResponse); i {
 			case 0:
 				return &v.state
@@ -1148,7 +1213,7 @@ func file_recordmover_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_recordmover_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

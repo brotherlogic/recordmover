@@ -205,6 +205,16 @@ func (s *Server) readMoves(ctx context.Context) error {
 		s.RaiseIssue(ctx, "Config problem", "Config still contains move archive", false)
 	}
 
+	for len(s.config.GetMoveArchive()) > 0 {
+		move := s.config.GetMoveArchive()[0]
+		err := s.addToArchive(ctx, move)
+		if err != nil {
+			return err
+		}
+		s.config.MoveArchive = s.config.GetMoveArchive()[1:]
+		s.saveMoves(ctx)
+	}
+
 	return nil
 }
 

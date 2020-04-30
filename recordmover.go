@@ -39,6 +39,7 @@ type Server struct {
 	count       int
 	testing     bool
 	configMutex *sync.Mutex
+	block       *sync.Mutex
 }
 
 // Init builds the server
@@ -57,6 +58,7 @@ func Init() *Server {
 		0,
 		0,
 		false,
+		&sync.Mutex{},
 		&sync.Mutex{},
 	}
 	s.getter = &prodGetter{s.DialMaster}
@@ -205,6 +207,8 @@ func (s *Server) readMoves(ctx context.Context) error {
 		s.RaiseIssue(ctx, "Config problem", "Config still contains move archive", false)
 	}
 
+	s.block.Lock()
+	defer s.block.Unlock()
 	for len(s.config.GetMoveArchive()) > 0 {
 		move := s.config.GetMoveArchive()[0]
 		err := s.addToArchive(ctx, move)

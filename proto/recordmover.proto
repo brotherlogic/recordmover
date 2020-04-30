@@ -33,6 +33,10 @@ message Config {
   map<int32, int64> next_update_time = 4;
 }
 
+message MoveArchive {
+  repeated RecordedMove moves = 1;
+}
+
 message Context {
   recordcollection.Record before = 1; // DEPRECATED
   int32 before_instance = 5;

@@ -69,6 +69,9 @@ func Init() *Server {
 const (
 	//ConfigKey is where we store the overall config
 	ConfigKey = "github.com/brotherlogic/recordmover/config"
+
+	//MoveKey is the base key for storing moves
+	MoveKey = "github.com/brotherlogic/recordmove/archive"
 )
 
 type organiser interface {
@@ -198,11 +201,31 @@ func (s *Server) readMoves(ctx context.Context) error {
 	}
 	delete(s.config.NextUpdateTime, 0)
 
+	if len(s.config.GetMoveArchive()) > 0 {
+		s.RaiseIssue(ctx, "Config problem", "Config still contains move archive", false)
+	}
+
 	return nil
+}
+
+func (s *Server) readMoveArchive(ctx context.Context, iid int32) ([]*pb.RecordedMove, error) {
+	config := &pb.MoveArchive{}
+	data, _, err := s.KSclient.Read(ctx, fmt.Sprintf("%v-%v", MoveKey, iid), config)
+
+	if err != nil {
+		return nil, err
+	}
+
+	config = data.(*pb.MoveArchive)
+	return config.GetMoves(), nil
 }
 
 func (s *Server) saveMoves(ctx context.Context) error {
 	return s.KSclient.Save(ctx, ConfigKey, s.config)
+}
+
+func (s *Server) saveMoveArchive(ctx context.Context, iid int32, moves []*pb.RecordedMove) error {
+	return s.KSclient.Save(ctx, fmt.Sprintf("%v-%v", MoveKey, iid), &pb.MoveArchive{Moves: moves})
 }
 
 func (p prodGetter) update(ctx context.Context, instanceID int32, reason string, folder int32) error {

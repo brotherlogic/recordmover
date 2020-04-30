@@ -11,6 +11,23 @@ import (
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 )
 
+func (s *Server) addToArchive(ctx context.Context, move *pb.RecordedMove) error {
+	moves, err := s.readMoveArchive(ctx, move.GetInstanceId())
+	if err != nil {
+		return err
+	}
+
+	for _, movea := range moves {
+		if movea.GetMoveTime() == move.GetMoveTime() {
+			return fmt.Errorf("This move has already been recorded")
+		}
+	}
+
+	moves = append(moves, move)
+
+	return s.saveMoveArchive(ctx, move.GetInstanceId(), moves)
+}
+
 func (s *Server) incrementCount(ctx context.Context, id int32) error {
 	if s.lastID == id {
 		s.lastIDCount++

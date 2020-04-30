@@ -207,6 +207,10 @@ func (s *Server) readMoves(ctx context.Context) error {
 		s.RaiseIssue(ctx, "Config problem", "Config still contains move archive", false)
 	}
 
+	return nil
+}
+
+func (s *Server) blocker(ctx context.Context) error {
 	s.block.Lock()
 	defer s.block.Unlock()
 	for len(s.config.GetMoveArchive()) > 0 {
@@ -218,8 +222,6 @@ func (s *Server) readMoves(ctx context.Context) error {
 		s.config.MoveArchive = s.config.GetMoveArchive()[1:]
 		s.saveMoves(ctx)
 	}
-
-	return nil
 }
 
 func (s *Server) readMoveArchive(ctx context.Context, iid int32) ([]*pb.RecordedMove, error) {
@@ -339,6 +341,7 @@ func main() {
 	server.RegisterRepeatingTask(server.moveRecords, "move_records", time.Minute*5)
 	server.RegisterRepeatingTask(server.doTheMove, "do_the_move", time.Minute)
 	server.RegisterRepeatingTask(server.refreshMoves, "refresh_moves", time.Minute)
+	server.RegisterRepeatingTask(server.blocker, "blocker", time.Minute)
 
 	fmt.Printf("%v\n", server.Serve())
 }

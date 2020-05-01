@@ -128,7 +128,7 @@ func (s *Server) moveRecords(ctx context.Context) error {
 func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) error {
 	folder, rule := s.moveRecord(ctx, record)
 	s.Log(fmt.Sprintf("MOVED: %v, %v", folder, rule))
-	s.updateArchive(ctx, &pb.RecordedMove{
+	s.addToArchive(ctx, &pb.RecordedMove{
 		InstanceId: record.GetRelease().GetInstanceId(),
 		From:       record.GetRelease().GetFolderId(),
 		To:         folder,

@@ -176,7 +176,7 @@ func TestAppendArchive(t *testing.T) {
 	s := InitTest()
 	s.config.MoveArchive = append(s.config.MoveArchive, &pb.RecordedMove{InstanceId: 1, MoveLocation: "blah", MoveTime: 12})
 
-	s.updateArchive(context.Background(), &pb.RecordedMove{InstanceId: 1, MoveLocation: "blah", MoveTime: 123})
+	s.addToArchive(context.Background(), &pb.RecordedMove{InstanceId: 1, MoveLocation: "blah", MoveTime: 123})
 
 	if s.config.MoveArchive[0].MoveTime != 12 {
 		t.Errorf("Update has failed")

@@ -10,11 +10,6 @@ import (
 	pbro "github.com/brotherlogic/recordsorganiser/proto"
 )
 
-func (s *Server) updateArchive(ctx context.Context, move *pb.RecordedMove) {
-	s.config.MoveArchive = append(s.config.MoveArchive, move)
-	s.saveMoves(ctx)
-}
-
 // RecordMove moves a record
 func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveResponse, error) {
 	if in.GetMove().InstanceId == 0 {
@@ -77,7 +72,8 @@ func (s *Server) ListMoves(ctx context.Context, in *pb.ListRequest) (*pb.ListRes
 			resp.Moves = append(resp.Moves, move)
 		}
 	}
-	for _, move := range s.config.MoveArchive {
+	moves, _ := s.readMoveArchive(ctx, in.GetInstanceId())
+	for _, move := range moves {
 		if move.GetInstanceId() == in.GetInstanceId() {
 			resp.Archives = append(resp.Archives, move)
 		}

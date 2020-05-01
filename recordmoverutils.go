@@ -141,16 +141,17 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 			return err
 		}
 		s.incrementCount(ctx, record.GetRelease().InstanceId)
+		delete(s.config.GetNextUpdateTime(), record.GetRelease().GetInstanceId())
+		return nil
 	} else {
 		if len(rule) > 0 {
 			return fmt.Errorf("Unable to move record: %v", rule)
 		}
 	}
 
-	// Remove this move from the update set
 	delete(s.config.GetNextUpdateTime(), record.GetRelease().GetInstanceId())
 
-	return nil
+	return status.Errorf(codes.FailedPrecondition, "No move made")
 }
 
 func (s *Server) doTheMove(ctx context.Context) error {
@@ -161,7 +162,11 @@ func (s *Server) doTheMove(ctx context.Context) error {
 		if time.Unix(tim, 0).Before(time.Now()) {
 			record, err := s.getter.getRecord(ctx, iid)
 			if err == nil {
-				return s.moveRecordInternal(ctx, record)
+				err := s.moveRecordInternal(ctx, record)
+				// Only stop processing on a genuine fail or move
+				if status.Convert(err).Code() != codes.FailedPrecondition {
+					return err
+				}
 			}
 		}
 	}

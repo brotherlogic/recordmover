@@ -9,6 +9,8 @@ import (
 	pb "github.com/brotherlogic/recordmover/proto"
 	pbro "github.com/brotherlogic/recordsorganiser/proto"
 	"golang.org/x/net/context"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type testCol struct {
@@ -186,7 +188,7 @@ func TestAppendArchive(t *testing.T) {
 func TestForceUpdate(t *testing.T) {
 	s := InitTest()
 	_, err := s.ForceMove(context.Background(), &pb.ForceRequest{})
-	if err != nil {
+	if status.Convert(err).Code() != codes.FailedPrecondition {
 		t.Errorf("Bad force: %v", err)
 	}
 }

@@ -222,6 +222,7 @@ func (s *Server) blocker(ctx context.Context) error {
 		s.config.MoveArchive = s.config.GetMoveArchive()[1:]
 		s.saveMoves(ctx)
 	}
+	return nil
 }
 
 func (s *Server) readMoveArchive(ctx context.Context, iid int32) ([]*pb.RecordedMove, error) {

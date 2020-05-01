@@ -128,25 +128,27 @@ func (s *Server) moveRecords(ctx context.Context) error {
 func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) error {
 	folder, rule := s.moveRecord(ctx, record)
 	s.Log(fmt.Sprintf("MOVED: %v -> %v, %v", record.GetRelease().GetInstanceId(), folder, rule))
-	s.addToArchive(ctx, &pb.RecordedMove{
-		InstanceId: record.GetRelease().GetInstanceId(),
-		From:       record.GetRelease().GetFolderId(),
-		To:         folder,
-		MoveTime:   time.Now().Unix(),
-		Rule:       rule,
-	})
 	if folder > 0 {
+		s.addToArchive(ctx, &pb.RecordedMove{
+			InstanceId: record.GetRelease().GetInstanceId(),
+			From:       record.GetRelease().GetFolderId(),
+			To:         folder,
+			MoveTime:   time.Now().Unix(),
+			Rule:       rule,
+		})
 		err := s.getter.update(ctx, record.GetRelease().GetInstanceId(), rule, folder)
 		if err != nil {
 			return err
 		}
 		s.incrementCount(ctx, record.GetRelease().InstanceId)
-		delete(s.config.GetNextUpdateTime(), record.GetRelease().GetInstanceId())
 	} else {
 		if len(rule) > 0 {
 			return fmt.Errorf("Unable to move record: %v", rule)
 		}
 	}
+
+	// Remove this move from the update set
+	delete(s.config.GetNextUpdateTime(), record.GetRelease().GetInstanceId())
 
 	return nil
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"golang.org/x/net/context"
@@ -15,7 +16,7 @@ import (
 
 func (s *Server) addToArchive(ctx context.Context, move *pb.RecordedMove) error {
 	moves, err := s.readMoveArchive(ctx, move.GetInstanceId())
-	if status.Convert(err).Code() != codes.NotFound {
+	if status.Convert(err).Code() != codes.OK && status.Convert(err).Code() != codes.NotFound {
 		return err
 	}
 
@@ -145,10 +146,13 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 		s.incrementCount(ctx, record.GetRelease().InstanceId)
 		delete(s.config.GetNextUpdateTime(), record.GetRelease().GetInstanceId())
 		return nil
-	} else {
-		if len(rule) > 0 {
-			return fmt.Errorf("Unable to move record: %v", rule)
+	}
+
+	if len(rule) > 0 {
+		if strings.Contains(rule, "Missing match") {
+			return status.Errorf(codes.FailedPrecondition, "Temp unable to move: %v", rule)
 		}
+		return fmt.Errorf("Unable to move record: %v", rule)
 	}
 
 	delete(s.config.GetNextUpdateTime(), record.GetRelease().GetInstanceId())

@@ -226,6 +226,9 @@ func (s *Server) blocker(ctx context.Context) error {
 }
 
 func (s *Server) readMoveArchive(ctx context.Context, iid int32) ([]*pb.RecordedMove, error) {
+	if s.testing {
+		return nil, fmt.Errorf("Bad")
+	}
 	config := &pb.MoveArchive{}
 	data, _, err := s.KSclient.Read(ctx, fmt.Sprintf("%v-%v", MoveKey, iid), config)
 

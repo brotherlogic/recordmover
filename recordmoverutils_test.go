@@ -181,6 +181,7 @@ func TestMoveUnrippedButDigital(t *testing.T) {
 
 func TestUpdateRipThenSellToListeningPile(t *testing.T) {
 	s := InitTest()
+	s.testing = false
 	tg := testGetter{rec: &pbrc.Record{Release: &gdpb.Release{InstanceId: 12, FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, GoalFolder: 820, Category: pbrc.ReleaseMetadata_RIP_THEN_SELL}}}
 	s.config.NextUpdateTime[12] = time.Now().Unix()
 	s.getter = &tg
@@ -294,6 +295,14 @@ func TestCanMoveFailInternal(t *testing.T) {
 	}
 }
 
+func TestCanMoveFailInternalNoMatch(t *testing.T) {
+	s := InitTest()
+
+	if s.moveRecordInternal(context.Background(), &pbrc.Record{Metadata: &pbrc.ReleaseMetadata{GoalFolder: 1234}}) == nil {
+		t.Errorf("Should not be able to move dirty record")
+	}
+}
+
 func TestCanMoveCDWithNoMatch(t *testing.T) {
 	s := InitTest()
 
@@ -323,4 +332,31 @@ func TestEmptyDoMove(t *testing.T) {
 	s := InitTest()
 
 	s.doTheMove(context.Background())
+}
+
+func TestAddToArchiveFail(t *testing.T) {
+	s := InitTest()
+	s.testing = true
+
+	err := s.addToArchive(context.Background(), &pb.RecordedMove{})
+	if err == nil {
+		t.Errorf("Should have failed")
+	}
+}
+
+func TestAddToArchiveDoubleFail(t *testing.T) {
+	s := InitTest()
+	s.testing = false
+
+	move := &pb.RecordedMove{InstanceId: 1, MoveTime: 12}
+	err := s.addToArchive(context.Background(), move)
+	if err != nil {
+		t.Errorf("Should not have failed: %v", err)
+	}
+
+	err = s.addToArchive(context.Background(), move)
+	if err == nil {
+		t.Errorf("Should have failed")
+	}
+
 }

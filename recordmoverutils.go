@@ -254,7 +254,7 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 
 	err := s.canMove(ctx, r)
 	if err != nil {
-		return -1, fmt.Sprintf("CANNOT MOVE: %v", err)
+		return -1, fmt.Sprintf("CANNOT MOVE %v: %v", r.GetRelease().GetInstanceId(), err)
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PARENTS && (r.GetRelease().FolderId != 1727264 && r.GetMetadata().MoveFolder != 1727264) {

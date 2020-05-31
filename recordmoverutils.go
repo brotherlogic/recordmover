@@ -12,6 +12,8 @@ import (
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pb "github.com/brotherlogic/recordmover/proto"
 	pbro "github.com/brotherlogic/recordsorganiser/proto"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
 func (s *Server) addToArchive(ctx context.Context, move *pb.RecordedMove) error {
@@ -126,6 +128,13 @@ func (s *Server) moveRecords(ctx context.Context) error {
 	return s.moveRecordsHelper(ctx, 0)
 }
 
+var (
+	backlog = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "recordmover_backlog",
+		Help: "The size of the print queue",
+	})
+)
+
 func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) error {
 	folder, rule := s.moveRecord(ctx, record)
 	if folder > 0 || len(rule) > 0 {
@@ -163,6 +172,14 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 func (s *Server) doTheMove(ctx context.Context) error {
 	s.configMutex.Lock()
 	defer s.configMutex.Unlock()
+
+	count := float64(0)
+	for _, tim := range s.config.GetNextUpdateTime() {
+		if time.Unix(tim, 0).Before(time.Now()) {
+			count++
+		}
+	}
+	backlog.Set(count)
 
 	for iid, tim := range s.config.GetNextUpdateTime() {
 		if time.Unix(tim, 0).Before(time.Now()) {

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"runtime/debug"
 	"sync"
 	"time"
 
@@ -241,6 +242,10 @@ func (s *Server) readMoveArchive(ctx context.Context, iid int32) ([]*pb.Recorded
 }
 
 func (s *Server) saveMoves(ctx context.Context) error {
+	if s.config.LastPull == 0 {
+		debug.PrintStack()
+		log.Fatalf("Saving empty config: %v", s.config)
+	}
 	return s.KSclient.Save(ctx, ConfigKey, s.config)
 }
 

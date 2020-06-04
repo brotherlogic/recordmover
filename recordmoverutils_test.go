@@ -89,6 +89,7 @@ func InitTest() *Server {
 	s.cdproc = &testRipper{}
 	s.organiser = &testOrg{failCount: 100}
 	s.testing = true
+	s.config.LastPull = 1
 
 	return s
 }

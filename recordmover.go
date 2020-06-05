@@ -280,7 +280,9 @@ func (s *Server) ReportHealth() bool {
 
 // Shutdown the server
 func (s *Server) Shutdown(ctx context.Context) error {
-	s.saveMoves(ctx)
+	if s.Registry.Master {
+		s.saveMoves(ctx)
+	}
 	return nil
 }
 

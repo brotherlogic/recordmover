@@ -757,91 +757,6 @@ func (*ClearResponse) Descriptor() ([]byte, []int) {
 	return file_recordmover_proto_rawDescGZIP(), []int{11}
 }
 
-type ForceRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	InstanceId int32 `protobuf:"varint,1,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"`
-}
-
-func (x *ForceRequest) Reset() {
-	*x = ForceRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_recordmover_proto_msgTypes[12]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *ForceRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ForceRequest) ProtoMessage() {}
-
-func (x *ForceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_recordmover_proto_msgTypes[12]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ForceRequest.ProtoReflect.Descriptor instead.
-func (*ForceRequest) Descriptor() ([]byte, []int) {
-	return file_recordmover_proto_rawDescGZIP(), []int{12}
-}
-
-func (x *ForceRequest) GetInstanceId() int32 {
-	if x != nil {
-		return x.InstanceId
-	}
-	return 0
-}
-
-type ForceResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-}
-
-func (x *ForceResponse) Reset() {
-	*x = ForceResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_recordmover_proto_msgTypes[13]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *ForceResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ForceResponse) ProtoMessage() {}
-
-func (x *ForceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_recordmover_proto_msgTypes[13]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ForceResponse.ProtoReflect.Descriptor instead.
-func (*ForceResponse) Descriptor() ([]byte, []int) {
-	return file_recordmover_proto_rawDescGZIP(), []int{13}
-}
-
 var File_recordmover_proto protoreflect.FileDescriptor
 
 var file_recordmover_proto_rawDesc = []byte{
@@ -945,31 +860,23 @@ var file_recordmover_proto_rawDesc = []byte{
 	0x6c, 0x65, 0x61, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1f, 0x0a, 0x0b, 0x69,
 	0x6e, 0x73, 0x74, 0x61, 0x6e, 0x63, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05,
 	0x52, 0x0a, 0x69, 0x6e, 0x73, 0x74, 0x61, 0x6e, 0x63, 0x65, 0x49, 0x64, 0x22, 0x0f, 0x0a, 0x0d,
-	0x43, 0x6c, 0x65, 0x61, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x2f, 0x0a,
-	0x0c, 0x46, 0x6f, 0x72, 0x63, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1f, 0x0a,
-	0x0b, 0x69, 0x6e, 0x73, 0x74, 0x61, 0x6e, 0x63, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x05, 0x52, 0x0a, 0x69, 0x6e, 0x73, 0x74, 0x61, 0x6e, 0x63, 0x65, 0x49, 0x64, 0x22, 0x0f,
-	0x0a, 0x0d, 0x46, 0x6f, 0x72, 0x63, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x32,
-	0xa2, 0x02, 0x0a, 0x0b, 0x4d, 0x6f, 0x76, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12,
-	0x43, 0x0a, 0x0a, 0x52, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x4d, 0x6f, 0x76, 0x65, 0x12, 0x18, 0x2e,
-	0x72, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x6d, 0x6f, 0x76, 0x65, 0x72, 0x2e, 0x4d, 0x6f, 0x76, 0x65,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x19, 0x2e, 0x72, 0x65, 0x63, 0x6f, 0x72, 0x64,
-	0x6d, 0x6f, 0x76, 0x65, 0x72, 0x2e, 0x4d, 0x6f, 0x76, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x22, 0x00, 0x12, 0x42, 0x0a, 0x09, 0x4c, 0x69, 0x73, 0x74, 0x4d, 0x6f, 0x76, 0x65,
-	0x73, 0x12, 0x18, 0x2e, 0x72, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x6d, 0x6f, 0x76, 0x65, 0x72, 0x2e,
-	0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x19, 0x2e, 0x72, 0x65,
-	0x63, 0x6f, 0x72, 0x64, 0x6d, 0x6f, 0x76, 0x65, 0x72, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x09, 0x43, 0x6c, 0x65, 0x61,
-	0x72, 0x4d, 0x6f, 0x76, 0x65, 0x12, 0x19, 0x2e, 0x72, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x6d, 0x6f,
-	0x76, 0x65, 0x72, 0x2e, 0x43, 0x6c, 0x65, 0x61, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x1a, 0x1a, 0x2e, 0x72, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x6d, 0x6f, 0x76, 0x65, 0x72, 0x2e, 0x43,
-	0x6c, 0x65, 0x61, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x44,
-	0x0a, 0x09, 0x46, 0x6f, 0x72, 0x63, 0x65, 0x4d, 0x6f, 0x76, 0x65, 0x12, 0x19, 0x2e, 0x72, 0x65,
-	0x63, 0x6f, 0x72, 0x64, 0x6d, 0x6f, 0x76, 0x65, 0x72, 0x2e, 0x46, 0x6f, 0x72, 0x63, 0x65, 0x52,
-	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1a, 0x2e, 0x72, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x6d,
-	0x6f, 0x76, 0x65, 0x72, 0x2e, 0x46, 0x6f, 0x72, 0x63, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x22, 0x00, 0x42, 0x0f, 0x5a, 0x0d, 0x2e, 0x3b, 0x72, 0x65, 0x63, 0x6f, 0x72, 0x64,
-	0x6d, 0x6f, 0x76, 0x65, 0x72, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x43, 0x6c, 0x65, 0x61, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x32, 0xdc, 0x01,
+	0x0a, 0x0b, 0x4d, 0x6f, 0x76, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x43, 0x0a,
+	0x0a, 0x52, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x4d, 0x6f, 0x76, 0x65, 0x12, 0x18, 0x2e, 0x72, 0x65,
+	0x63, 0x6f, 0x72, 0x64, 0x6d, 0x6f, 0x76, 0x65, 0x72, 0x2e, 0x4d, 0x6f, 0x76, 0x65, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x19, 0x2e, 0x72, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x6d, 0x6f,
+	0x76, 0x65, 0x72, 0x2e, 0x4d, 0x6f, 0x76, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x22, 0x00, 0x12, 0x42, 0x0a, 0x09, 0x4c, 0x69, 0x73, 0x74, 0x4d, 0x6f, 0x76, 0x65, 0x73, 0x12,
+	0x18, 0x2e, 0x72, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x6d, 0x6f, 0x76, 0x65, 0x72, 0x2e, 0x4c, 0x69,
+	0x73, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x19, 0x2e, 0x72, 0x65, 0x63, 0x6f,
+	0x72, 0x64, 0x6d, 0x6f, 0x76, 0x65, 0x72, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x09, 0x43, 0x6c, 0x65, 0x61, 0x72, 0x4d,
+	0x6f, 0x76, 0x65, 0x12, 0x19, 0x2e, 0x72, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x6d, 0x6f, 0x76, 0x65,
+	0x72, 0x2e, 0x43, 0x6c, 0x65, 0x61, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1a,
+	0x2e, 0x72, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x6d, 0x6f, 0x76, 0x65, 0x72, 0x2e, 0x43, 0x6c, 0x65,
+	0x61, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x0f, 0x5a, 0x0d,
+	0x2e, 0x3b, 0x72, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x6d, 0x6f, 0x76, 0x65, 0x72, 0x62, 0x06, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -984,7 +891,7 @@ func file_recordmover_proto_rawDescGZIP() []byte {
 	return file_recordmover_proto_rawDescData
 }
 
-var file_recordmover_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_recordmover_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_recordmover_proto_goTypes = []interface{}{
 	(*RecordedMove)(nil),  // 0: recordmover.RecordedMove
 	(*Config)(nil),        // 1: recordmover.Config
@@ -998,19 +905,17 @@ var file_recordmover_proto_goTypes = []interface{}{
 	(*ListResponse)(nil),  // 9: recordmover.ListResponse
 	(*ClearRequest)(nil),  // 10: recordmover.ClearRequest
 	(*ClearResponse)(nil), // 11: recordmover.ClearResponse
-	(*ForceRequest)(nil),  // 12: recordmover.ForceRequest
-	(*ForceResponse)(nil), // 13: recordmover.ForceResponse
-	nil, // 14: recordmover.Config.NextUpdateTimeEntry
-	(*proto1.Record)(nil), // 15: recordcollection.Record
+	nil, // 12: recordmover.Config.NextUpdateTimeEntry
+	(*proto1.Record)(nil), // 13: recordcollection.Record
 }
 var file_recordmover_proto_depIdxs = []int32{
 	4,  // 0: recordmover.Config.moves:type_name -> recordmover.RecordMove
 	0,  // 1: recordmover.Config.move_archive:type_name -> recordmover.RecordedMove
-	14, // 2: recordmover.Config.next_update_time:type_name -> recordmover.Config.NextUpdateTimeEntry
+	12, // 2: recordmover.Config.next_update_time:type_name -> recordmover.Config.NextUpdateTimeEntry
 	0,  // 3: recordmover.MoveArchive.moves:type_name -> recordmover.RecordedMove
-	15, // 4: recordmover.Context.before:type_name -> recordcollection.Record
-	15, // 5: recordmover.Context.after:type_name -> recordcollection.Record
-	15, // 6: recordmover.RecordMove.record:type_name -> recordcollection.Record
+	13, // 4: recordmover.Context.before:type_name -> recordcollection.Record
+	13, // 5: recordmover.Context.after:type_name -> recordcollection.Record
+	13, // 6: recordmover.RecordMove.record:type_name -> recordcollection.Record
 	3,  // 7: recordmover.RecordMove.before_context:type_name -> recordmover.Context
 	3,  // 8: recordmover.RecordMove.after_context:type_name -> recordmover.Context
 	4,  // 9: recordmover.Moves.moves:type_name -> recordmover.RecordMove
@@ -1020,13 +925,11 @@ var file_recordmover_proto_depIdxs = []int32{
 	6,  // 13: recordmover.MoveService.RecordMove:input_type -> recordmover.MoveRequest
 	8,  // 14: recordmover.MoveService.ListMoves:input_type -> recordmover.ListRequest
 	10, // 15: recordmover.MoveService.ClearMove:input_type -> recordmover.ClearRequest
-	12, // 16: recordmover.MoveService.ForceMove:input_type -> recordmover.ForceRequest
-	7,  // 17: recordmover.MoveService.RecordMove:output_type -> recordmover.MoveResponse
-	9,  // 18: recordmover.MoveService.ListMoves:output_type -> recordmover.ListResponse
-	11, // 19: recordmover.MoveService.ClearMove:output_type -> recordmover.ClearResponse
-	13, // 20: recordmover.MoveService.ForceMove:output_type -> recordmover.ForceResponse
-	17, // [17:21] is the sub-list for method output_type
-	13, // [13:17] is the sub-list for method input_type
+	7,  // 16: recordmover.MoveService.RecordMove:output_type -> recordmover.MoveResponse
+	9,  // 17: recordmover.MoveService.ListMoves:output_type -> recordmover.ListResponse
+	11, // 18: recordmover.MoveService.ClearMove:output_type -> recordmover.ClearResponse
+	16, // [16:19] is the sub-list for method output_type
+	13, // [13:16] is the sub-list for method input_type
 	13, // [13:13] is the sub-list for extension type_name
 	13, // [13:13] is the sub-list for extension extendee
 	0,  // [0:13] is the sub-list for field type_name
@@ -1182,30 +1085,6 @@ func file_recordmover_proto_init() {
 				return nil
 			}
 		}
-		file_recordmover_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ForceRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_recordmover_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ForceResponse); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -1213,7 +1092,7 @@ func file_recordmover_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_recordmover_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   15,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -1242,7 +1121,6 @@ type MoveServiceClient interface {
 	RecordMove(ctx context.Context, in *MoveRequest, opts ...grpc.CallOption) (*MoveResponse, error)
 	ListMoves(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
 	ClearMove(ctx context.Context, in *ClearRequest, opts ...grpc.CallOption) (*ClearResponse, error)
-	ForceMove(ctx context.Context, in *ForceRequest, opts ...grpc.CallOption) (*ForceResponse, error)
 }
 
 type moveServiceClient struct {
@@ -1280,21 +1158,11 @@ func (c *moveServiceClient) ClearMove(ctx context.Context, in *ClearRequest, opt
 	return out, nil
 }
 
-func (c *moveServiceClient) ForceMove(ctx context.Context, in *ForceRequest, opts ...grpc.CallOption) (*ForceResponse, error) {
-	out := new(ForceResponse)
-	err := c.cc.Invoke(ctx, "/recordmover.MoveService/ForceMove", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // MoveServiceServer is the server API for MoveService service.
 type MoveServiceServer interface {
 	RecordMove(context.Context, *MoveRequest) (*MoveResponse, error)
 	ListMoves(context.Context, *ListRequest) (*ListResponse, error)
 	ClearMove(context.Context, *ClearRequest) (*ClearResponse, error)
-	ForceMove(context.Context, *ForceRequest) (*ForceResponse, error)
 }
 
 // UnimplementedMoveServiceServer can be embedded to have forward compatible implementations.
@@ -1309,9 +1177,6 @@ func (*UnimplementedMoveServiceServer) ListMoves(context.Context, *ListRequest) 
 }
 func (*UnimplementedMoveServiceServer) ClearMove(context.Context, *ClearRequest) (*ClearResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ClearMove not implemented")
-}
-func (*UnimplementedMoveServiceServer) ForceMove(context.Context, *ForceRequest) (*ForceResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ForceMove not implemented")
 }
 
 func RegisterMoveServiceServer(s *grpc.Server, srv MoveServiceServer) {
@@ -1372,24 +1237,6 @@ func _MoveService_ClearMove_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MoveService_ForceMove_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ForceRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MoveServiceServer).ForceMove(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/recordmover.MoveService/ForceMove",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MoveServiceServer).ForceMove(ctx, req.(*ForceRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 var _MoveService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "recordmover.MoveService",
 	HandlerType: (*MoveServiceServer)(nil),
@@ -1405,10 +1252,6 @@ var _MoveService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ClearMove",
 			Handler:    _MoveService_ClearMove_Handler,
-		},
-		{
-			MethodName: "ForceMove",
-			Handler:    _MoveService_ForceMove_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

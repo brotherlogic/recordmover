@@ -85,6 +85,7 @@ func InitTest() *Server {
 	s.SkipIssue = true
 	s.getter = &testGetter{rec: &pbrc.Record{Release: &gdpb.Release{InstanceId: 1}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, GoalFolder: 2}}}
 	s.GoServer.KSclient = *keystoreclient.GetTestClient("./testing")
+	s.GoServer.KSclient.Save(context.Background(), ConfigKey, &pb.Config{})
 	s.cdproc = &testRipper{}
 	s.organiser = &testOrg{failCount: 100}
 	s.testing = true

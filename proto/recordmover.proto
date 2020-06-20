@@ -84,15 +84,8 @@ message ClearRequest {
 
 message ClearResponse {}
 
-message ForceRequest {
-  int32 instance_id = 1;
-}
-
-message ForceResponse {}
-
 service MoveService {
   rpc RecordMove(MoveRequest) returns (MoveResponse) {};
   rpc ListMoves(ListRequest) returns (ListResponse) {};
   rpc ClearMove(ClearRequest) returns (ClearResponse) {};
-  rpc ForceMove(ForceRequest) returns (ForceResponse) {};
 }

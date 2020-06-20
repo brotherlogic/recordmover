@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"testing"
-	"time"
 
 	"github.com/brotherlogic/keystore/client"
 	"golang.org/x/net/context"
@@ -86,24 +85,18 @@ func InitTest() *Server {
 	s.SkipIssue = true
 	s.getter = &testGetter{rec: &pbrc.Record{Release: &gdpb.Release{InstanceId: 1}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, GoalFolder: 2}}}
 	s.GoServer.KSclient = *keystoreclient.GetTestClient("./testing")
+	s.GoServer.KSclient.Save(context.Background(), ConfigKey, &pb.Config{})
 	s.cdproc = &testRipper{}
 	s.organiser = &testOrg{failCount: 100}
 	s.testing = true
-	s.config.LastPull = 1
 
 	return s
-}
-
-func TestEmptyUpdate(t *testing.T) {
-	s := InitTest()
-	s.moveRecords(context.Background())
 }
 
 func TestBadGetter(t *testing.T) {
 	s := InitTest()
 	tg := &testFailGetter{}
 	s.getter = tg
-	s.moveRecords(context.Background())
 }
 
 var movetests = []struct {
@@ -136,30 +129,14 @@ func TestMoves(t *testing.T) {
 	for _, test := range movetests {
 		s := InitTest()
 		tg := testGetter{rec: test.in}
-		s.config.NextUpdateTime[test.in.GetRelease().GetInstanceId()] = time.Now().Unix()
 		s.getter = &tg
-		s.doTheMove(context.Background())
+
+		s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{})
 
 		if tg.rec.GetMetadata().MoveFolder != test.out {
 			t.Fatalf("Error moving record: %v -> %v (ended up in %v)", test.in, test.out, tg.rec.GetMetadata().MoveFolder)
 		}
 	}
-}
-
-func TestUpdateFailOnUpdate(t *testing.T) {
-	s := InitTest()
-	tg := &testFailGetter{grf: true}
-	s.getter = tg
-	s.config.NextUpdateTime[0] = time.Now().Unix()
-	s.doTheMove(context.Background())
-}
-
-func TestUpdateFailOnUpdateRecordPull(t *testing.T) {
-	s := InitTest()
-	tg := &testGetter{failGet: true, rec: &pbrc.Record{Release: &gdpb.Release{InstanceId: 12}}}
-	s.config.NextUpdateTime[12] = time.Now().Unix()
-	s.getter = tg
-	s.moveRecords(context.Background())
 }
 
 func TestMoveUnripped(t *testing.T) {
@@ -184,9 +161,8 @@ func TestUpdateRipThenSellToListeningPile(t *testing.T) {
 	s := InitTest()
 	s.testing = false
 	tg := testGetter{rec: &pbrc.Record{Release: &gdpb.Release{InstanceId: 12, FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, GoalFolder: 820, Category: pbrc.ReleaseMetadata_RIP_THEN_SELL}}}
-	s.config.NextUpdateTime[12] = time.Now().Unix()
 	s.getter = &tg
-	s.doTheMove(context.Background())
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{})
 
 	if tg.rec.GetMetadata().MoveFolder != 812802 {
 		t.Errorf("RIP THEN SELL has not been moved correctly: %v", tg.rec)
@@ -198,53 +174,6 @@ func TestUpdateRipThenSellToListeningPile(t *testing.T) {
 	}
 	if len(moves.GetArchives()) == 0 {
 		t.Errorf("Bad archival recording: %v", moves)
-	}
-}
-
-func TestUpdateMove(t *testing.T) {
-	s := InitTest()
-	s.config.Moves = append(s.config.Moves, &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3})
-
-	s.refreshMoves(context.Background())
-
-	if s.config.Moves[0].AfterContext.Location == "" {
-		t.Errorf("Update not run")
-	}
-}
-
-func TestUpdateMoveWithFlip(t *testing.T) {
-	s := InitTest()
-	s.organiser = &testOrg{flipLocate: true}
-	s.config.Moves = append(s.config.Moves, &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3})
-
-	s.refreshMoves(context.Background())
-
-	if s.config.Moves[0].AfterContext.Location == "" {
-		t.Errorf("Update not run")
-	}
-}
-
-func TestReverseUpdateMoveWithFlip(t *testing.T) {
-	s := InitTest()
-	s.organiser = &testOrg{rflipLocate: true}
-	s.config.Moves = append(s.config.Moves, &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3})
-
-	s.refreshMoves(context.Background())
-
-	if s.config.Moves[0].AfterContext.Location == "" {
-		t.Errorf("Update not run")
-	}
-}
-
-func TestUpdateMoveFailLocate(t *testing.T) {
-	s := InitTest()
-	s.organiser = &testOrg{failLocate: true}
-	s.config.Moves = append(s.config.Moves, &pb.RecordMove{InstanceId: 1, FromFolder: 2, ToFolder: 3})
-
-	s.refreshMoves(context.Background())
-
-	if s.config.Moves[0].AfterContext != nil {
-		t.Errorf("Update run")
 	}
 }
 
@@ -327,12 +256,6 @@ func TestMoveFailOnAfterLocatePull(t *testing.T) {
 	if err == nil {
 		t.Errorf("Should have failed")
 	}
-}
-
-func TestEmptyDoMove(t *testing.T) {
-	s := InitTest()
-
-	s.doTheMove(context.Background())
 }
 
 func TestAddToArchiveFail(t *testing.T) {

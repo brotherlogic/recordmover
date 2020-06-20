@@ -168,7 +168,7 @@ func TestRunThrough(t *testing.T) {
 		t.Fatalf("Error listing records: %v", err)
 	}
 
-	if len(moves.GetMoves()) != 0 || len(s.config.Moves) != 0 {
+	if len(moves.GetMoves()) != 0 {
 		t.Fatalf("Move is a problem: %v", moves)
 	}
 
@@ -176,18 +176,14 @@ func TestRunThrough(t *testing.T) {
 
 func TestAppendArchive(t *testing.T) {
 	s := InitTest()
-	s.config.MoveArchive = append(s.config.MoveArchive, &pb.RecordedMove{InstanceId: 1, MoveLocation: "blah", MoveTime: 12})
 
 	s.addToArchive(context.Background(), &pb.RecordedMove{InstanceId: 1, MoveLocation: "blah", MoveTime: 123})
 
-	if s.config.MoveArchive[0].MoveTime != 12 {
-		t.Errorf("Update has failed")
-	}
 }
 
 func TestForceUpdate(t *testing.T) {
 	s := InitTest()
-	_, err := s.ForceMove(context.Background(), &pb.ForceRequest{})
+	_, err := s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{})
 	if status.Convert(err).Code() != codes.FailedPrecondition {
 		t.Errorf("Bad force: %v", err)
 	}
@@ -195,7 +191,7 @@ func TestForceUpdate(t *testing.T) {
 func TestForceUpdateFail(t *testing.T) {
 	s := InitTest()
 	s.getter = &testGetter{failGet: true}
-	_, err := s.ForceMove(context.Background(), &pb.ForceRequest{})
+	_, err := s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{})
 	if err == nil {
 		t.Errorf("Bad force")
 	}

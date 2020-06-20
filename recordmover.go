@@ -5,13 +5,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"runtime/debug"
 	"sync"
 	"time"
 
 	"github.com/brotherlogic/goserver"
-	"github.com/brotherlogic/keystore/client"
-	"github.com/golang/protobuf/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
@@ -32,7 +29,6 @@ type Server struct {
 	lastCount   int64
 	cdproc      cdproc
 	organiser   organiser
-	config      *pb.Config
 	lastArch    time.Duration
 	lastID      int32
 	lastIDCount int
@@ -52,7 +48,6 @@ func Init() *Server {
 		0,
 		&cdprocProd{},
 		&prodOrganiser{},
-		&pb.Config{},
 		0,
 		int32(0),
 		0,
@@ -62,10 +57,9 @@ func Init() *Server {
 		&sync.Mutex{},
 		&sync.Mutex{},
 	}
-	s.getter = &prodGetter{s.DialMaster}
-	s.cdproc = &cdprocProd{s.DialMaster}
-	s.organiser = &prodOrganiser{s.DialMaster}
-	s.config.NextUpdateTime = make(map[int32]int64)
+	s.getter = &prodGetter{s.FDialServer}
+	s.cdproc = &cdprocProd{s.FDialServer}
+	s.organiser = &prodOrganiser{s.FDialServer}
 	return s
 }
 
@@ -83,11 +77,11 @@ type organiser interface {
 }
 
 type prodOrganiser struct {
-	dial func(server string) (*grpc.ClientConn, error)
+	dial func(ctx context.Context, server string) (*grpc.ClientConn, error)
 }
 
 func (p *prodOrganiser) reorgLocation(ctx context.Context, folder int32) error {
-	conn, err := p.dial("recordsorganiser")
+	conn, err := p.dial(ctx, "recordsorganiser")
 	if err != nil {
 		return err
 	}
@@ -99,7 +93,7 @@ func (p *prodOrganiser) reorgLocation(ctx context.Context, folder int32) error {
 }
 
 func (p *prodOrganiser) locate(ctx context.Context, req *pbro.LocateRequest) (*pbro.LocateResponse, error) {
-	conn, err := p.dial("recordsorganiser")
+	conn, err := p.dial(ctx, "recordsorganiser")
 	if err != nil {
 		return &pbro.LocateResponse{}, err
 	}
@@ -114,11 +108,11 @@ type cdproc interface {
 }
 
 type cdprocProd struct {
-	dial func(server string) (*grpc.ClientConn, error)
+	dial func(ctx context.Context, server string) (*grpc.ClientConn, error)
 }
 
 func (p *cdprocProd) isRipped(ctx context.Context, ID int32) bool {
-	conn, err := p.dial("cdprocessor")
+	conn, err := p.dial(ctx, "cdprocessor")
 	if err != nil {
 		return false
 	}
@@ -140,11 +134,11 @@ func (p *cdprocProd) isRipped(ctx context.Context, ID int32) bool {
 }
 
 type prodGetter struct {
-	dial func(server string) (*grpc.ClientConn, error)
+	dial func(ctx context.Context, server string) (*grpc.ClientConn, error)
 }
 
 func (p *prodGetter) getRecordsSince(ctx context.Context, since int64) ([]int32, error) {
-	conn, err := p.dial("recordcollection")
+	conn, err := p.dial(ctx, "recordcollection")
 	if err != nil {
 		return []int32{}, err
 	}
@@ -160,7 +154,7 @@ func (p *prodGetter) getRecordsSince(ctx context.Context, since int64) ([]int32,
 	return resp.GetInstanceIds(), err
 }
 func (p *prodGetter) getRecord(ctx context.Context, instanceID int32) (*pbrc.Record, error) {
-	conn, err := p.dial("recordcollection")
+	conn, err := p.dial(ctx, "recordcollection")
 	if err != nil {
 		return nil, err
 	}
@@ -190,40 +184,15 @@ func (s *Server) forceMatch(ctx context.Context, ID int32) {
 	client.Match(ctx, &rmpb.MatchRequest{InstanceId: ID})
 }
 
-func (s *Server) readMoves(ctx context.Context) error {
+func (s *Server) readMoves(ctx context.Context) (*pb.Config, error) {
 	config := &pb.Config{}
 	data, _, err := s.KSclient.Read(ctx, ConfigKey, config)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	s.config = data.(*pb.Config)
-	if s.config.GetNextUpdateTime() == nil {
-		s.config.NextUpdateTime = make(map[int32]int64)
-	}
-	delete(s.config.NextUpdateTime, 0)
-
-	if len(s.config.GetMoveArchive()) > 0 {
-		s.RaiseIssue(ctx, "Config problem", "Config still contains move archive", false)
-	}
-
-	return nil
-}
-
-func (s *Server) blocker(ctx context.Context) error {
-	s.block.Lock()
-	defer s.block.Unlock()
-	for len(s.config.GetMoveArchive()) > 0 {
-		move := s.config.GetMoveArchive()[0]
-		err := s.addToArchive(ctx, move)
-		if err != nil {
-			return err
-		}
-		s.config.MoveArchive = s.config.GetMoveArchive()[1:]
-		s.saveMoves(ctx)
-	}
-	return nil
+	return data.(*pb.Config), nil
 }
 
 func (s *Server) readMoveArchive(ctx context.Context, iid int32) ([]*pb.RecordedMove, error) {
@@ -241,12 +210,8 @@ func (s *Server) readMoveArchive(ctx context.Context, iid int32) ([]*pb.Recorded
 	return config.GetMoves(), nil
 }
 
-func (s *Server) saveMoves(ctx context.Context) error {
-	if s.config.LastPull == 0 {
-		debug.PrintStack()
-		log.Fatalf("Saving empty config: %v", s.config)
-	}
-	return s.KSclient.Save(ctx, ConfigKey, s.config)
+func (s *Server) saveMoves(ctx context.Context, config *pb.Config) error {
+	return s.KSclient.Save(ctx, ConfigKey, config)
 }
 
 func (s *Server) saveMoveArchive(ctx context.Context, iid int32, moves []*pb.RecordedMove) error {
@@ -254,7 +219,7 @@ func (s *Server) saveMoveArchive(ctx context.Context, iid int32, moves []*pb.Rec
 }
 
 func (p prodGetter) update(ctx context.Context, instanceID int32, reason string, folder int32) error {
-	conn, err := p.dial("recordcollection")
+	conn, err := p.dial(ctx, "recordcollection")
 	if err != nil {
 		return err
 	}
@@ -280,60 +245,17 @@ func (s *Server) ReportHealth() bool {
 
 // Shutdown the server
 func (s *Server) Shutdown(ctx context.Context) error {
-	if s.Registry.Master {
-		s.saveMoves(ctx)
-	}
 	return nil
 }
 
 // Mote promotes/demotes this server
 func (s *Server) Mote(ctx context.Context, master bool) error {
-	if master {
-		return s.readMoves(ctx)
-	}
-
 	return nil
 }
 
 // GetState gets the state of the server
 func (s *Server) GetState() []*pbg.State {
-	fromCount := int64(0)
-	toCount := int64(0)
-	oldest := time.Now().Unix()
-	for _, m := range s.config.Moves {
-		if m.BeforeContext != nil {
-			fromCount++
-		}
-		if m.AfterContext != nil {
-			toCount++
-		}
-
-		if m.MoveDate < oldest {
-			oldest = m.MoveDate
-		}
-	}
-	togo := 0
-	for _, tim := range s.config.GetNextUpdateTime() {
-		if time.Unix(tim, 0).Before(time.Now()) {
-			togo++
-		}
-	}
-
-	return []*pbg.State{
-		&pbg.State{Key: "last_pull", TimeValue: s.config.LastPull},
-		&pbg.State{Key: "moves", Value: int64(len(s.config.GetNextUpdateTime()))},
-		&pbg.State{Key: "togo", Value: int64(togo)},
-		&pbg.State{Key: "config_size", Value: int64(proto.Size(s.config))},
-		&pbg.State{Key: "progress", Text: fmt.Sprintf("%v / %v", s.count, s.total)},
-		&pbg.State{Key: "last_id_count", Value: int64(s.lastIDCount)},
-		&pbg.State{Key: "last_id", Value: int64(s.lastID)},
-		&pbg.State{Key: "last_proc", TimeValue: s.lastProc.Unix()},
-		&pbg.State{Key: "moves_with_from", Value: fromCount},
-		&pbg.State{Key: "moves_with_to", Value: toCount},
-		&pbg.State{Key: "config_moves", Value: int64(len(s.config.Moves))},
-		&pbg.State{Key: "config_archives", Value: int64(len(s.config.MoveArchive))},
-		&pbg.State{Key: "oldest_move", TimeValue: oldest},
-	}
+	return []*pbg.State{}
 }
 
 func main() {
@@ -346,19 +268,13 @@ func main() {
 		log.SetOutput(ioutil.Discard)
 	}
 	server := Init()
-	server.GoServer.KSclient = *keystoreclient.GetClient(server.DialMaster)
 	server.PrepServer()
 	server.Register = server
 
-	err := server.RegisterServerV2("recordmover", false, false)
+	err := server.RegisterServerV2("recordmover", false, true)
 	if err != nil {
 		return
 	}
-
-	server.RegisterRepeatingTask(server.moveRecords, "move_records", time.Minute*5)
-	server.RegisterRepeatingTask(server.doTheMove, "do_the_move", time.Minute)
-	server.RegisterRepeatingTask(server.refreshMoves, "refresh_moves", time.Minute)
-	server.RegisterRepeatingTask(server.blocker, "blocker", time.Minute)
 
 	fmt.Printf("%v\n", server.Serve())
 }

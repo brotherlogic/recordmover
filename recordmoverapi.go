@@ -6,12 +6,18 @@ import (
 
 	"golang.org/x/net/context"
 
+	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pb "github.com/brotherlogic/recordmover/proto"
 	pbro "github.com/brotherlogic/recordsorganiser/proto"
 )
 
 // RecordMove moves a record
 func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveResponse, error) {
+	config, err := s.readMoves(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	if in.GetMove().InstanceId == 0 {
 		return nil, fmt.Errorf("You need to supply an instance ID")
 	}
@@ -48,26 +54,29 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 
 	// Overwrite existing move or create a new one
 	found := false
-	for i, val := range s.config.Moves {
+	for i, val := range config.Moves {
 		if val.InstanceId == in.GetMove().InstanceId {
 			found = true
-			s.config.Moves[i] = in.GetMove()
+			config.Moves[i] = in.GetMove()
 		}
 	}
 
 	if !found {
 		in.GetMove().BeforeContext = newBefore
-		s.config.Moves = append(s.config.Moves, in.GetMove())
+		config.Moves = append(config.Moves, in.GetMove())
 	}
 
-	s.saveMoves(ctx)
-	return &pb.MoveResponse{}, nil
+	return &pb.MoveResponse{}, s.saveMoves(ctx, config)
 }
 
 // ListMoves list the moves made
 func (s *Server) ListMoves(ctx context.Context, in *pb.ListRequest) (*pb.ListResponse, error) {
+	config, err := s.readMoves(ctx)
+	if err != nil {
+		return nil, err
+	}
 	resp := &pb.ListResponse{Moves: make([]*pb.RecordMove, 0), Archives: make([]*pb.RecordedMove, 0)}
-	for _, move := range s.config.Moves {
+	for _, move := range config.Moves {
 		if in.GetInstanceId() == 0 || move.GetInstanceId() == in.GetInstanceId() {
 			resp.Moves = append(resp.Moves, move)
 		}
@@ -83,23 +92,26 @@ func (s *Server) ListMoves(ctx context.Context, in *pb.ListRequest) (*pb.ListRes
 
 // ClearMove clears a single move
 func (s *Server) ClearMove(ctx context.Context, in *pb.ClearRequest) (*pb.ClearResponse, error) {
-	for i, mv := range s.config.Moves {
+	config, err := s.readMoves(ctx)
+	if err != nil {
+		return nil, err
+	}
+	for i, mv := range config.Moves {
 		if mv.InstanceId == in.InstanceId {
-			s.config.Moves = append(s.config.Moves[:i], s.config.Moves[i+1:]...)
-			s.saveMoves(ctx)
-			return &pb.ClearResponse{}, nil
+			config.Moves = append(config.Moves[:i], config.Moves[i+1:]...)
+			return &pb.ClearResponse{}, s.saveMoves(ctx, config)
 		}
 	}
 
 	return nil, fmt.Errorf("Unable to clear move: %v", in.InstanceId)
 }
 
-//ForceMove forces a move
-func (s *Server) ForceMove(ctx context.Context, in *pb.ForceRequest) (*pb.ForceResponse, error) {
+//ClientUpdate forces a move
+func (s *Server) ClientUpdate(ctx context.Context, in *pbrc.ClientUpdateRequest) (*pbrc.ClientUpdateResponse, error) {
 	record, err := s.getter.getRecord(ctx, in.InstanceId)
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.ForceResponse{}, s.moveRecordInternal(ctx, record)
+	return &pbrc.ClientUpdateResponse{}, s.moveRecordInternal(ctx, record)
 }

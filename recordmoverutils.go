@@ -42,7 +42,7 @@ func (s *Server) incrementCount(ctx context.Context, id int32) error {
 	}
 
 	if s.lastIDCount > 100 {
-		s.RaiseIssue(ctx, "Stuck move", fmt.Sprintf("%v cannot be moved", id), false)
+		s.RaiseIssue("Stuck move", fmt.Sprintf("%v cannot be moved", id))
 		return fmt.Errorf("Stuck Move")
 	}
 
@@ -53,23 +53,6 @@ type getter interface {
 	getRecordsSince(ctx context.Context, since int64) ([]int32, error)
 	getRecord(ctx context.Context, instanceID int32) (*pbrc.Record, error)
 	update(ctx context.Context, instanceID int32, reason string, moveFolder int32) error
-}
-
-func (s *Server) refreshMoves(ctx context.Context) error {
-	save := false
-	for _, r := range s.config.Moves {
-		if time.Now().Sub(time.Unix(r.LastUpdate, 0)) > time.Hour {
-			err := s.refreshMove(ctx, r)
-			if err == nil {
-				save = true
-			}
-		}
-	}
-
-	if save {
-		s.saveMoves(ctx)
-	}
-	return nil
 }
 
 func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
@@ -122,12 +105,6 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 	return nil
 }
 
-func (s *Server) moveRecords(ctx context.Context) error {
-	s.configMutex.Lock()
-	defer s.configMutex.Unlock()
-	return s.moveRecordsHelper(ctx, 0)
-}
-
 var (
 	backlog = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "recordmover_backlog",
@@ -153,7 +130,6 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 			return err
 		}
 		s.incrementCount(ctx, record.GetRelease().InstanceId)
-		delete(s.config.GetNextUpdateTime(), record.GetRelease().GetInstanceId())
 		return nil
 	}
 
@@ -164,65 +140,7 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 		return fmt.Errorf("Unable to move record: %v", rule)
 	}
 
-	delete(s.config.GetNextUpdateTime(), record.GetRelease().GetInstanceId())
-
 	return status.Errorf(codes.FailedPrecondition, "No move made")
-}
-
-func (s *Server) doTheMove(ctx context.Context) error {
-	s.configMutex.Lock()
-	defer s.configMutex.Unlock()
-
-	count := float64(0)
-	for _, tim := range s.config.GetNextUpdateTime() {
-		if time.Unix(tim, 0).Before(time.Now()) {
-			count++
-		}
-	}
-	backlog.Set(count)
-
-	for iid, tim := range s.config.GetNextUpdateTime() {
-		if time.Unix(tim, 0).Before(time.Now()) {
-			record, err := s.getter.getRecord(ctx, iid)
-			if err == nil {
-				err := s.moveRecordInternal(ctx, record)
-				// Only stop processing on a genuine fail or move
-				if status.Convert(err).Code() != codes.FailedPrecondition {
-					return err
-				}
-			}
-		}
-	}
-
-	return s.saveMoves(ctx)
-}
-
-func (s *Server) moveRecordsHelper(ctx context.Context, instanceID int32) error {
-	records, err := s.getter.getRecordsSince(ctx, s.config.LastPull)
-	s.Log(fmt.Sprintf("Found %v records since %v", len(records), time.Unix(s.config.LastPull, 0)))
-	s.total = len(records)
-
-	if err != nil {
-		return err
-	}
-
-	s.count = 0
-	for _, id := range records {
-		record, err := s.getter.getRecord(ctx, id)
-		if err != nil {
-			return err
-		}
-		s.count++
-		if record.GetMetadata() != nil && !record.GetMetadata().Dirty {
-			if instanceID == 0 || record.GetRelease().InstanceId == instanceID {
-				s.config.NextUpdateTime[record.GetRelease().GetInstanceId()] = time.Now().Unix()
-			}
-		}
-	}
-
-	s.config.LastPull = time.Now().Unix()
-	s.saveMoves(ctx)
-	return nil
 }
 
 func (s *Server) canMove(ctx context.Context, r *pbrc.Record) error {

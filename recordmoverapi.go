@@ -106,7 +106,7 @@ func (s *Server) ClearMove(ctx context.Context, in *pb.ClearRequest) (*pb.ClearR
 	return nil, fmt.Errorf("Unable to clear move: %v", in.InstanceId)
 }
 
-//ForceMove forces a move
+//ClientUpdate forces a move
 func (s *Server) ClientUpdate(ctx context.Context, in *pbrc.ClientUpdateRequest) (*pbrc.ClientUpdateResponse, error) {
 	record, err := s.getter.getRecord(ctx, in.InstanceId)
 	if err != nil {

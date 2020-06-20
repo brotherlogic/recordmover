@@ -131,6 +131,8 @@ func TestMoves(t *testing.T) {
 		tg := testGetter{rec: test.in}
 		s.getter = &tg
 
+		s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{})
+
 		if tg.rec.GetMetadata().MoveFolder != test.out {
 			t.Fatalf("Error moving record: %v -> %v (ended up in %v)", test.in, test.out, tg.rec.GetMetadata().MoveFolder)
 		}
@@ -160,6 +162,7 @@ func TestUpdateRipThenSellToListeningPile(t *testing.T) {
 	s.testing = false
 	tg := testGetter{rec: &pbrc.Record{Release: &gdpb.Release{InstanceId: 12, FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, GoalFolder: 820, Category: pbrc.ReleaseMetadata_RIP_THEN_SELL}}}
 	s.getter = &tg
+	s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{})
 
 	if tg.rec.GetMetadata().MoveFolder != 812802 {
 		t.Errorf("RIP THEN SELL has not been moved correctly: %v", tg.rec)

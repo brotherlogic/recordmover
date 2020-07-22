@@ -140,7 +140,7 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 		return fmt.Errorf("Unable to move record: %v", rule)
 	}
 
-	return status.Errorf(codes.FailedPrecondition, "No move made")
+	return nil
 }
 
 func (s *Server) canMove(ctx context.Context, r *pbrc.Record) error {

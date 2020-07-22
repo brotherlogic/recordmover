@@ -184,7 +184,7 @@ func TestAppendArchive(t *testing.T) {
 func TestForceUpdate(t *testing.T) {
 	s := InitTest()
 	_, err := s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{})
-	if status.Convert(err).Code() != codes.FailedPrecondition {
+	if status.Convert(err).Code() != codes.OK {
 		t.Errorf("Bad force: %v", err)
 	}
 }

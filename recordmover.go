@@ -16,6 +16,7 @@ import (
 	gdpb "github.com/brotherlogic/godiscogs"
 	pbg "github.com/brotherlogic/goserver/proto"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
+	rcpb "github.com/brotherlogic/recordcollection/proto"
 	rmpb "github.com/brotherlogic/recordmatcher/proto"
 	pb "github.com/brotherlogic/recordmover/proto"
 	pbro "github.com/brotherlogic/recordsorganiser/proto"
@@ -236,6 +237,7 @@ func (p prodGetter) update(ctx context.Context, instanceID int32, reason string,
 // DoRegister does RPC registration
 func (s *Server) DoRegister(server *grpc.Server) {
 	pb.RegisterMoveServiceServer(server, s)
+	rcpb.RegisterClientUpdateServiceServer(server, s)
 }
 
 // ReportHealth alerts if we're not healthy

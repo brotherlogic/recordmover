@@ -175,7 +175,7 @@ func (s *Server) forceMatch(ctx context.Context, ID int32) {
 	if s.testing {
 		return
 	}
-	conn, err := s.NewBaseDial("recordmatcher")
+	conn, err := s.FDialServer(ctx, "recordmatcher")
 	if err != nil {
 		return
 	}

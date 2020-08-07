@@ -116,20 +116,17 @@ func getLocation(ctx context.Context, rec *pbrc.Record) (string, error) {
 }
 
 func main() {
-	host, port, err := utils.Resolve("recordmover", "recordmover-cli")
-	if err != nil {
-		log.Fatalf("Unable to reach organiser: %v", err)
-	}
-	conn, err := grpc.Dial(host+":"+strconv.Itoa(int(port)), grpc.WithInsecure())
-	defer conn.Close()
+	ctx, cancel := utils.BuildContext("recordmover-cli-"+os.Args[1], "recordmover-cli")
+	defer cancel()
+
+	conn, err := utils.LFDialServer(ctx, "recordmover")
 
 	if err != nil {
 		log.Fatalf("Unable to dial: %v", err)
 	}
+	defer conn.Close()
 
 	client := pb.NewMoveServiceClient(conn)
-	ctx, cancel := utils.BuildContext("recordmover-cli-"+os.Args[1], "recordmover-cli")
-	defer cancel()
 
 	switch os.Args[1] {
 	case "get":

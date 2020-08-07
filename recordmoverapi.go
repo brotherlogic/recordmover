@@ -113,5 +113,19 @@ func (s *Server) ClientUpdate(ctx context.Context, in *pbrc.ClientUpdateRequest)
 		return nil, err
 	}
 
+	config, err := s.readMoves(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, move := range config.GetMoves() {
+		if move.GetInstanceId() == in.GetInstanceId() {
+			err = s.refreshMove(ctx, move)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
 	return &pbrc.ClientUpdateResponse{}, s.moveRecordInternal(ctx, record)
 }

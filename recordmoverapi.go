@@ -124,6 +124,8 @@ func (s *Server) ClientUpdate(ctx context.Context, in *pbrc.ClientUpdateRequest)
 			if err != nil {
 				return nil, err
 			}
+
+			s.saveMoves(ctx, config)
 		}
 	}
 

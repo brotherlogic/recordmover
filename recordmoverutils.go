@@ -160,7 +160,7 @@ func (s *Server) canMove(ctx context.Context, r *pbrc.Record) error {
 	}
 
 	// Only check for non GOOGLE_PLAY releases
-	if r.GetMetadata().GetCategory() != pbrc.ReleaseMetadata_GOOGLE_PLAY && r.GetMetadata().GetGoalFolder() != 1782105 {
+	if r.GetMetadata().GetCategory() != pbrc.ReleaseMetadata_GOOGLE_PLAY && r.GetMetadata().GetGoalFolder() != 1782105 && r.GetMetadata().GetGoalFolder() != 1433217 {
 		for _, f := range r.GetRelease().GetFormats() {
 			if f.Name == "CD" || f.Name == "CDr" {
 				if len(r.GetMetadata().CdPath) == 0 {

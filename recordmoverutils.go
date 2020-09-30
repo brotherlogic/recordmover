@@ -114,6 +114,10 @@ var (
 
 func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) error {
 	folder, rule := s.moveRecord(ctx, record)
+	if record.GetRelease().GetFolderId() == 812802 && record.GetMetadata().GetSpineWidth() == 0 {
+		return status.Errorf(codes.InvalidArgument, "%v needs to have the spine width set", record.GetRelease().GetInstanceId())
+	}
+
 	if folder > 0 || len(rule) > 0 {
 		s.Log(fmt.Sprintf("MOVED: %v -> %v, %v", record.GetRelease().GetInstanceId(), folder, rule))
 	}

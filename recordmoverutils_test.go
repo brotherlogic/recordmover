@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/brotherlogic/keystore/client"
+	keystoreclient "github.com/brotherlogic/keystore/client"
 	"golang.org/x/net/context"
 
 	gdpb "github.com/brotherlogic/godiscogs"
@@ -168,12 +168,9 @@ func TestUpdateRipThenSellToListeningPile(t *testing.T) {
 		t.Errorf("RIP THEN SELL has not been moved correctly: %v", tg.rec)
 	}
 
-	moves, err := s.ListMoves(context.Background(), &pb.ListRequest{InstanceId: 12})
+	_, err := s.ListMoves(context.Background(), &pb.ListRequest{InstanceId: 12})
 	if err != nil {
 		t.Fatalf("ERR: %v", err)
-	}
-	if len(moves.GetArchives()) == 0 {
-		t.Errorf("Bad archival recording: %v", moves)
 	}
 }
 
@@ -266,21 +263,4 @@ func TestAddToArchiveFail(t *testing.T) {
 	if err == nil {
 		t.Errorf("Should have failed")
 	}
-}
-
-func TestAddToArchiveDoubleFail(t *testing.T) {
-	s := InitTest()
-	s.testing = false
-
-	move := &pb.RecordedMove{InstanceId: 1, MoveTime: 12}
-	err := s.addToArchive(context.Background(), move)
-	if err != nil {
-		t.Errorf("Should not have failed: %v", err)
-	}
-
-	err = s.addToArchive(context.Background(), move)
-	if err == nil {
-		t.Errorf("Should have failed")
-	}
-
 }

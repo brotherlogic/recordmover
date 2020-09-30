@@ -207,3 +207,27 @@ func TestAddCausesUpdateMissingRecord(t *testing.T) {
 		t.Fatalf("Move did not fail")
 	}
 }
+
+func TestMoveWithoutWidth(t *testing.T) {
+	s := InitTest()
+
+	// A record in the listening pile that has no width
+	s.getter = &testGetter{rec: &pbrc.Record{Release: &pbgd.Release{InstanceId: 123, FolderId: 812802},
+		Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_NO_MATCH, GoalFolder: int32(242017)}}}
+
+	_, err := s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{InstanceId: 123})
+
+	if status.Convert(err).Code() != codes.InvalidArgument {
+		t.Errorf("Moving a record without valid width from listening pile did not fail: %v", err)
+	}
+
+	// A record in the listening pile that has no width
+	s.getter = &testGetter{rec: &pbrc.Record{Release: &pbgd.Release{InstanceId: 123, FolderId: 812802},
+		Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_NO_MATCH, GoalFolder: int32(242017), SpineWidth: int32(12)}}}
+
+	_, err = s.ClientUpdate(context.Background(), &pbrc.ClientUpdateRequest{InstanceId: 123})
+
+	if status.Convert(err).Code() != codes.OK {
+		t.Errorf("Did not succeed to move a bad record: %v", err)
+	}
+}

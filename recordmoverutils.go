@@ -210,6 +210,10 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		return 1362206, "ASSESSING"
 	}
 
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_VALIDATE && (r.GetRelease().FolderId != 812802 && r.GetMetadata().MoveFolder != 812802) {
+		return 812802, "VALIDATING"
+	}
+
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_NO_LABELS && (r.GetRelease().FolderId != 1362206 && r.GetMetadata().MoveFolder != 1362206) {
 		return 1362206, "NO LABELS"
 	}

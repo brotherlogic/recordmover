@@ -123,6 +123,8 @@ var movetests = []struct {
 	{&pbrc.Record{Release: &gdpb.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, GoalFolder: 820, Category: pbrc.ReleaseMetadata_PROFESSOR}}, 820},
 	{&pbrc.Record{Release: &gdpb.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_PRE_FRESHMAN, GoalFolder: 1234}}, 812802},
 	{&pbrc.Record{Release: &gdpb.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, GoalFolder: 820, Category: pbrc.ReleaseMetadata_FRESHMAN}}, 820},
+	{&pbrc.Record{Release: &gdpb.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_PRE_IN_COLLECTION, GoalFolder: 1234}}, 812802},
+	{&pbrc.Record{Release: &gdpb.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, GoalFolder: 820, Category: pbrc.ReleaseMetadata_IN_COLLECTION}}, 820},
 	{&pbrc.Record{Release: &gdpb.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_STAGED_TO_SELL, GoalFolder: 1234}}, 812802},
 }
 

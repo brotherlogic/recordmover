@@ -250,6 +250,15 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		return 488127, "LSITEND TO SELL"
 	}
 
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_IN_COLLECTION && r.GetRelease().FolderId != 812802 {
+		return 812802, "PRE IN COLLECTION"
+	}
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_IN_COLLECTION {
+		if r.GetMetadata().GetGoalFolder() != 0 && (r.GetRelease().FolderId != r.GetMetadata().GetGoalFolder() && r.GetMetadata().MoveFolder != r.GetMetadata().GetGoalFolder()) {
+			return r.GetMetadata().GetGoalFolder(), "COLLECTION MOVE"
+		}
+	}
+
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_FRESHMAN && r.GetRelease().FolderId != 812802 {
 		return 812802, "PRE FERSHMAN"
 	}

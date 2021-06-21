@@ -116,8 +116,10 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 	folder, rule := s.moveRecord(ctx, record)
 	if record.GetRelease().GetFolderId() == 812802 && record.GetMetadata().GetRecordWidth() == 0 &&
 		(record.GetMetadata().GetGoalFolder() != 2274270 && record.GetMetadata().GetGoalFolder() != 1782105) {
-		s.RaiseIssue(fmt.Sprintf("%v needs record width", record.GetRelease().GetInstanceId()), fmt.Sprintf("Record is %v", record.GetRelease().GetTitle()))
-		return status.Errorf(codes.InvalidArgument, "%v needs to have the record width set", record.GetRelease().GetInstanceId())
+		if folder != record.GetRelease().GetFolderId() {
+			s.RaiseIssue(fmt.Sprintf("%v needs record width", record.GetRelease().GetInstanceId()), fmt.Sprintf("Record is %v and we're trying to move to %v", record.GetRelease().GetTitle(), folder))
+			return status.Errorf(codes.InvalidArgument, "%v needs to have the record width set", record.GetRelease().GetInstanceId())
+		}
 	}
 
 	if folder > 0 || len(rule) > 0 {

@@ -6,6 +6,7 @@ require (
 	github.com/brotherlogic/cdprocessor v0.0.0-20210516180209-a867bfb00442
 	github.com/brotherlogic/godiscogs v0.0.0-20210527024337-f82403e3d903
 	github.com/brotherlogic/goserver v0.0.0-20210606163817-6f1a6e8b38f3
+	github.com/brotherlogic/keystore v0.0.0-20201029130503-da423c07fd79
 	github.com/brotherlogic/recordcollection v0.0.0-20210606170657-ead81c56293c
 	github.com/brotherlogic/recordmatcher v0.0.0-20200923211800-13a99af8f4cf
 	github.com/brotherlogic/recordsorganiser v0.0.0-20210509192121-8c945511edb7

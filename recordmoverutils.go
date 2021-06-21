@@ -136,7 +136,7 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 		if strings.Contains(rule, "Missing match") {
 			return status.Errorf(codes.FailedPrecondition, "Temp unable to move: %v", rule)
 		}
-		return fmt.Errorf("Unable to move record: %v", rule)
+		return fmt.Errorf("unable to move record: %v", rule)
 	}
 
 	return nil

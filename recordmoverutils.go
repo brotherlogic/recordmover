@@ -105,6 +105,9 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 
 func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) error {
 	folder, rule := s.moveRecord(ctx, record)
+
+	s.Log(fmt.Sprintf("%v -> %v, %v", record.GetRelease().GetInstanceId(), folder, rule))
+
 	if record.GetRelease().GetFolderId() == 812802 && record.GetMetadata().GetRecordWidth() == 0 &&
 		(record.GetMetadata().GetGoalFolder() != 2274270 && record.GetMetadata().GetGoalFolder() != 1782105) {
 		if folder > 0 && folder != record.GetRelease().GetFolderId() {

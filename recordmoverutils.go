@@ -173,6 +173,10 @@ func (s *Server) canMove(ctx context.Context, r *pbrc.Record) error {
 }
 
 func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string) {
+	if r.GetMetadata().GetBoxState() == pbrc.ReleaseMetadata_IN_THE_BOX && (r.GetRelease().FolderId != 3282985 && r.GetMetadata().MoveFolder != 3282985) {
+		return 3282985, "BOX_IT_UP"
+	}
+
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_GOOGLE_PLAY && (r.GetRelease().FolderId != 1433217 && r.GetMetadata().MoveFolder != 1433217) {
 		return 1433217, "GPLAY"
 	}

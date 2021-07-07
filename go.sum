@@ -155,6 +155,8 @@ github.com/brotherlogic/recordcollection v0.0.0-20210614132640-d949a4b8f298/go.m
 github.com/brotherlogic/recordcollection v0.0.0-20210621175822-ca96c9f05258/go.mod h1:ehYT9PrVqk+zPjyoIrjbchDh4Cglg1nLYB3GUpO8MeQ=
 github.com/brotherlogic/recordcollection v0.0.0-20210705183718-cbc462227df2 h1:ctp/fLIyjTxZIoJRiLSi64uW/vzAsFS8IWZ1EZsDbkA=
 github.com/brotherlogic/recordcollection v0.0.0-20210705183718-cbc462227df2/go.mod h1:Gbu3uW71qfY6Q9QDhHi5ipXjbtoA5SiUJaUnWl5FbQA=
+github.com/brotherlogic/recordcollection v0.0.0-20210705201234-23243d77fc69 h1:wUV4M5hjZz1vc80hlq0fi2AcYi7AvmnK9ugnHtKYdBE=
+github.com/brotherlogic/recordcollection v0.0.0-20210705201234-23243d77fc69/go.mod h1:Gbu3uW71qfY6Q9QDhHi5ipXjbtoA5SiUJaUnWl5FbQA=
 github.com/brotherlogic/recordgetter v0.0.0-20201227170856-8696381a15a9/go.mod h1:yJmhM51lcaJ2zYRD9wBuaG+u2anrS+lMMV/x9hXruaQ=
 github.com/brotherlogic/recordmatcher v0.0.0-20200923211800-13a99af8f4cf h1:EaNuZkgjqoyYKOXTXRP+HTLOPpRP8zy7fnOrfefu+bU=
 github.com/brotherlogic/recordmatcher v0.0.0-20200923211800-13a99af8f4cf/go.mod h1:kOa/fmama1cU+hgn6xfBSHjthqtQeVRO0lf2AyhKohY=

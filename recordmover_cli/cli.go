@@ -145,7 +145,7 @@ func main() {
 			if err != nil {
 				log.Fatalf("Pah: %v", err)
 			}
-			if r.GetRecord().GetMetadata().GetBoxState() == pbrc.ReleaseMetadata_IN_CDS_BOX {
+			if r.GetRecord().GetMetadata().GetBoxState() == pbrc.ReleaseMetadata_IN_TAPE_BOX {
 				/*v, err := strconv.Atoi(os.Args[2])
 				if err != nil {
 					log.Fatalf("%v", err)
@@ -155,7 +155,7 @@ func main() {
 				if err != nil {
 					log.Fatalf("Error on GET: %v", err)
 				}
-			}
+		 	}
 		}
 
 	case "get":

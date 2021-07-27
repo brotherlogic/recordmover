@@ -136,12 +136,12 @@ func main() {
 			log.Fatalf("RC load: %v", err2)
 		}
 		rcclient := pbrc.NewRecordCollectionServiceClient(conn2)
-		//ids, err := rcclient.QueryRecords(ctx, &pbrc.QueryRecordsRequest{Query: &pbrc.QueryRecordsRequest_All{true}})
-		//if err != nil {
-		//	log.Fatalf("Pah2: %v -> %v", err, ids)
-		//}
-		//for _, id := range ids.GetInstanceIds() {
-		id := int32(342981733)
+		ids, err := rcclient.QueryRecords(ctx, &pbrc.QueryRecordsRequest{Query: &pbrc.QueryRecordsRequest_All{true}})
+		if err != nil {
+		log.Fatalf("Pah2: %v -> %v", err, ids)
+		}
+		for _, id := range ids.GetInstanceIds() {
+		
 			r, err := rcclient.GetRecord(ctx, &pbrc.GetRecordRequest{InstanceId: id})
 			if err != nil {
 				log.Fatalf("Pah: %v", err)
@@ -157,7 +157,7 @@ func main() {
 					log.Fatalf("Error on GET: %v", err)
 				}
 		 	}
-		
+		}
 
 	case "get":
 		v, err := strconv.Atoi(os.Args[2])

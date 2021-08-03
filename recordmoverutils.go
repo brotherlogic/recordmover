@@ -133,7 +133,7 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 		if err != nil {
 			return err
 		}
-		s.incrementCount(ctx, record.GetRelease().InstanceId)
+		s.incrementCount(ctx, record.GetRelease().GetInstanceId())
 		return nil
 	}
 
@@ -203,6 +203,10 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 	// Don't move a record that's in the box
 	if r.GetMetadata().GetBoxState() != pbrc.ReleaseMetadata_BOX_UNKNOWN && r.GetMetadata().GetBoxState() != pbrc.ReleaseMetadata_OUT_OF_BOX {
 		return -1, ""
+	}
+
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_UNKNOWN && (r.GetRelease().GetFolderId() != 3380098 && r.GetMetadata().GetMoveFolder() != 3380098) {
+		return 3380098, "UNKNOWN"
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_GOOGLE_PLAY && (r.GetRelease().FolderId != 1433217 && r.GetMetadata().MoveFolder != 1433217) {

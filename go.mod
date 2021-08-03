@@ -3,13 +3,14 @@ module github.com/brotherlogic/recordmover
 go 1.13
 
 require (
-	github.com/brotherlogic/cdprocessor v0.0.0-20210713210144-edc8b486cdf1
+	github.com/brotherlogic/buildserver v0.0.0-20210728184850-2807794331a0 // indirect
+	github.com/brotherlogic/cdprocessor v0.0.0-20210728184024-22df73c1b4bd
 	github.com/brotherlogic/discovery v0.0.0-20210626180714-1ae56396f4e1 // indirect
 	github.com/brotherlogic/gobuildslave v0.0.0-20210626211527-ff107a8a9b1d // indirect
 	github.com/brotherlogic/godiscogs v0.0.0-20210527024337-f82403e3d903
-	github.com/brotherlogic/goserver v0.0.0-20210615034723-54a9e8564a59
+	github.com/brotherlogic/goserver v0.0.0-20210728172851-3fb58a9ee5c2
 	github.com/brotherlogic/keystore v0.0.0-20201029130503-da423c07fd79
-	github.com/brotherlogic/recordcollection v0.0.0-20210727202911-1433db1d456a
+	github.com/brotherlogic/recordcollection v0.0.0-20210802235141-7dcae56622d9
 	github.com/brotherlogic/recordmatcher v0.0.0-20210622165532-1d0abf549ba0
 	github.com/brotherlogic/recordsorganiser v0.0.0-20210706222422-7d8c036fc939
 	github.com/golang/protobuf v1.5.2
@@ -17,7 +18,7 @@ require (
 	github.com/prometheus/procfs v0.7.1 // indirect
 	golang.org/x/net v0.0.0-20210726213435-c6fcb2dbf985
 	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
-	google.golang.org/genproto v0.0.0-20210726200206-e7812ac95cc0 // indirect
+	google.golang.org/genproto v0.0.0-20210729151513-df9385d47c1b // indirect
 	google.golang.org/grpc v1.39.0
 	google.golang.org/protobuf v1.27.1
 )

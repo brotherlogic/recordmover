@@ -138,15 +138,15 @@ func main() {
 		rcclient := pbrc.NewRecordCollectionServiceClient(conn2)
 		ids, err := rcclient.QueryRecords(ctx, &pbrc.QueryRecordsRequest{Query: &pbrc.QueryRecordsRequest_All{true}})
 		if err != nil {
-		log.Fatalf("Pah2: %v -> %v", err, ids)
+			log.Fatalf("Pah2: %v -> %v", err, ids)
 		}
 		for _, id := range ids.GetInstanceIds() {
-		
+
 			r, err := rcclient.GetRecord(ctx, &pbrc.GetRecordRequest{InstanceId: id})
 			if err != nil {
 				log.Fatalf("Pah: %v", err)
 			}
-			if r.GetRecord().GetMetadata().GetBoxState() == pbrc.ReleaseMetadata_IN_TAPE_BOX {
+			if r.GetRecord().GetMetadata().GetBoxState() == pbrc.ReleaseMetadata_IN_DIGITAL_BOX {
 				/*v, err := strconv.Atoi(os.Args[2])
 				if err != nil {
 					log.Fatalf("%v", err)
@@ -156,7 +156,7 @@ func main() {
 				if err != nil {
 					log.Fatalf("Error on GET: %v", err)
 				}
-		 	}
+			}
 		}
 
 	case "get":

@@ -222,6 +222,11 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		return 812802, "RIP THEN SELL"
 	}
 
+	// We can always move something for processing.
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_ARRIVED && (r.GetRelease().FolderId != 812802 && r.GetMetadata().MoveFolder != 812802) {
+		return 812802, "ARRIVED"
+	}
+
 	err := s.canMove(ctx, r)
 	if err != nil {
 		return -1, fmt.Sprintf("CANNOT MOVE %v: %v", r.GetRelease().GetInstanceId(), err)

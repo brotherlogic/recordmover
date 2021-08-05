@@ -130,35 +130,12 @@ func main() {
 
 	switch os.Args[1] {
 	case "ping":
-		conn2, err2 := utils.LFDialServer(ctx, "recordcollection")
-		defer conn2.Close()
-		if err2 != nil {
-			log.Fatalf("RC load: %v", err2)
-		}
-		rcclient := pbrc.NewRecordCollectionServiceClient(conn2)
-		ids, err := rcclient.QueryRecords(ctx, &pbrc.QueryRecordsRequest{Query: &pbrc.QueryRecordsRequest_All{true}})
-		if err != nil {
-			log.Fatalf("Pah2: %v -> %v", err, ids)
-		}
-		for _, id := range ids.GetInstanceIds() {
-
-			r, err := rcclient.GetRecord(ctx, &pbrc.GetRecordRequest{InstanceId: id})
-			if err != nil {
-				log.Fatalf("Pah: %v", err)
-			}
-			if r.GetRecord().GetMetadata().GetBoxState() == pbrc.ReleaseMetadata_IN_DIGITAL_BOX {
-				/*v, err := strconv.Atoi(os.Args[2])
-				if err != nil {
-					log.Fatalf("%v", err)
-				}*/
+	id, err := strconv.Atoi(os.Args[2])
 				sclient := pbrc.NewClientUpdateServiceClient(conn)
-				_, err = sclient.ClientUpdate(ctx, &pbrc.ClientUpdateRequest{InstanceId: id})
+				_, err = sclient.ClientUpdate(ctx, &pbrc.ClientUpdateRequest{InstanceId: int32(id)})
 				if err != nil {
 					log.Fatalf("Error on GET: %v", err)
-				}
-			}
-		}
-
+					}
 	case "get":
 		v, err := strconv.Atoi(os.Args[2])
 		if err != nil {

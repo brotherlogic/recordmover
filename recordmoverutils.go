@@ -178,6 +178,12 @@ func (s *Server) canMove(ctx context.Context, r *pbrc.Record) error {
 }
 
 func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string) {
+
+	// Prevent unclean records from moving out of the cleaning pile
+	if r.GetRelease().GetFolderId() == 3386035 && time.Since(time.Unix(r.GetMetadata().GetLastCleanDate(), 0)) < time.Hour*24*365*3 {
+		return -1, "STILL_NOT_CLEAN"
+	}
+
 	if r.GetMetadata().GetBoxState() == pbrc.ReleaseMetadata_IN_THE_BOX && (r.GetRelease().FolderId != 3282985 && r.GetMetadata().MoveFolder != 3282985) {
 		return 3282985, "BOX_IT_UP"
 	}

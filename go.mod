@@ -10,15 +10,17 @@ require (
 	github.com/brotherlogic/godiscogs v0.0.0-20210527024337-f82403e3d903
 	github.com/brotherlogic/goserver v0.0.0-20210805130102-24f4ac0bb699
 	github.com/brotherlogic/keystore v0.0.0-20201029130503-da423c07fd79
-	github.com/brotherlogic/recordcollection v0.0.0-20210804183554-43804f310007
+	github.com/brotherlogic/recordcollection v0.0.0-20210808230243-7b0a70cc8ffd
 	github.com/brotherlogic/recordmatcher v0.0.0-20210622165532-1d0abf549ba0
 	github.com/brotherlogic/recordsorganiser v0.0.0-20210706222422-7d8c036fc939
 	github.com/golang/protobuf v1.5.2
 	github.com/prometheus/common v0.30.0 // indirect
 	github.com/prometheus/procfs v0.7.2 // indirect
-	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d
-	golang.org/x/sys v0.0.0-20210806184541-e5e7981a1069 // indirect
-	google.golang.org/genproto v0.0.0-20210805201207-89edb61ffb67 // indirect
-	google.golang.org/grpc v1.39.1
+	github.com/struCoder/pidusage v0.2.1 // indirect
+	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d
+	golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e // indirect
+	golang.org/x/text v0.3.7 // indirect
+	google.golang.org/genproto v0.0.0-20210813162853-db860fec028c // indirect
+	google.golang.org/grpc v1.40.0
 	google.golang.org/protobuf v1.27.1
 )

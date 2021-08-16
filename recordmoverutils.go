@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	pbgd "github.com/brotherlogic/godiscogs"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pb "github.com/brotherlogic/recordmover/proto"
 	pbro "github.com/brotherlogic/recordsorganiser/proto"
@@ -180,7 +181,7 @@ func (s *Server) canMove(ctx context.Context, r *pbrc.Record) error {
 func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string) {
 
 	// Prevent unclean records from moving out of the cleaning pile
-	if r.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_12_INCH || r.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_7_INCH {
+	if (r.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_12_INCH || r.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_7_INCH) && r.GetMetadata().GetSaleState() != pbgd.SaleState_SOLD {
 		if r.GetRelease().GetFolderId() == 3386035 && time.Since(time.Unix(r.GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*365*3 {
 			return -1, "STILL_NOT_CLEAN"
 		}

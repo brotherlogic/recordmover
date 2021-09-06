@@ -207,6 +207,10 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		return 3358141, "BOX_IT_UP"
 	}
 
+	if r.GetMetadata().GetBoxState() == pbrc.ReleaseMetadata_IN_BOXSET_BOX && (r.GetRelease().FolderId != 3499126 && r.GetMetadata().MoveFolder != 3499126) {
+		return 3499126, "BOX_IT_UP"
+	}
+
 	s.Log(fmt.Sprintf("%v, %v, %v", r.GetMetadata().GetBoxState(), r.GetRelease().GetFolderId(), r.GetMetadata().GetMoveFolder()))
 
 	// Don't move a record that's in the box

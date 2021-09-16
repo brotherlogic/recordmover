@@ -81,19 +81,17 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 				move.AfterContext = &pb.Context{}
 			}
 
+			move.GetAfterContext().Location = location.GetFoundLocation().Name
+			move.GetAfterContext().Slot = location.GetFoundLocation().GetReleasesLocation()[i].Slot
+
 			if i > 0 {
-				move.GetAfterContext().Location = location.GetFoundLocation().Name
-				move.GetAfterContext().Slot = location.GetFoundLocation().GetReleasesLocation()[i].Slot
 				move.GetAfterContext().BeforeInstance = location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId
 			} else {
 				move.AfterContext.BeforeInstance = -2
 			}
 
 			if i < len(location.GetFoundLocation().GetReleasesLocation())-1 {
-				move.GetAfterContext().Location = location.GetFoundLocation().Name
-				move.GetAfterContext().Slot = location.GetFoundLocation().GetReleasesLocation()[i].Slot
 				move.GetAfterContext().AfterInstance = location.GetFoundLocation().GetReleasesLocation()[i+1].InstanceId
-
 			} else {
 				move.AfterContext.AfterInstance = -2
 			}

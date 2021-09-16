@@ -1,10 +1,7 @@
 package main
 
 import (
-	"flag"
 	"fmt"
-	"io/ioutil"
-	"log"
 	"sync"
 	"time"
 
@@ -263,14 +260,6 @@ func (s *Server) GetState() []*pbg.State {
 }
 
 func main() {
-	var quiet = flag.Bool("quiet", false, "Show all output")
-	flag.Parse()
-
-	//Turn off logging
-	if *quiet {
-		log.SetFlags(0)
-		log.SetOutput(ioutil.Discard)
-	}
 	server := Init()
 	server.PrepServer()
 	server.Register = server

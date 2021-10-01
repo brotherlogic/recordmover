@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/brotherlogic/goserver/utils"
 	"golang.org/x/net/context"
@@ -129,13 +130,36 @@ func main() {
 	client := pb.NewMoveServiceClient(conn)
 
 	switch os.Args[1] {
+	case "fullping":
+		ctx2, cancel2 := utils.ManualContext("recordcollectioncli-"+os.Args[1], time.Hour)
+		defer cancel2()
+
+		conn2, err := utils.LFDialServer(ctx2, "recordcollection")
+		if err != nil {
+			log.Fatalf("Cannot reach rc: %v", err)
+		}
+		defer conn2.Close()
+
+		registry := pbrc.NewRecordCollectionServiceClient(conn2)
+		ids, err := registry.QueryRecords(ctx2, &pbrc.QueryRecordsRequest{Query: &pbrc.QueryRecordsRequest_FolderId{673768}})
+		if err != nil {
+			log.Fatalf("Bad query: %v", err)
+		}
+		client2 := pbrc.NewClientUpdateServiceClient(conn)
+		for i, id := range ids.GetInstanceIds() {
+			log.Printf("PING %v -> %v\n", i, id)
+			ctx3, cancel3 := utils.ManualContext("fullping", time.Minute)
+			res, err := client2.ClientUpdate(ctx3, &pbrc.ClientUpdateRequest{InstanceId: int32(id)})
+			fmt.Printf("%v->%v\n", res, err)
+			cancel3()
+		}
 	case "ping":
-	id, err := strconv.Atoi(os.Args[2])
-				sclient := pbrc.NewClientUpdateServiceClient(conn)
-				_, err = sclient.ClientUpdate(ctx, &pbrc.ClientUpdateRequest{InstanceId: int32(id)})
-				if err != nil {
-					log.Fatalf("Error on GET: %v", err)
-					}
+		id, err := strconv.Atoi(os.Args[2])
+		sclient := pbrc.NewClientUpdateServiceClient(conn)
+		_, err = sclient.ClientUpdate(ctx, &pbrc.ClientUpdateRequest{InstanceId: int32(id)})
+		if err != nil {
+			log.Fatalf("Error on GET: %v", err)
+		}
 	case "get":
 		v, err := strconv.Atoi(os.Args[2])
 		if err != nil {

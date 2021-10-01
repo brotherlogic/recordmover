@@ -275,8 +275,8 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		return 812802, "UNLISTE"
 	}
 
-	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_STAGED && r.GetRelease().FolderId != 673768 {
-		return 673768, "STAGED"
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_STAGED && r.GetRelease().FolderId != 3578980 {
+		return 3578980, "STAGED"
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_STALE_SALE && r.GetRelease().FolderId != 1708299 {

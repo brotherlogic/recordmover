@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"golang.org/x/net/context"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pb "github.com/brotherlogic/recordmover/proto"
@@ -110,6 +112,9 @@ func (s *Server) ClearMove(ctx context.Context, in *pb.ClearRequest) (*pb.ClearR
 func (s *Server) ClientUpdate(ctx context.Context, in *pbrc.ClientUpdateRequest) (*pbrc.ClientUpdateResponse, error) {
 	record, err := s.getter.getRecord(ctx, in.InstanceId)
 	if err != nil {
+		if status.Convert(err).Code() == codes.OutOfRange {
+			return &pbrc.ClientUpdateResponse{}, nil
+		}
 		return nil, err
 	}
 

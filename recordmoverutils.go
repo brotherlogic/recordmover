@@ -67,6 +67,11 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 			move.BeforeContext = &pb.Context{}
 		}
 		move.GetBeforeContext().Location = loc.GetFoundLocation().GetName()
+		for _, r := range loc.GetFoundLocation().GetReleasesLocation() {
+			if r.GetInstanceId() == move.InstanceId {
+				move.GetBeforeContext().Slot = r.GetSlot()
+			}
+		}
 	}
 
 	location, err := s.organiser.locate(ctx, &pbro.LocateRequest{InstanceId: move.InstanceId})

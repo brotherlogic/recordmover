@@ -32,7 +32,7 @@ func (s *Server) RecordMove(ctx context.Context, in *pb.MoveRequest) (*pb.MoveRe
 	for i, r := range location.GetFoundLocation().GetReleasesLocation() {
 		if r.GetInstanceId() == in.GetMove().InstanceId {
 			newBefore.Location = location.GetFoundLocation().Name
-			newBefore.Slot = location.GetFoundLocation().GetReleasesLocation()[0].Slot
+			newBefore.Slot = location.GetFoundLocation().GetReleasesLocation()[i].Slot
 
 			if i > 0 {
 				newBefore.BeforeInstance = location.GetFoundLocation().GetReleasesLocation()[i-1].InstanceId

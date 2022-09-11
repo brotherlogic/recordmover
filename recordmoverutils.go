@@ -55,7 +55,7 @@ type getter interface {
 }
 
 func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
-	s.Log(fmt.Sprintf("Refreshing: %v", move.InstanceId))
+	s.CtxLog(ctx, fmt.Sprintf("Refreshing: %v", move.InstanceId))
 
 	//Hydrate the origin
 	if move.GetBeforeContext().GetLocation() == "" {
@@ -110,7 +110,7 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) error {
 	folder, rule := s.moveRecord(ctx, record)
 
-	s.Log(fmt.Sprintf("%v -> %v, %v", record.GetRelease().GetInstanceId(), folder, rule))
+	s.CtxLog(ctx, fmt.Sprintf("%v -> %v, %v", record.GetRelease().GetInstanceId(), folder, rule))
 
 	if record.GetRelease().GetFolderId() == 812802 && record.GetMetadata().GetRecordWidth() == 0 &&
 		(record.GetMetadata().GetGoalFolder() != 2274270 && record.GetMetadata().GetGoalFolder() != 1782105) {
@@ -123,7 +123,7 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 	}
 
 	if folder > 0 || len(rule) > 0 {
-		s.Log(fmt.Sprintf("MOVED: %v -> %v, %v", record.GetRelease().GetInstanceId(), folder, rule))
+		s.CtxLog(ctx, fmt.Sprintf("MOVED: %v -> %v, %v", record.GetRelease().GetInstanceId(), folder, rule))
 	}
 	if folder > 0 {
 		s.addToArchive(ctx, &pb.RecordedMove{
@@ -145,7 +145,7 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 		if strings.Contains(rule, "Missing match") {
 			return status.Errorf(codes.FailedPrecondition, "Temp unable to move: %v", rule)
 		}
-		s.Log(fmt.Sprintf("Unable to move record: %v", rule))
+		s.CtxLog(ctx, fmt.Sprintf("Unable to move record: %v", rule))
 	}
 
 	return nil
@@ -216,7 +216,7 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		return 3499126, "BOX_IT_UP"
 	}
 
-	s.Log(fmt.Sprintf("%v, %v, %v", r.GetMetadata().GetBoxState(), r.GetRelease().GetFolderId(), r.GetMetadata().GetMoveFolder()))
+	s.CtxLog(ctx, fmt.Sprintf("%v, %v, %v", r.GetMetadata().GetBoxState(), r.GetRelease().GetFolderId(), r.GetMetadata().GetMoveFolder()))
 
 	// Don't move a record that's in the box
 	if r.GetMetadata().GetBoxState() != pbrc.ReleaseMetadata_BOX_UNKNOWN && r.GetMetadata().GetBoxState() != pbrc.ReleaseMetadata_OUT_OF_BOX {

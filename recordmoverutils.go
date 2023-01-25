@@ -167,17 +167,6 @@ func (s *Server) canMove(ctx context.Context, r *pbrc.Record) error {
 		return fmt.Errorf("Missing match: %v", r.GetRelease().GetInstanceId())
 	}
 
-	// Only check for non GOOGLE_PLAY releases
-	if r.GetMetadata().GetCategory() != pbrc.ReleaseMetadata_GOOGLE_PLAY && r.GetMetadata().GetGoalFolder() != 1782105 && r.GetMetadata().GetGoalFolder() != 1433217 {
-		for _, f := range r.GetRelease().GetFormats() {
-			if f.Name == "CD" || f.Name == "CDr" {
-				if len(r.GetMetadata().CdPath) == 0 {
-					return fmt.Errorf("No CDPath: %v", r.GetMetadata())
-				}
-			}
-		}
-	}
-
 	return nil
 }
 

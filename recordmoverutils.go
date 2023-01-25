@@ -17,7 +17,7 @@ import (
 
 func (s *Server) addToArchive(ctx context.Context, move *pb.RecordedMove) error {
 	moves, err := s.readMoveArchive(ctx, move.GetInstanceId())
-	if status.Convert(err).Code() != codes.OK && status.Convert(err).Code() != codes.NotFound {
+	if status.Convert(err).Code() != codes.OK && status.Convert(err).Code() != codes.InvalidArgument {
 		return err
 	}
 

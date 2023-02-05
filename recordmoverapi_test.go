@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	pbgd "github.com/brotherlogic/godiscogs"
+	pbgd "github.com/brotherlogic/godiscogs/proto"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pb "github.com/brotherlogic/recordmover/proto"
 	pbro "github.com/brotherlogic/recordsorganiser/proto"
@@ -23,7 +23,7 @@ type testCol struct {
 
 func (t *testCol) getRecords(ctx context.Context, rec *pbrc.GetRecordsRequest) (*pbrc.GetRecordsResponse, error) {
 	if t.fail || (t.failSecond && t.count > 0) {
-		return &pbrc.GetRecordsResponse{}, fmt.Errorf("Recs Built to fail")
+		return &pbrc.GetRecordsResponse{}, fmt.Errorf("recs Built to fail")
 	}
 
 	if t.noLocate || (t.noLocateSecond && t.count > 0) {

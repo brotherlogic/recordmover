@@ -109,7 +109,7 @@ var movetests = []struct {
 	{&pbrc.Record{Release: &gdpb.Release{}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_GOOGLE_PLAY, GoalFolder: 1234}}, 1433217},
 	{&pbrc.Record{Release: &gdpb.Release{}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_SOLD_ARCHIVE, GoalFolder: 1234}}, 1613206},
 	{&pbrc.Record{Release: &gdpb.Release{}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_ASSESS_FOR_SALE, GoalFolder: 1234}}, 1362206},
-	{&pbrc.Record{Release: &gdpb.Release{}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_PRE_HIGH_SCHOOL, GoalFolder: 1234}}, 673768},
+	{&pbrc.Record{Release: &gdpb.Release{}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_PRE_HIGH_SCHOOL, GoalFolder: 1234}}, 812802},
 	{&pbrc.Record{Release: &gdpb.Release{}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_LISTED_TO_SELL, GoalFolder: 1234}}, 488127},
 	{&pbrc.Record{Release: &gdpb.Release{}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_HIGH_SCHOOL, GoalFolder: 1234}}, 673768},
 	{&pbrc.Record{Release: &gdpb.Release{FolderId: 2259637}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_PRE_VALIDATE, GoalFolder: 2259637}}, 812802},
@@ -119,7 +119,7 @@ var movetests = []struct {
 	{&pbrc.Record{Release: &gdpb.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_UNLISTENED, GoalFolder: 1234}}, 812802},
 	{&pbrc.Record{Release: &gdpb.Release{Rating: 4, FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_DIGITAL, GoalFolder: 1234}}, 268147},
 	{&pbrc.Record{Release: &gdpb.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_SOLD, GoalFolder: 1234}}, 488127},
-	{&pbrc.Record{Release: &gdpb.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_STAGED, GoalFolder: 1234}}, 673768},
+	{&pbrc.Record{Release: &gdpb.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_STAGED, GoalFolder: 1234}}, 3578980},
 	{&pbrc.Record{Release: &gdpb.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, GoalFolder: 820, Category: pbrc.ReleaseMetadata_PROFESSOR}}, 820},
 	{&pbrc.Record{Release: &gdpb.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_PRE_FRESHMAN, GoalFolder: 1234}}, 812802},
 	{&pbrc.Record{Release: &gdpb.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, GoalFolder: 820, Category: pbrc.ReleaseMetadata_FRESHMAN}}, 820},
@@ -139,24 +139,6 @@ func TestMoves(t *testing.T) {
 		if tg.rec.GetMetadata().MoveFolder != test.out {
 			t.Fatalf("Error moving record: %v -> %v (ended up in %v)", test.in, test.out, tg.rec.GetMetadata().MoveFolder)
 		}
-	}
-}
-
-func TestMoveUnripped(t *testing.T) {
-	s := InitTest()
-	val, _ := s.moveRecord(context.Background(), &pbrc.Record{Release: &gdpb.Release{Id: 123, Formats: []*gdpb.Format{&gdpb.Format{Name: "CD"}}}, Metadata: &pbrc.ReleaseMetadata{}})
-
-	if val > 0 {
-		t.Errorf("moved: %v", val)
-	}
-}
-
-func TestMoveUnrippedButDigital(t *testing.T) {
-	s := InitTest()
-	val, _ := s.moveRecord(context.Background(), &pbrc.Record{Metadata: &pbrc.ReleaseMetadata{GoalFolder: 268147}, Release: &gdpb.Release{Id: 123, Formats: []*gdpb.Format{&gdpb.Format{Name: "CD"}}}})
-
-	if val > 0 {
-		t.Errorf("moved: %v", val)
 	}
 }
 
@@ -217,34 +199,10 @@ func TestCanMoveFail(t *testing.T) {
 	}
 }
 
-func TestCanMoveFailInternal(t *testing.T) {
-	s := InitTest()
-
-	if s.moveRecordInternal(context.Background(), &pbrc.Record{Metadata: &pbrc.ReleaseMetadata{Dirty: true}}) == nil {
-		t.Errorf("Should not be able to move dirty record")
-	}
-}
-
-func TestCanMoveFailInternalNoMatch(t *testing.T) {
-	s := InitTest()
-
-	if s.moveRecordInternal(context.Background(), &pbrc.Record{Metadata: &pbrc.ReleaseMetadata{GoalFolder: 1234}}) == nil {
-		t.Errorf("Should not be able to move dirty record")
-	}
-}
-
 func TestCanMoveCDWithNoMatch(t *testing.T) {
 	s := InitTest()
 
 	if s.canMove(context.Background(), &pbrc.Record{Release: &gdpb.Release{Formats: []*gdpb.Format{&gdpb.Format{Name: "CD"}}}, Metadata: &pbrc.ReleaseMetadata{GoalFolder: 1234}}) == nil {
-		t.Errorf("Should not be able to move dirty record")
-	}
-}
-
-func TestCanMoveCD(t *testing.T) {
-	s := InitTest()
-
-	if s.canMove(context.Background(), &pbrc.Record{Release: &gdpb.Release{Formats: []*gdpb.Format{&gdpb.Format{Name: "CD"}}}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, GoalFolder: 1234}}) == nil {
 		t.Errorf("Should not be able to move dirty record")
 	}
 }

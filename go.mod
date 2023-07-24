@@ -13,6 +13,7 @@ require (
 	github.com/brotherlogic/recordsorganiser v0.0.0-20230717230607-1d88ccf8a8e4
 	github.com/golang/protobuf v1.5.3
 	golang.org/x/net v0.12.0
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20230724170836-66ad5b6ff146 // indirect
 	google.golang.org/grpc v1.56.2
 	google.golang.org/protobuf v1.31.0
 )

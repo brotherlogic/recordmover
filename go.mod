@@ -4,11 +4,10 @@ go 1.13
 
 require (
 	github.com/brotherlogic/cdprocessor v0.0.0-20231013210046-6efe6abeb1b1
-	github.com/brotherlogic/discovery v0.0.0-20231019043330-e664fbb1036e // indirect
 	github.com/brotherlogic/godiscogs v0.0.0-20230922000443-fb73651e941c
 	github.com/brotherlogic/goserver v0.0.0-20230726200050-779ae6811580
 	github.com/brotherlogic/keystore v0.0.0-20231014003010-9fa4578d12ad
-	github.com/brotherlogic/recordcollection v0.0.0-20231019042242-48f308f6b42a
+	github.com/brotherlogic/recordcollection v0.0.0-20231019051056-a4b21e81ca3d
 	github.com/brotherlogic/recordmatcher v0.0.0-20231011232053-49dc2a2ca851
 	github.com/brotherlogic/recordsorganiser v0.0.0-20231011232053-98052241f97c
 	github.com/golang/protobuf v1.5.3

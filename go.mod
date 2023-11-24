@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/brotherlogic/cdprocessor v0.0.0-20231027225317-e326db84ee52
-	github.com/brotherlogic/discovery v0.0.0-20231123223716-d1c9640bbcea // indirect
+	github.com/brotherlogic/discovery v0.0.0-20231124134448-9d4e9a397b82 // indirect
 	github.com/brotherlogic/godiscogs v0.0.0-20230922000443-fb73651e941c
 	github.com/brotherlogic/goserver v0.0.0-20230726200050-779ae6811580
 	github.com/brotherlogic/keystore v0.0.0-20231119202049-7825451248e4

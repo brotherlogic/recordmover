@@ -292,6 +292,14 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 			if r.GetRelease().GetFolderId() != 6803737 {
 				return 6803737, "LISTED 12 INCH FOR SALE"
 			}
+		} else if r.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_CD {
+			if r.GetRelease().GetFolderId() != 6804694 {
+				return 6804694, "LISTED CD FOR SALE"
+			}
+		} else if r.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_7_INCH {
+			if r.GetRelease().GetFolderId() != 6804697 {
+				return 6804697, "LISTED 7 INCH FOR SALE"
+			}
 		} else {
 			if r.GetRelease().FolderId != 488127 {
 				return 488127, "LSITEND TO SELL"

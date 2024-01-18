@@ -126,6 +126,7 @@ var movetests = []struct {
 	{&pbrc.Record{Release: &gdpb.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_PRE_IN_COLLECTION, GoalFolder: 1234}}, 812802},
 	{&pbrc.Record{Release: &gdpb.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, GoalFolder: 820, Category: pbrc.ReleaseMetadata_IN_COLLECTION}}, 820},
 	{&pbrc.Record{Release: &gdpb.Release{FolderId: 812}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_STAGED_TO_SELL, GoalFolder: 1234}}, 812802},
+	{&pbrc.Record{Release: &gdpb.Release{}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, FiledUnder: pbrc.ReleaseMetadata_FILE_12_INCH, Category: pbrc.ReleaseMetadata_LISTED_TO_SELL, GoalFolder: 1234}}, 6803737},
 }
 
 func TestMoves(t *testing.T) {

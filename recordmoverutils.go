@@ -287,6 +287,10 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		return 812802, "PRE HIGH SCHOOL"
 	}
 
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_SALE_ISSUE && r.GetRelease().GetFolderId() != 681883 {
+		return 681883, "SALE_ISSUE"
+	}
+
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_LISTED_TO_SELL {
 		if r.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_12_INCH {
 			if r.GetRelease().GetFolderId() != 6803737 {

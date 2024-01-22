@@ -287,8 +287,8 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		return 812802, "PRE HIGH SCHOOL"
 	}
 
-	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_SALE_ISSUE && r.GetRelease().GetFolderId() != 681883 {
-		return 681883, "SALE_ISSUE"
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_SALE_ISSUE && r.GetRelease().GetFolderId() != 6818839 {
+		return 6818839, "SALE_ISSUE"
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_LISTED_TO_SELL {

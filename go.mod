@@ -8,7 +8,7 @@ require (
 	github.com/brotherlogic/goserver v0.0.0-20240303220030-80da220f0393
 	github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126
 	github.com/brotherlogic/recordcollection v0.0.0-20240620132824-7180796040a6
-	github.com/brotherlogic/recordmatcher v0.0.0-20240621010545-6a31b9122051
+	github.com/brotherlogic/recordmatcher v0.0.0-20240621012831-1ff06ddade20
 	github.com/brotherlogic/recordsorganiser v0.0.0-20240619144755-a546b6fba6b0
 	github.com/golang/protobuf v1.5.4
 	golang.org/x/net v0.26.0

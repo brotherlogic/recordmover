@@ -2,16 +2,21 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
+	"os"
 	"sync"
 	"time"
 
 	"github.com/brotherlogic/goserver"
+	"github.com/golang/protobuf/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/metadata"
 
 	pbcdp "github.com/brotherlogic/cdprocessor/proto"
-	gdpb "github.com/brotherlogic/godiscogs/proto"
 	pbg "github.com/brotherlogic/goserver/proto"
+	pbgr "github.com/brotherlogic/gramophile/proto"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 	rcpb "github.com/brotherlogic/recordcollection/proto"
 	rmpb "github.com/brotherlogic/recordmatcher/proto"
@@ -19,7 +24,7 @@ import (
 	pbro "github.com/brotherlogic/recordsorganiser/proto"
 )
 
-//Server main server type
+// Server main server type
 type Server struct {
 	*goserver.GoServer
 	getter      getter
@@ -216,19 +221,52 @@ func (s *Server) saveMoveArchive(ctx context.Context, iid int32, moves []*pb.Rec
 	return s.KSclient.Save(ctx, fmt.Sprintf("%v-%v", MoveKey, iid), &pb.MoveArchive{Moves: moves})
 }
 
+func buildContext(ctx context.Context) (context.Context, context.CancelFunc, error) {
+	dirname, err := os.UserHomeDir()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	text, err := ioutil.ReadFile(fmt.Sprintf("%v/.gramophile", dirname))
+	if err != nil {
+		return nil, nil, err
+	}
+
+	user := &pbgr.GramophileAuth{}
+	err = proto.UnmarshalText(string(text), user)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	mContext := metadata.AppendToOutgoingContext(ctx, "auth-token", user.GetToken())
+	ctx, cancel := context.WithTimeout(mContext, time.Minute)
+	return ctx, cancel, nil
+}
+
 func (p prodGetter) update(ctx context.Context, instanceID int32, reason string, folder int32) error {
-	conn, err := p.dial(ctx, "recordcollection")
+
+	// Dial gram
+	conn, err := grpc.NewClient("gramophile-grpc.brotherlogic-backend.com:80", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return err
 	}
 	defer conn.Close()
 
-	client := pbrc.NewRecordCollectionServiceClient(conn)
-	_, err = client.UpdateRecord(ctx, &pbrc.UpdateRecordRequest{Reason: fmt.Sprintf("recordmover-%v", reason), Update: &pbrc.Record{Release: &gdpb.Release{InstanceId: instanceID}, Metadata: &pbrc.ReleaseMetadata{MoveFolder: folder}}})
-	if err != nil {
-		return err
+	gclient := pbgr.NewGramophileEServiceClient(conn)
+	nctx, cancel, gerr := buildContext(ctx)
+	if gerr != nil {
+		return gerr
 	}
-	return nil
+	defer cancel()
+
+	_, err = gclient.SetIntent(nctx, &pbgr.SetIntentRequest{
+		InstanceId: int64(instanceID),
+		Intent: &pbgr.Intent{
+			NewFolder: folder,
+		},
+	})
+
+	return err
 }
 
 // DoRegister does RPC registration

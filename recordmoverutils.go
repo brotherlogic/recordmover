@@ -124,6 +124,8 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 			Rule:       rule,
 		})
 		if record.GetRelease().GetFolderId() != folder {
+			s.CtxLog(ctx, fmt.Sprintf("Moving %v to %v", record.GetRelease().GetInstanceId(), folder))
+
 			err := s.getter.update(ctx, record.GetRelease().GetInstanceId(), rule, folder)
 			if err != nil {
 				return err

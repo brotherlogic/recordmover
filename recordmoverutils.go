@@ -123,9 +123,11 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 			MoveTime:   time.Now().Unix(),
 			Rule:       rule,
 		})
-		err := s.getter.update(ctx, record.GetRelease().GetInstanceId(), rule, folder)
-		if err != nil {
-			return err
+		if record.GetRelease().GetFolderId() != folder {
+			err := s.getter.update(ctx, record.GetRelease().GetInstanceId(), rule, folder)
+			if err != nil {
+				return err
+			}
 		}
 		s.incrementCount(ctx, record.GetRelease().GetInstanceId())
 		return nil

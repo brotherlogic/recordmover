@@ -259,6 +259,7 @@ func (p prodGetter) update(ctx context.Context, instanceID int32, reason string,
 	}
 	defer cancel()
 
+	s.CtxLog(ctx, fmt.Sprintf("Moving %v to %v", instanceID, folder))
 	_, err = gclient.SetIntent(nctx, &pbgr.SetIntentRequest{
 		InstanceId: int64(instanceID),
 		Intent: &pbgr.Intent{

@@ -110,6 +110,14 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) error {
 	folder, rule := s.moveRecord(ctx, record)
 
+	// Adjust to the cleaning folder if the record needs to be cleaned
+	if record.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_12_INCH || record.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_7_INCH {
+		if folder == 812802 && time.Since(time.Unix(record.GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*365*2 {
+			s.CtxLog(ctx, fmt.Sprintf("ADJUST TO CLEAN FOLDER %v", record.GetRelease().GetInstanceId()))
+			folder = 3386035
+		}
+	}
+
 	s.CtxLog(ctx, fmt.Sprintf("%v -> %v, %v", record.GetRelease().GetInstanceId(), folder, rule))
 
 	if folder > 0 || len(rule) > 0 {

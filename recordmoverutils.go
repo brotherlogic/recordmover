@@ -113,7 +113,7 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 	// Adjust to the cleaning folder if the record needs to be cleaned
 	if record.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_12_INCH || record.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_7_INCH {
 		if folder == 812802 && time.Since(time.Unix(record.GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*365*2 {
-			s.CtxLog(ctx, fmt.Sprintf("ADJUST TO CLEAN FOLDER %v", record.GetRelease().GetInstanceId()))
+			s.CtxLog(ctx, fmt.Sprintf("ADJUST TO CLEAN FOLDER %v (%v)", record.GetRelease().GetInstanceId(), time.Since(time.Unix(record.GetMetadata().GetLastCleanDate(), 0))))
 			folder = 3386035
 		}
 	}

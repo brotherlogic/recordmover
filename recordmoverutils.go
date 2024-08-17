@@ -127,7 +127,16 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 		return nil
 	}
 
-	
+	// Adjust to the cleaning folder if the record needs to be cleaned
+	if record.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_12_INCH || record.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_7_INCH {
+		if folder == 812802 && time.Since(time.Unix(record.GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*365*2 {
+			s.CtxLog(ctx, fmt.Sprintf("ADJUST TO CLEAN FOLDER %v (because %v)", record.GetRelease().GetInstanceId(), time.Since(time.Unix(record.GetMetadata().GetLastCleanDate(), 0))))
+			folder = 3386035
+		}
+	}
+
+	s.CtxLog(ctx, fmt.Sprintf("%v -> %v, %v", record.GetRelease().GetInstanceId(), folder, rule))
+
 	if folder > 0 || len(rule) > 0 {
 		s.CtxLog(ctx, fmt.Sprintf("MOVED: %v -> %v, %v", record.GetRelease().GetInstanceId(), folder, rule))
 	}
@@ -139,9 +148,13 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 			MoveTime:   time.Now().Unix(),
 			Rule:       rule,
 		})
-		err := s.getter.update(ctx, record.GetRelease().GetInstanceId(), rule, folder)
-		if err != nil {
-			return err
+		if record.GetRelease().GetFolderId() != folder {
+			s.CtxLog(ctx, fmt.Sprintf("Moving %v to %v", record.GetRelease().GetInstanceId(), folder))
+
+			err := s.getter.update(ctx, record.GetRelease().GetInstanceId(), rule, folder)
+			if err != nil {
+				return err
+			}
 		}
 		s.incrementCount(ctx, record.GetRelease().GetInstanceId())
 		return nil

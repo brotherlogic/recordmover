@@ -155,10 +155,11 @@ func main() {
 	case "ping":
 		id, err := strconv.Atoi(os.Args[2])
 		sclient := pbrc.NewClientUpdateServiceClient(conn)
-		_, err = sclient.ClientUpdate(ctx, &pbrc.ClientUpdateRequest{InstanceId: int32(id)})
+		rr, err := sclient.ClientUpdate(ctx, &pbrc.ClientUpdateRequest{InstanceId: int32(id)})
 		if err != nil {
-			log.Fatalf("Error on GET: %v", err)
+		log.Fatalf("Error on GET: %v", err)
 		}
+		log.Printf("%v -> %v", rr, err)
 	case "get":
 		v, err := strconv.Atoi(os.Args[2])
 		if err != nil {

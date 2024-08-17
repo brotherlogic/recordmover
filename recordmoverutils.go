@@ -117,26 +117,17 @@ func isTwelve(record *pbrc.Record) bool {
 	return isTwelve
 }
 
-func adjustFolder(folder int32, record *pbrc.Record) int32{
-	isTw := isTwelve(record)
-
-	if folder == 812802 && isTw {
-		return 7651472
-	}
-
-	return folder
-}
 
 func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) error {
 	folder, rule := s.moveRecord(ctx, record)
-	folder = adjustFolder(folder, record)
+	
+	s.CtxLog(ctx, fmt.Sprintf("%v -> %v, %v", record.GetRelease().GetInstanceId(), folder, rule))
 
 	if record.GetRelease().GetFolderId() == folder {
 		return nil
 	}
 
-	s.CtxLog(ctx, fmt.Sprintf("%v -> %v, %v", record.GetRelease().GetInstanceId(), folder, rule))
-
+	
 	if folder > 0 || len(rule) > 0 {
 		s.CtxLog(ctx, fmt.Sprintf("MOVED: %v -> %v, %v", record.GetRelease().GetInstanceId(), folder, rule))
 	}

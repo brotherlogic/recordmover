@@ -159,7 +159,7 @@ func main() {
 		if err != nil {
 		log.Fatalf("Error on GET: %v", err)
 		}
-		log.Printf("%v -> %v", rr, err)
+		fmt.Printf("%v -> %v\n", rr, err)
 	case "get":
 		v, err := strconv.Atoi(os.Args[2])
 		if err != nil {

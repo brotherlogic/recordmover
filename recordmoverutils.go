@@ -107,8 +107,25 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 	return nil
 }
 
+func adjustFolder(folder int32, record *pbrc.Record) int32{
+	isTwelve := false
+	for _, format := range record.GetRelease().GetFormats() {
+		if format.GetName()  == "LP" {
+			isTwelve = true
+		}
+	}
+
+	if folder == 812802 && isTwelve {
+		return 7651472
+	}
+
+	return folder
+}
+
 func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) error {
 	folder, rule := s.moveRecord(ctx, record)
+
+	folder = adjustFolder(folder, record)
 
 	s.CtxLog(ctx, fmt.Sprintf("%v -> %v, %v", record.GetRelease().GetInstanceId(), folder, rule))
 

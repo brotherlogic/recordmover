@@ -107,15 +107,20 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 	return nil
 }
 
-func adjustFolder(folder int32, record *pbrc.Record) int32{
+func isTwelve(record *pbrc.Record) bool {
 	isTwelve := false
 	for _, format := range record.GetRelease().GetFormats() {
 		if format.GetName()  == "LP" {
 			isTwelve = true
 		}
 	}
+	return isTwelve
+}
 
-	if folder == 812802 && isTwelve {
+func adjustFolder(folder int32, record *pbrc.Record) int32{
+	isTw := isTwelve(record)
+
+	if folder == 812802 && isTw {
 		return 7651472
 	}
 
@@ -124,8 +129,11 @@ func adjustFolder(folder int32, record *pbrc.Record) int32{
 
 func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) error {
 	folder, rule := s.moveRecord(ctx, record)
-
 	folder = adjustFolder(folder, record)
+
+	if record.GetRelease().GetFolderId() == folder {
+		return nil
+	}
 
 	s.CtxLog(ctx, fmt.Sprintf("%v -> %v, %v", record.GetRelease().GetInstanceId(), folder, rule))
 
@@ -274,7 +282,7 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		return 1613206, "SOLD_ARCHI"
 	}
 
-	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_UNLISTENED && r.GetRelease().FolderId != 812802 {
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_UNLISTENED  {
 		return 812802, "UNLISTE"
 	}
 

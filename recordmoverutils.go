@@ -295,6 +295,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_UNLISTENED  {
+		if isTwelve(r) {
+			return 7651472, "UNLISTENED 12"
+		}
 		return 812802, "UNLISTE"
 	}
 

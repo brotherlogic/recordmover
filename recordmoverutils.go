@@ -110,7 +110,7 @@ func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {
 func isTwelve(record *pbrc.Record) bool {
 	isTwelve := false
 	for _, format := range record.GetRelease().GetFormats() {
-		if format.GetName()  == "LP" {
+		if format.GetName() == "LP" {
 			isTwelve = true
 		}
 		for _, desc := range format.GetDescriptions() {
@@ -122,18 +122,15 @@ func isTwelve(record *pbrc.Record) bool {
 	return isTwelve
 }
 
-
 func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) error {
 	folder, rule := s.moveRecord(ctx, record)
-	
+
 	s.CtxLog(ctx, fmt.Sprintf("%v", record.GetRelease().GetFormats()))
 	s.CtxLog(ctx, fmt.Sprintf("%v -> %v, %v", record.GetRelease().GetInstanceId(), folder, rule))
 
 	if record.GetRelease().GetFolderId() == folder {
 		return nil
 	}
-
-
 
 	s.CtxLog(ctx, fmt.Sprintf("%v -> %v, %v", record.GetRelease().GetInstanceId(), folder, rule))
 
@@ -250,6 +247,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 
 	// We can always move something for processing.
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_ARRIVED && (r.GetRelease().FolderId != 812802 && r.GetMetadata().MoveFolder != 812802) {
+		if isTwelve(r) {
+			return 7651472, "ARRIVED 12"
+		}
 		return 812802, "ARRIVED"
 	}
 
@@ -271,6 +271,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_VALIDATE && (r.GetRelease().FolderId != 812802 && r.GetMetadata().MoveFolder != 812802) {
+		if isTwelve(r) {
+			return 7651472, "VALIDATING 12"
+		}
 		return 812802, "VALIDATING"
 	}
 
@@ -286,7 +289,7 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		return 1613206, "SOLD_ARCHI"
 	}
 
-	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_UNLISTENED  {
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_UNLISTENED {
 		if isTwelve(r) {
 			return 7651472, "UNLISTENED 12"
 		}
@@ -306,6 +309,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_HIGH_SCHOOL && r.GetRelease().FolderId != 812802 {
+		if isTwelve(r) {
+			return 7651472, "PRE HIGH SCHOOL 12"
+		}
 		return 812802, "PRE HIGH SCHOOL"
 	}
 
@@ -334,6 +340,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_IN_COLLECTION && r.GetRelease().FolderId != 812802 {
+		if isTwelve(r) {
+			return 7651472, "PRE IN COLLECTION 12"
+		}
 		return 812802, "PRE IN COLLECTION"
 	}
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_IN_COLLECTION {
@@ -352,7 +361,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_STAGED_TO_SELL && r.GetRelease().FolderId != 812802 && r.GetMetadata().MoveFolder != 812802 {
-		r.GetMetadata().MoveFolder = 812802
+		if isTwelve(r) {
+			return 7651472, "STAGED TO SELL 12"
+		}
 		return 812802, "STAGED TO SELL"
 	}
 

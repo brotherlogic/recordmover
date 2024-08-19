@@ -241,12 +241,12 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 	}
 
 	// We can always move something for processing.
-	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_RIP_THEN_SELL && (r.GetRelease().FolderId != 812802 && r.GetMetadata().MoveFolder != 812802) {
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_RIP_THEN_SELL {
 		return 812802, "RIP THEN SELL"
 	}
 
 	// We can always move something for processing.
-	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_ARRIVED && (r.GetRelease().FolderId != 812802 && r.GetMetadata().MoveFolder != 812802) {
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_ARRIVED {
 		if isTwelve(r) {
 			return 7651472, "ARRIVED 12"
 		}
@@ -270,7 +270,7 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		return 1362206, "ASSESSING"
 	}
 
-	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_VALIDATE && (r.GetRelease().FolderId != 812802 && r.GetMetadata().MoveFolder != 812802) {
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_VALIDATE {
 		if isTwelve(r) {
 			return 7651472, "VALIDATING 12"
 		}
@@ -296,19 +296,25 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		return 812802, "UNLISTE"
 	}
 
-	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_STAGED && r.GetRelease().FolderId != 3578980 {
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_STAGED {
+		if isTwelve(r) {
+			return 7651472, "STAGED 12"
+		}
 		return 3578980, "STAGED"
 	}
 
-	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_STALE_SALE && r.GetRelease().FolderId != 1708299 {
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_STALE_SALE {
 		return 1708299, "STALE SALE"
 	}
 
-	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_HIGH_SCHOOL && r.GetRelease().FolderId != 673768 {
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_HIGH_SCHOOL {
+		if isTwelve(r) {
+			return 7651472, "HIGH SCHOOL 12"
+		}
 		return 673768, "HIGH SCHOOL"
 	}
 
-	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_HIGH_SCHOOL && r.GetRelease().FolderId != 812802 {
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_HIGH_SCHOOL {
 		if isTwelve(r) {
 			return 7651472, "PRE HIGH SCHOOL 12"
 		}

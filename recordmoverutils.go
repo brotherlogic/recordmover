@@ -128,6 +128,16 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 	s.CtxLog(ctx, fmt.Sprintf("%v", record.GetRelease().GetFormats()))
 	s.CtxLog(ctx, fmt.Sprintf("%v -> %v, %v", record.GetRelease().GetInstanceId(), folder, rule))
 
+	// Move from LP to cleaning pile if required
+	if time.Since(time.Unix(record.GetMetadata().GetLastCleanDate(), 0)).Hours() > 3*365*24 {
+		if folder == 812802 || folder == 7651472 {
+			if record.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_12_INCH || record.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_7_INCH {
+				s.CtxLog(ctx, fmt.Sprintf("Moving to clean %v", record.GetRelease().GetInstanceId()))
+				folder = 3386035
+			}
+		}
+	}
+
 	if record.GetRelease().GetFolderId() == folder {
 		return nil
 	}
@@ -190,7 +200,8 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 
 	// Prevent unclean records from moving out of the cleaning pile
 	if r.GetMetadata().GetCategory() != pbrc.ReleaseMetadata_PARENTS {
-		if (r.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_12_INCH || r.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_7_INCH) && r.GetMetadata().GetSaleState() != pbgd.SaleState_SOLD && r.GetMetadata().GetCategory() != pbrc.ReleaseMetadata_UNKNOWN && r.GetMetadata().GetCategory() != pbrc.ReleaseMetadata_SOLD_ARCHIVE {
+		if (r.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_12_INCH || r.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_7_INCH) &&
+			r.GetMetadata().GetSaleState() != pbgd.SaleState_SOLD && r.GetMetadata().GetCategory() != pbrc.ReleaseMetadata_UNKNOWN && r.GetMetadata().GetCategory() != pbrc.ReleaseMetadata_SOLD_ARCHIVE {
 			if r.GetRelease().GetFolderId() == 3386035 && time.Since(time.Unix(r.GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*365*3 {
 				return -1, "STILL_NOT_CLEAN"
 			}

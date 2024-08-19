@@ -309,7 +309,7 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_STAGED {
 		if isTwelve(r) {
-			return 7651472, "STAGED 12"
+			return 7651475, "STAGED 12"
 		}
 		return 3578980, "STAGED"
 	}
@@ -320,7 +320,7 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_HIGH_SCHOOL {
 		if isTwelve(r) {
-			return 7651472, "HIGH SCHOOL 12"
+			return 7651475, "HIGH SCHOOL 12"
 		}
 		return 673768, "HIGH SCHOOL"
 	}

@@ -114,7 +114,7 @@ func isTwelve(record *pbrc.Record) bool {
 			isTwelve = true
 		}
 		for _, desc := range format.GetDescriptions() {
-			if desc == "LP" {
+			if desc == "LP" || desc == "12\"" {
 				isTwelve = true
 			}
 		}

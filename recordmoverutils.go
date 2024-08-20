@@ -122,6 +122,27 @@ func isTwelve(record *pbrc.Record) bool {
 	return isTwelve
 }
 
+func isCD(record *pbrc.Record) bool {
+	isCD := false
+	for _, format := range record.GetRelease().GetFormats() {
+		if format.GetName() == "LP" {
+			return false
+		}
+		if format.GetName() == "CD" {
+			isCD = true
+		}
+		for _, desc := range format.GetDescriptions() {
+			if desc == "LP" || desc == "12\"" {
+				return false
+			}
+			if desc == "CD" {
+				isCD = true
+			}
+		}
+	}
+	return isCD
+}
+
 func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) error {
 	folder, rule := s.moveRecord(ctx, record)
 
@@ -261,6 +282,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		if isTwelve(r) {
 			return 7651472, "ARRIVED 12"
 		}
+		if isCD(r) {
+			return 7664293, "ARRIVED CD"
+		}
 		return 812802, "ARRIVED"
 	}
 
@@ -285,6 +309,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		if isTwelve(r) {
 			return 7651472, "VALIDATING 12"
 		}
+		if isCD(r) {
+			return 7664293, "VALIDATING CD"
+		}
 		return 812802, "VALIDATING"
 	}
 
@@ -304,12 +331,18 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		if isTwelve(r) {
 			return 7651472, "UNLISTENED 12"
 		}
+		if isCD(r) {
+			return 7664293, "UNLISTENED CD"
+		}
 		return 812802, "UNLISTE"
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_STAGED {
 		if isTwelve(r) {
 			return 7651475, "STAGED 12"
+		}
+		if isCD(r) {
+			return 7664296, "STAGED CD"
 		}
 		return 3578980, "STAGED"
 	}
@@ -321,6 +354,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_HIGH_SCHOOL {
 		if isTwelve(r) {
 			return 7651475, "HIGH SCHOOL 12"
+		}
+		if isCD(r) {
+			return 7664296, "STAGED CD"
 		}
 		return 673768, "HIGH SCHOOL"
 	}
@@ -360,6 +396,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		if isTwelve(r) {
 			return 7651472, "PRE IN COLLECTION 12"
 		}
+		if isCD(r) {
+			return 7664293, "PRE IN COLLECTION CD"
+		}
 		return 812802, "PRE IN COLLECTION"
 	}
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_IN_COLLECTION {
@@ -380,6 +419,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_STAGED_TO_SELL && r.GetRelease().FolderId != 812802 && r.GetMetadata().MoveFolder != 812802 {
 		if isTwelve(r) {
 			return 7651472, "STAGED TO SELL 12"
+		}
+		if isCD(r) {
+			return 7664293, "STAGED TO SELL CD"
 		}
 		return 812802, "STAGED TO SELL"
 	}

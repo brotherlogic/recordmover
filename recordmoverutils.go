@@ -143,6 +143,33 @@ func isCD(record *pbrc.Record) bool {
 	return isCD
 }
 
+func isSeven(record *pbrc.Record) bool {
+	isSeven := false
+	for _, format := range record.GetRelease().GetFormats() {
+		if format.GetName() == "LP" {
+			return false
+		}
+		if format.GetName() == "CD" {
+			return false
+		}
+		if format.GetName() == "7\"" {
+			isSeven = true
+		}
+		for _, desc := range format.GetDescriptions() {
+			if desc == "LP" || desc == "12\"" {
+				return false
+			}
+			if desc == "CD" {
+				return false
+			}
+			if desc == "7\"" {
+				isSeven = true
+			}
+		}
+	}
+	return isSeven
+}
+
 func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) error {
 	folder, rule := s.moveRecord(ctx, record)
 
@@ -285,6 +312,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		if isCD(r) {
 			return 7664293, "ARRIVED CD"
 		}
+		if isSeven(r) {
+			return 7665013, "ARRIVED 7"
+		}
 		return 812802, "ARRIVED"
 	}
 
@@ -312,6 +342,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		if isCD(r) {
 			return 7664293, "VALIDATING CD"
 		}
+		if isSeven(r) {
+			return 7665013, "VALIDATING 7"
+		}
 		return 812802, "VALIDATING"
 	}
 
@@ -334,6 +367,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		if isCD(r) {
 			return 7664293, "UNLISTENED CD"
 		}
+		if isSeven(r) {
+			return 7665013, "UNLISTENED 7"
+		}
 		return 812802, "UNLISTE"
 	}
 
@@ -343,6 +379,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		}
 		if isCD(r) {
 			return 7664296, "STAGED CD"
+		}
+		if isCD(r) {
+			return 7665016, "STAGED CD"
 		}
 		return 3578980, "STAGED"
 	}
@@ -356,7 +395,7 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 			return 7651475, "HIGH SCHOOL 12"
 		}
 		if isCD(r) {
-			return 7664296, "STAGED CD"
+			return 7665016, "HIGH SCHOOL CD"
 		}
 		return 673768, "HIGH SCHOOL"
 	}
@@ -364,6 +403,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_HIGH_SCHOOL {
 		if isTwelve(r) {
 			return 7651472, "PRE HIGH SCHOOL 12"
+		}
+		if isSeven(r) {
+			return 7665013, "PHS 7"
 		}
 		return 812802, "PRE HIGH SCHOOL"
 	}
@@ -399,6 +441,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		if isCD(r) {
 			return 7664293, "PRE IN COLLECTION CD"
 		}
+		if isSeven(r) {
+			return 7665013, "PIC 7"
+		}
 		return 812802, "PRE IN COLLECTION"
 	}
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_IN_COLLECTION {
@@ -422,6 +467,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		}
 		if isCD(r) {
 			return 7664293, "STAGED TO SELL CD"
+		}
+		if isSeven(r) {
+			return 7665013, "STS 7"
 		}
 		return 812802, "STAGED TO SELL"
 	}

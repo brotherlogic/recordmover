@@ -380,7 +380,7 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		if isCD(r) {
 			return 7664296, "STAGED CD"
 		}
-		if isCD(r) {
+		if isSeven(r) {
 			return 7665016, "STAGED CD"
 		}
 		return 3578980, "STAGED"

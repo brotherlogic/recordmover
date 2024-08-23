@@ -114,7 +114,7 @@ func isTwelve(record *pbrc.Record) bool {
 			isTwelve = true
 		}
 		for _, desc := range format.GetDescriptions() {
-			if desc == "LP" || desc == "12\"" {
+			if desc == "LP" || desc == "12\"" || desc == "10\"" {
 				isTwelve = true
 			}
 		}
@@ -132,7 +132,7 @@ func isCD(record *pbrc.Record) bool {
 			isCD = true
 		}
 		for _, desc := range format.GetDescriptions() {
-			if desc == "LP" || desc == "12\"" {
+			if desc == "LP" || desc == "12\"" || desc == "10\"" {
 				return false
 			}
 			if desc == "CD" {
@@ -156,7 +156,7 @@ func isSeven(record *pbrc.Record) bool {
 			isSeven = true
 		}
 		for _, desc := range format.GetDescriptions() {
-			if desc == "LP" || desc == "12\"" {
+			if desc == "LP" || desc == "12\"" || desc == "10\"" {
 				return false
 			}
 			if desc == "CD" {

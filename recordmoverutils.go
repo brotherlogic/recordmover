@@ -381,7 +381,7 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 			return 7664296, "STAGED CD"
 		}
 		if isSeven(r) {
-			return 7665016, "STAGED CD"
+			return 7665016, "STAGED SEVEN"
 		}
 		return 3578980, "STAGED"
 	}
@@ -395,9 +395,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 			return 7651475, "HIGH SCHOOL 12"
 		}
 		if isCD(r) {
-			return 7665016, "HIGH SCHOOL CD"
+			return 7664296, "HIGH SCHOOL CD"
 		}
-		return 673768, "HIGH SCHOOL"
+		return 7665016, "HIGH SCHOOL"
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_HIGH_SCHOOL {

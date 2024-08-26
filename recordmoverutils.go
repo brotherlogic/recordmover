@@ -178,7 +178,7 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 
 	// Move from LP to cleaning pile if required
 	if time.Since(time.Unix(record.GetMetadata().GetLastCleanDate(), 0)).Hours() > 3*365*24 {
-		if folder == 812802 || folder == 7651472 {
+		if folder == 812802 || folder == 7651472 || folder == 7665013 {
 			if record.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_12_INCH || record.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_7_INCH {
 				s.CtxLog(ctx, fmt.Sprintf("Moving to clean %v", record.GetRelease().GetInstanceId()))
 				folder = 3386035

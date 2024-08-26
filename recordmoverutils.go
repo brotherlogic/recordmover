@@ -128,7 +128,7 @@ func isCD(record *pbrc.Record) bool {
 		if format.GetName() == "LP" {
 			return false
 		}
-		if format.GetName() == "CD" {
+		if format.GetName() == "CD" || format.GetName() == "CDr" {
 			isCD = true
 		}
 		for _, desc := range format.GetDescriptions() {
@@ -149,7 +149,7 @@ func isSeven(record *pbrc.Record) bool {
 		if format.GetName() == "LP" {
 			return false
 		}
-		if format.GetName() == "CD" {
+		if format.GetName() == "CD" || format.GetName() == "CDr" {
 			return false
 		}
 		if format.GetName() == "7\"" {

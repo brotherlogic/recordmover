@@ -135,7 +135,7 @@ func isCD(record *pbrc.Record) bool {
 			if desc == "LP" || desc == "12\"" || desc == "10\"" {
 				return false
 			}
-			if desc == "CD" {
+			if desc == "CD" || desc == "CDr" {
 				isCD = true
 			}
 		}

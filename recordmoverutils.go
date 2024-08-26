@@ -128,14 +128,14 @@ func isCD(record *pbrc.Record) bool {
 		if format.GetName() == "LP" {
 			return false
 		}
-		if format.GetName() == "CD" {
+		if format.GetName() == "CD" || format.GetName() == "CDr" {
 			isCD = true
 		}
 		for _, desc := range format.GetDescriptions() {
 			if desc == "LP" || desc == "12\"" || desc == "10\"" {
 				return false
 			}
-			if desc == "CD" {
+			if desc == "CD" || desc == "CDr" {
 				isCD = true
 			}
 		}
@@ -149,7 +149,7 @@ func isSeven(record *pbrc.Record) bool {
 		if format.GetName() == "LP" {
 			return false
 		}
-		if format.GetName() == "CD" {
+		if format.GetName() == "CD" || format.GetName() == "CDr" {
 			return false
 		}
 		if format.GetName() == "7\"" {
@@ -178,7 +178,7 @@ func (s *Server) moveRecordInternal(ctx context.Context, record *pbrc.Record) er
 
 	// Move from LP to cleaning pile if required
 	if time.Since(time.Unix(record.GetMetadata().GetLastCleanDate(), 0)).Hours() > 3*365*24 {
-		if folder == 812802 || folder == 7651472 {
+		if folder == 812802 || folder == 7651472 || folder == 7665013 {
 			if record.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_12_INCH || record.GetMetadata().GetFiledUnder() == pbrc.ReleaseMetadata_FILE_7_INCH {
 				s.CtxLog(ctx, fmt.Sprintf("Moving to clean %v", record.GetRelease().GetInstanceId()))
 				folder = 3386035
@@ -381,7 +381,7 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 			return 7664296, "STAGED CD"
 		}
 		if isSeven(r) {
-			return 7665016, "STAGED CD"
+			return 7665016, "STAGED SEVEN"
 		}
 		return 3578980, "STAGED"
 	}
@@ -395,14 +395,17 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 			return 7651475, "HIGH SCHOOL 12"
 		}
 		if isCD(r) {
-			return 7665016, "HIGH SCHOOL CD"
+			return 7664296, "HIGH SCHOOL CD"
 		}
-		return 673768, "HIGH SCHOOL"
+		return 7665016, "HIGH SCHOOL"
 	}
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_HIGH_SCHOOL {
 		if isTwelve(r) {
 			return 7651472, "PRE HIGH SCHOOL 12"
+		}
+		if isCD(r) {
+			return 7664293, "PRE HIGH SCHOOL CD"
 		}
 		if isSeven(r) {
 			return 7665013, "PHS 7"

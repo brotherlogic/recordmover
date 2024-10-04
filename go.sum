@@ -32,8 +32,8 @@ github.com/brotherlogic/logging v0.0.0-20241002224615-e69e859e281e h1:J3fA3NMGzz
 github.com/brotherlogic/logging v0.0.0-20241002224615-e69e859e281e/go.mod h1:lv3O3LyKBAQvIFXMshC4tdWKk+RKtNAg3yQRje1R5Xw=
 github.com/brotherlogic/monitor v0.0.0-20221025152653-c10877c5f9e6 h1:hxu2T9JspE76sL3XAx/CNtA9bOO6QCEJkyG9rBXFEVA=
 github.com/brotherlogic/monitor v0.0.0-20221025152653-c10877c5f9e6/go.mod h1:babny4VO2GqFwjXqhJsP4a6la4XJeMT6f4BgLBPq4G8=
-github.com/brotherlogic/recordcollection v0.0.0-20240927033702-9494b3eb6bbb h1:LcU9O1BLNU+gQIWotTHDe+EGAL6W4U+kAAp9tgc6a4A=
-github.com/brotherlogic/recordcollection v0.0.0-20240927033702-9494b3eb6bbb/go.mod h1:TDrz2TKWUKXvQOHLYFnqxiUpTHfEp5vYhjc2YfYRUpY=
+github.com/brotherlogic/recordcollection v0.0.0-20241004034131-8fa296024260 h1:vF2zX6wyaKAzWuPZMQ3587dDv8tbKnY3mREbSgm5zB0=
+github.com/brotherlogic/recordcollection v0.0.0-20241004034131-8fa296024260/go.mod h1:q/aK2jgWjrb3RoTQghiNVpPdOUqdcwPc7yzyRKqL3xo=
 github.com/brotherlogic/recordmatcher v0.0.0-20241003233652-0ba0f1deafbc h1:BSVbCGCW8Td8m4BLFHpJCrZX2C4IZjDkH5G1z425HV4=
 github.com/brotherlogic/recordmatcher v0.0.0-20241003233652-0ba0f1deafbc/go.mod h1:wv1sqswIpTX4eD6Urv8iHsgfe08EIsq7zeKMa+Xc46w=
 github.com/brotherlogic/recordsorganiser v0.0.0-20240928002405-17eeaf3494e9 h1:/kabF0XZUDMAZ2ov8i0wOpHJ/qQLlnPV4cKprwPaAHQ=

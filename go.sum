@@ -28,12 +28,12 @@ github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126 h1:6e12Cl80V
 github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126/go.mod h1:2JK2kJhI5ler7e7M1WtIpIkiNGG2qy8V6X7VZLCsd5k=
 github.com/brotherlogic/lock v0.0.0-20241002085558-ab861043ff45 h1:nFdoZlr+BVkrotHP+ulZjHdop3Kiu39w7ncJLSd76kE=
 github.com/brotherlogic/lock v0.0.0-20241002085558-ab861043ff45/go.mod h1:9A0v3TlMdUvrNNr8r1XoQOQJdpmqQVgzu3EsjvymeLI=
-github.com/brotherlogic/logging v0.0.0-20241004141924-1ac3f29c6b2b h1:+mcjgn2q4q6ab2I7uWRoTozT6pf0mTYY8AeX0MW2Vis=
-github.com/brotherlogic/logging v0.0.0-20241004141924-1ac3f29c6b2b/go.mod h1:jwAU66gdQ/JqdMVwZOBBABZ6V1T8O+XfAGiuSkvGRzU=
+github.com/brotherlogic/logging v0.0.0-20241004172231-782edde03464 h1:TkSFUULfDJV9KVpx1jwVl7T45DkAfM1A31L5abbuVwk=
+github.com/brotherlogic/logging v0.0.0-20241004172231-782edde03464/go.mod h1:iPw0B6l2dBvjQjJYYAsK7lDg5S23KrkgFg0qH53mwXI=
 github.com/brotherlogic/monitor v0.0.0-20221025152653-c10877c5f9e6 h1:hxu2T9JspE76sL3XAx/CNtA9bOO6QCEJkyG9rBXFEVA=
 github.com/brotherlogic/monitor v0.0.0-20221025152653-c10877c5f9e6/go.mod h1:babny4VO2GqFwjXqhJsP4a6la4XJeMT6f4BgLBPq4G8=
-github.com/brotherlogic/recordcollection v0.0.0-20241004152505-b8d8b7f13779 h1:PK9Y+W2MV7DCnT9CymzhQMwrxJW36xVGIdxfVj2S7KE=
-github.com/brotherlogic/recordcollection v0.0.0-20241004152505-b8d8b7f13779/go.mod h1:U65x2bP65h4IQ8o/5g02NOmLkR39kPGJgLRHMZ5SrDE=
+github.com/brotherlogic/recordcollection v0.0.0-20241004182417-33d231509edf h1:93QT73z/ZA9TrA6ZJA/I3X/Ia60GFuXQmLYMgt5V8Q4=
+github.com/brotherlogic/recordcollection v0.0.0-20241004182417-33d231509edf/go.mod h1:u01BG4knXoVfqYIuJj4c9nfpV2WGX2eeu5uYEFLN8eA=
 github.com/brotherlogic/recordmatcher v0.0.0-20241004142145-0eaec2c87104 h1:VNOarmlfEhxK0qUTvrST7EPkHy+G71yZpSnw9ocGFdM=
 github.com/brotherlogic/recordmatcher v0.0.0-20241004142145-0eaec2c87104/go.mod h1:eQTq8zwc49TGBbzZzCSHt2fhyOZ9HkiEcJPYFH/HPRY=
 github.com/brotherlogic/recordsorganiser v0.0.0-20240928002405-17eeaf3494e9 h1:/kabF0XZUDMAZ2ov8i0wOpHJ/qQLlnPV4cKprwPaAHQ=

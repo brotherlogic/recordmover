@@ -8,8 +8,8 @@ require (
 	github.com/brotherlogic/goserver v0.0.0-20240826215223-fccbac46b3d4
 	github.com/brotherlogic/gramophile v0.1057.0
 	github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126
-	github.com/brotherlogic/recordcollection v0.0.0-20241130141420-c582e14f1a93
-	github.com/brotherlogic/recordmatcher v0.0.0-20241130141237-53e870f010e1
+	github.com/brotherlogic/recordcollection v0.0.0-20241130151430-a98482ab7811
+	github.com/brotherlogic/recordmatcher v0.0.0-20241130151312-acdff65c17eb
 	github.com/brotherlogic/recordsorganiser v0.0.0-20241130150615-d08d56c003fb
 	github.com/golang/protobuf v1.5.4
 	golang.org/x/net v0.31.0

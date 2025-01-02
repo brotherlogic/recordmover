@@ -8,9 +8,9 @@ require (
 	github.com/brotherlogic/goserver v0.0.0-20240826215223-fccbac46b3d4
 	github.com/brotherlogic/gramophile v0.1088.0
 	github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126
-	github.com/brotherlogic/recordcollection v0.0.0-20250102183701-7d86bcc5050e
+	github.com/brotherlogic/recordcollection v0.0.0-20250102184105-8f015d4d5b61
 	github.com/brotherlogic/recordmatcher v0.0.0-20250102182522-bdadd7b4ffc3
-	github.com/brotherlogic/recordsorganiser v0.0.0-20250102182757-16c8f89fd2dd
+	github.com/brotherlogic/recordsorganiser v0.0.0-20250102183712-7fb954b7a11c
 	github.com/golang/protobuf v1.5.4
 	golang.org/x/net v0.33.0
 	google.golang.org/grpc v1.69.2

@@ -36,8 +36,8 @@ github.com/brotherlogic/recordcollection v0.0.0-20250205053833-c2e7143d7cb7 h1:+
 github.com/brotherlogic/recordcollection v0.0.0-20250205053833-c2e7143d7cb7/go.mod h1:A+p6+E94GRc22lQAxAYnJk5Zp5BbtXhmhNCbVx7dfvo=
 github.com/brotherlogic/recordmatcher v0.0.0-20250209232222-2792a8f78917 h1:l99C9WT0yZZ2hAhM8Q+OfG6s9wWVbxz5joeRnAX0ccA=
 github.com/brotherlogic/recordmatcher v0.0.0-20250209232222-2792a8f78917/go.mod h1:NdhaydPvYuhDjyXoHqB6fuNWtj6JE63DqtK1Ibvs0Bk=
-github.com/brotherlogic/recordsorganiser v0.0.0-20250204170136-6a4240066e86 h1:S06rQual6zdWOcz2MehOwSNzIxregsFGj3ueHr/l37M=
-github.com/brotherlogic/recordsorganiser v0.0.0-20250204170136-6a4240066e86/go.mod h1:AfG9q3TZD3Ln/fZ+u2bbNg2WhVs/kB0I5tzmX6KpKjk=
+github.com/brotherlogic/recordsorganiser v0.0.0-20250209232634-93655ed8c164 h1:sUKkdFZzKJR/o4UPtsvaZ8/gjGOvWDmRaeE14CIfKEE=
+github.com/brotherlogic/recordsorganiser v0.0.0-20250209232634-93655ed8c164/go.mod h1:JoS61rTMFNC0IPirevnioUXsNUqOLk5GrfN7Bk/LZMw=
 github.com/brotherlogic/versionserver v0.0.0-20221025154054-c9bcd41be2f2 h1:YjFE4Sa+wwbl4yJwJaMQVeA4CMzLIDbbIuSMdsEp5/w=
 github.com/brotherlogic/versionserver v0.0.0-20221025154054-c9bcd41be2f2/go.mod h1:ODrbMDhG+yOp2vie9vE4oaKsKhILDralZMr7PJ4HrJY=
 github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=

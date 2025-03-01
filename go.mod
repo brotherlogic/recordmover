@@ -10,7 +10,7 @@ require (
 	github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126
 	github.com/brotherlogic/recordcollection v0.0.0-20250227174213-ce20ec909d87
 	github.com/brotherlogic/recordmatcher v0.0.0-20250301004356-03604434f673
-	github.com/brotherlogic/recordsorganiser v0.0.0-20250301000649-d9ad306ce499
+	github.com/brotherlogic/recordsorganiser v0.0.0-20250301020750-f290601bb83c
 	github.com/golang/protobuf v1.5.4
 	golang.org/x/net v0.35.0
 	google.golang.org/grpc v1.70.0

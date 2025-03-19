@@ -3,13 +3,13 @@ module github.com/brotherlogic/recordmover
 go 1.23.2
 
 require (
-	github.com/brotherlogic/cdprocessor v0.0.0-20250319041437-9c2b8cbc1321
+	github.com/brotherlogic/cdprocessor v0.0.0-20250319052004-473d7c64eef0
 	github.com/brotherlogic/godiscogs v0.0.0-20250131163651-1e34c776a68e
 	github.com/brotherlogic/goserver v0.0.0-20250123145056-95c6fbb2310a
 	github.com/brotherlogic/gramophile v0.1132.0
 	github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126
 	github.com/brotherlogic/recordcollection v0.0.0-20250227174213-ce20ec909d87
-	github.com/brotherlogic/recordmatcher v0.0.0-20250319043710-9e2e571a09b4
+	github.com/brotherlogic/recordmatcher v0.0.0-20250319052152-9715f9203c8e
 	github.com/brotherlogic/recordsorganiser v0.0.0-20250319024128-e4c8f768daa5
 	github.com/golang/protobuf v1.5.4
 	golang.org/x/net v0.37.0

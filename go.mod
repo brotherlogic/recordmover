@@ -3,7 +3,7 @@ module github.com/brotherlogic/recordmover
 go 1.23.2
 
 require (
-	github.com/brotherlogic/cdprocessor v0.0.0-20250321152726-203e0b17f39b
+	github.com/brotherlogic/cdprocessor v0.0.0-20250321164713-3977fac0e040
 	github.com/brotherlogic/godiscogs v0.0.0-20250131163651-1e34c776a68e
 	github.com/brotherlogic/goserver v0.0.0-20250123145056-95c6fbb2310a
 	github.com/brotherlogic/gramophile v0.1133.0
@@ -23,7 +23,7 @@ require (
 	github.com/brotherlogic/datastore v0.0.0-20250313015544-917b63bdd6ff // indirect
 	github.com/brotherlogic/discogs v0.0.0-20250108144950-fc78f5083d93 // indirect
 	github.com/brotherlogic/discovery v0.0.0-20241109204028-02908558af09 // indirect
-	github.com/brotherlogic/dstore v0.0.0-20250321162930-55f7d6851621 // indirect
+	github.com/brotherlogic/dstore v0.0.0-20250321170910-c34fe8d0fec4 // indirect
 	github.com/brotherlogic/githubcard v0.0.0-20250321163919-9ffdfbc150d0 // indirect
 	github.com/brotherlogic/githubridge v0.2852.0 // indirect
 	github.com/brotherlogic/gobuildslave v0.0.0-20250321162957-5ed59f2a9cc2 // indirect

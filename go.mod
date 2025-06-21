@@ -9,7 +9,7 @@ require (
 	github.com/brotherlogic/gramophile v0.1220.0
 	github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126
 	github.com/brotherlogic/recordcollection v0.0.0-20250617153857-d1849643b935
-	github.com/brotherlogic/recordmatcher v0.0.0-20250621044402-9d7534517d4e
+	github.com/brotherlogic/recordmatcher v0.0.0-20250621143817-e6be962b4eef
 	github.com/brotherlogic/recordsorganiser v0.0.0-20250522071341-e94f0b2c7f87
 	github.com/golang/protobuf v1.5.4
 	golang.org/x/net v0.41.0
@@ -24,7 +24,7 @@ require (
 	github.com/brotherlogic/discogs v0.0.0-20250516174159-fe8652bd9b78 // indirect
 	github.com/brotherlogic/discovery v0.0.0-20250613142713-1dac6d7d6bdd // indirect
 	github.com/brotherlogic/dstore v0.0.0-20250613140516-5b29ccb83705 // indirect
-	github.com/brotherlogic/githubcard v0.0.0-20250621044317-0676a755f09b // indirect
+	github.com/brotherlogic/githubcard v0.0.0-20250621142930-8f801a304906 // indirect
 	github.com/brotherlogic/githubridge v0.2865.0 // indirect
 	github.com/brotherlogic/gobuildslave v0.0.0-20250617150904-f41a1af90c2d // indirect
 	github.com/brotherlogic/lock v0.0.0-20250621045443-1337f9acd50c // indirect

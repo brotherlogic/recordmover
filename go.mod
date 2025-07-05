@@ -3,13 +3,13 @@ module github.com/brotherlogic/recordmover
 go 1.24.4
 
 require (
-	github.com/brotherlogic/cdprocessor v0.0.0-20250701232615-f12c2f6e1ac8
+	github.com/brotherlogic/cdprocessor v0.0.0-20250705000613-08080b9bf31c
 	github.com/brotherlogic/godiscogs v0.0.0-20250429182651-404c7473edf8
 	github.com/brotherlogic/goserver v0.0.0-20250608182006-4ace595931a5
 	github.com/brotherlogic/gramophile v0.1234.0
 	github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126
 	github.com/brotherlogic/recordcollection v0.0.0-20250625165631-0ab7d5811bd2
-	github.com/brotherlogic/recordmatcher v0.0.0-20250705000051-3b777761ece2
+	github.com/brotherlogic/recordmatcher v0.0.0-20250705000544-333064955b76
 	github.com/brotherlogic/recordsorganiser v0.0.0-20250522071341-e94f0b2c7f87
 	github.com/golang/protobuf v1.5.4
 	golang.org/x/net v0.41.0
@@ -28,7 +28,7 @@ require (
 	github.com/brotherlogic/githubridge v0.2865.0 // indirect
 	github.com/brotherlogic/gobuildslave v0.0.0-20250617150904-f41a1af90c2d // indirect
 	github.com/brotherlogic/lock v0.0.0-20250629072006-197388caac7e // indirect
-	github.com/brotherlogic/logging v0.0.0-20250705000003-88c10964e4a4 // indirect
+	github.com/brotherlogic/logging v0.0.0-20250705000421-310995d1c5a6 // indirect
 	github.com/brotherlogic/monitor v0.0.0-20221025152653-c10877c5f9e6 // indirect
 	github.com/brotherlogic/versionserver v0.0.0-20221025154054-c9bcd41be2f2 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect

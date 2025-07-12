@@ -3,7 +3,7 @@ module github.com/brotherlogic/recordmover
 go 1.24.4
 
 require (
-	github.com/brotherlogic/cdprocessor v0.0.0-20250712151112-2a7a12cc8a30
+	github.com/brotherlogic/cdprocessor v0.0.0-20250712181039-3609bdbb247b
 	github.com/brotherlogic/godiscogs v0.0.0-20250429182651-404c7473edf8
 	github.com/brotherlogic/goserver v0.0.0-20250608182006-4ace595931a5
 	github.com/brotherlogic/gramophile v0.1234.0
@@ -19,7 +19,7 @@ require (
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/brotherlogic/buildserver v0.0.0-20250712160903-a88f46a61637 // indirect
+	github.com/brotherlogic/buildserver v0.0.0-20250712181116-09aeee0839f0 // indirect
 	github.com/brotherlogic/datastore v0.0.0-20250610012354-722a6beaa331 // indirect
 	github.com/brotherlogic/discogs v0.0.0-20250516174159-fe8652bd9b78 // indirect
 	github.com/brotherlogic/discovery v0.0.0-20250613142713-1dac6d7d6bdd // indirect
@@ -27,7 +27,7 @@ require (
 	github.com/brotherlogic/githubcard v0.0.0-20250711223628-6afb88694f07 // indirect
 	github.com/brotherlogic/githubridge v0.2865.0 // indirect
 	github.com/brotherlogic/gobuildslave v0.0.0-20250617150904-f41a1af90c2d // indirect
-	github.com/brotherlogic/lock v0.0.0-20250712142753-d06088214604 // indirect
+	github.com/brotherlogic/lock v0.0.0-20250712180612-a0d5dfcdbbe0 // indirect
 	github.com/brotherlogic/logging v0.0.0-20250711231052-0c807c2916f6 // indirect
 	github.com/brotherlogic/monitor v0.0.0-20221025152653-c10877c5f9e6 // indirect
 	github.com/brotherlogic/versionserver v0.0.0-20221025154054-c9bcd41be2f2 // indirect

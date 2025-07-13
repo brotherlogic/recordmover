@@ -3,13 +3,13 @@ module github.com/brotherlogic/recordmover
 go 1.24.4
 
 require (
-	github.com/brotherlogic/cdprocessor v0.0.0-20250713102113-d7102a17ade3
+	github.com/brotherlogic/cdprocessor v0.0.0-20250713132239-f6dbdf14ae65
 	github.com/brotherlogic/godiscogs v0.0.0-20250429182651-404c7473edf8
 	github.com/brotherlogic/goserver v0.0.0-20250608182006-4ace595931a5
 	github.com/brotherlogic/gramophile v0.1234.0
 	github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126
 	github.com/brotherlogic/recordcollection v0.0.0-20250625165631-0ab7d5811bd2
-	github.com/brotherlogic/recordmatcher v0.0.0-20250713122533-ccde4a943a06
+	github.com/brotherlogic/recordmatcher v0.0.0-20250713142403-e8191d5e2b6a
 	github.com/brotherlogic/recordsorganiser v0.0.0-20250522071341-e94f0b2c7f87
 	github.com/golang/protobuf v1.5.4
 	golang.org/x/net v0.42.0
@@ -19,7 +19,7 @@ require (
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/brotherlogic/buildserver v0.0.0-20250713082425-87aebaa1a004 // indirect
+	github.com/brotherlogic/buildserver v0.0.0-20250713132909-7f1e2909e1b9 // indirect
 	github.com/brotherlogic/datastore v0.0.0-20250610012354-722a6beaa331 // indirect
 	github.com/brotherlogic/discogs v0.0.0-20250516174159-fe8652bd9b78 // indirect
 	github.com/brotherlogic/discovery v0.0.0-20250613142713-1dac6d7d6bdd // indirect

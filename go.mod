@@ -3,7 +3,7 @@ module github.com/brotherlogic/recordmover
 go 1.24.4
 
 require (
-	github.com/brotherlogic/cdprocessor v0.0.0-20250714224913-e9905dcee8a3
+	github.com/brotherlogic/cdprocessor v0.0.0-20250715035342-fb3002a73fff
 	github.com/brotherlogic/godiscogs v0.0.0-20250429182651-404c7473edf8
 	github.com/brotherlogic/goserver v0.0.0-20250608182006-4ace595931a5
 	github.com/brotherlogic/gramophile v0.1234.0

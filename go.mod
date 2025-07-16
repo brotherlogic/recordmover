@@ -9,7 +9,7 @@ require (
 	github.com/brotherlogic/gramophile v0.1236.0
 	github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126
 	github.com/brotherlogic/recordcollection v0.0.0-20250715205636-bf74e659d908
-	github.com/brotherlogic/recordmatcher v0.0.0-20250715231130-a35e3adb235c
+	github.com/brotherlogic/recordmatcher v0.0.0-20250716051754-593bc207fc71
 	github.com/brotherlogic/recordsorganiser v0.0.0-20250522071341-e94f0b2c7f87
 	github.com/golang/protobuf v1.5.4
 	golang.org/x/net v0.42.0

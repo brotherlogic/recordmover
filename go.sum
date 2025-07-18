@@ -26,8 +26,8 @@ github.com/brotherlogic/gramophile v0.1236.0 h1:60mT8jxmoYJee7T+79RH9Dv/6Gh/og8Q
 github.com/brotherlogic/gramophile v0.1236.0/go.mod h1:vVn1VLaDm04U48LNXyz8pEjq2HfY8v5x+R3MnZK518s=
 github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126 h1:6e12Cl80VtMghgEyTyx1tZB1mUSSBHeLhKvikwb7kIQ=
 github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126/go.mod h1:2JK2kJhI5ler7e7M1WtIpIkiNGG2qy8V6X7VZLCsd5k=
-github.com/brotherlogic/lock v0.0.0-20250716224321-4928c4c23ac4 h1:Kg/S247X3V36uBqPYFnXxzv5kRqGItGLfz3X+zEIbdo=
-github.com/brotherlogic/lock v0.0.0-20250716224321-4928c4c23ac4/go.mod h1:f7Y0zhdQz1tttfW3wrCiaAuuRMoz65hVQDa/e2+zmxU=
+github.com/brotherlogic/lock v0.0.0-20250718190008-c9c28b464177 h1:bL2dsUDJLR82PEBBbGu7gTKuIZU/PlfMnxIa3fKTf9Y=
+github.com/brotherlogic/lock v0.0.0-20250718190008-c9c28b464177/go.mod h1:R0qntNbANQN/nq+1ovOZ96Gp8sdnUyWF9pJdnODuA/4=
 github.com/brotherlogic/logging v0.0.0-20250714215612-d76512b702de h1:gjbjCr/fEFwSzO385DtnJtnOi6qJp8lxdXgyuqW2pxE=
 github.com/brotherlogic/logging v0.0.0-20250714215612-d76512b702de/go.mod h1:LqGprjgoFch8ZPtQH6/MgtAjkMbiBQi78jqsvYndhaw=
 github.com/brotherlogic/monitor v0.0.0-20221025152653-c10877c5f9e6 h1:hxu2T9JspE76sL3XAx/CNtA9bOO6QCEJkyG9rBXFEVA=

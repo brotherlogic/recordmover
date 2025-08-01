@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	keystoreclient "github.com/brotherlogic/keystore/client"
+	"github.com/gogo/protobuf/proto"
 	"golang.org/x/net/context"
 
 	gdpb "github.com/brotherlogic/godiscogs/proto"
@@ -224,5 +225,18 @@ func TestAddToArchiveFail(t *testing.T) {
 	err := s.addToArchive(context.Background(), &pb.RecordedMove{})
 	if err == nil {
 		t.Errorf("Should have failed")
+	}
+}
+
+func TestIsSeven(t *testing.T) {
+	r := &pbrc.Record{Release: &gdpb.Release{}}
+	strFormats := `formats:{descriptions:"WAV" descriptions:"Compilation" name:"File" qty:"20"}`
+	err := proto.UnmarshalText(strFormats, r.Release)
+	if err != nil {
+		t.Fatalf("Bad convert: %v", err)
+	}
+
+	if !isSeven(r) {
+		t.Errorf("%v should not be a seven inch", r)
 	}
 }

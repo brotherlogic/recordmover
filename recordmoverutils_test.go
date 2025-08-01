@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	keystoreclient "github.com/brotherlogic/keystore/client"
+	"github.com/gogo/protobuf/proto"
 	"golang.org/x/net/context"
 
 	gdpb "github.com/brotherlogic/godiscogs/proto"
@@ -111,7 +112,7 @@ var movetests = []struct {
 	{&pbrc.Record{Release: &gdpb.Release{}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_ASSESS_FOR_SALE, GoalFolder: 1234}}, 1362206},
 	{&pbrc.Record{Release: &gdpb.Release{}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_PRE_HIGH_SCHOOL, GoalFolder: 1234}}, 812802},
 	{&pbrc.Record{Release: &gdpb.Release{}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_LISTED_TO_SELL, GoalFolder: 1234}}, 488127},
-	{&pbrc.Record{Release: &gdpb.Release{}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_HIGH_SCHOOL, GoalFolder: 1234}}, 7665016},
+	{&pbrc.Record{Release: &gdpb.Release{}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_HIGH_SCHOOL, GoalFolder: 1234}}, 3578980},
 	{&pbrc.Record{Release: &gdpb.Release{FolderId: 2259637}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_PRE_VALIDATE, GoalFolder: 2259637}}, 812802},
 	{&pbrc.Record{Release: &gdpb.Release{FolderId: 4321}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, Category: pbrc.ReleaseMetadata_PRE_SOPHMORE, GoalFolder: 1234}}, 1234},
 	{&pbrc.Record{Release: &gdpb.Release{FolderId: 1249, Rating: 5, InstanceId: 19867493}, Metadata: &pbrc.ReleaseMetadata{Match: pbrc.ReleaseMetadata_FULL_MATCH, DateAdded: 1368884100, FilePath: "1450170", LastCache: 1543338069, Category: pbrc.ReleaseMetadata_STAGED_TO_SELL, GoalFolder: 242018, LastSyncTime: 1544561649, Purgatory: pbrc.Purgatory_NEEDS_STOCK_CHECK, LastStockCheck: 1544490181, OverallScore: 4}}, 812802},
@@ -224,5 +225,18 @@ func TestAddToArchiveFail(t *testing.T) {
 	err := s.addToArchive(context.Background(), &pb.RecordedMove{})
 	if err == nil {
 		t.Errorf("Should have failed")
+	}
+}
+
+func TestIsSeven(t *testing.T) {
+	r := &pbrc.Record{Release: &gdpb.Release{}}
+	strFormats := `formats:{descriptions:"WAV" descriptions:"Compilation" name:"File" qty:"20"}`
+	err := proto.UnmarshalText(strFormats, r.Release)
+	if err != nil {
+		t.Fatalf("Bad convert: %v", err)
+	}
+
+	if isSeven(r) {
+		t.Errorf("%v should not be a seven inch", r)
 	}
 }

@@ -236,7 +236,7 @@ func TestIsSeven(t *testing.T) {
 		t.Fatalf("Bad convert: %v", err)
 	}
 
-	if !isSeven(r) {
+	if isSeven(r) {
 		t.Errorf("%v should not be a seven inch", r)
 	}
 }

@@ -1,12 +1,12 @@
 module github.com/brotherlogic/recordmover
 
-go 1.24.4
+go 1.24.5
 
 require (
-	github.com/brotherlogic/cdprocessor v0.0.0-20250806185315-b78a7ce6990a
+	github.com/brotherlogic/cdprocessor v0.0.0-20250812144352-7ff361266097
 	github.com/brotherlogic/godiscogs v0.0.0-20250429182651-404c7473edf8
 	github.com/brotherlogic/goserver v0.0.0-20250608182006-4ace595931a5
-	github.com/brotherlogic/gramophile v0.1281.0
+	github.com/brotherlogic/gramophile v0.1302.0
 	github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126
 	github.com/brotherlogic/recordcollection v0.0.0-20250722141022-d09a67a16bb5
 	github.com/brotherlogic/recordmatcher v0.0.0-20250809021758-2988ce68eae1
@@ -14,19 +14,19 @@ require (
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang/protobuf v1.5.4
 	golang.org/x/net v0.43.0
-	google.golang.org/grpc v1.74.2
-	google.golang.org/protobuf v1.36.7
+	google.golang.org/grpc v1.75.0
+	google.golang.org/protobuf v1.36.8
 )
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/brotherlogic/buildserver v0.0.0-20250805024309-81a3b6189b58 // indirect
+	github.com/brotherlogic/buildserver v0.0.0-20250812032055-b55519aed1f5 // indirect
 	github.com/brotherlogic/datastore v0.0.0-20250610012354-722a6beaa331 // indirect
 	github.com/brotherlogic/discogs v0.0.0-20250729214233-806b1a4864d8 // indirect
 	github.com/brotherlogic/discovery v0.0.0-20250613142713-1dac6d7d6bdd // indirect
 	github.com/brotherlogic/dstore v0.0.0-20250613140516-5b29ccb83705 // indirect
 	github.com/brotherlogic/githubcard v0.0.0-20250809015258-b7eb47354a1b // indirect
-	github.com/brotherlogic/githubridge v0.2867.0 // indirect
+	github.com/brotherlogic/githubridge v0.2872.0 // indirect
 	github.com/brotherlogic/gobuildslave v0.0.0-20250617150904-f41a1af90c2d // indirect
 	github.com/brotherlogic/lock v0.0.0-20250809014217-ec6d59d5f63a // indirect
 	github.com/brotherlogic/logging v0.0.0-20250809013256-00b27467c7fd // indirect
@@ -42,5 +42,5 @@ require (
 	github.com/struCoder/pidusage v0.2.1 // indirect
 	golang.org/x/sys v0.35.0 // indirect
 	golang.org/x/text v0.28.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250804133106-a7a43d27e69b // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250818200422-3122310a409c // indirect
 )

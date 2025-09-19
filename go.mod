@@ -6,7 +6,7 @@ require (
 	github.com/brotherlogic/cdprocessor v0.0.0-20250812144352-7ff361266097
 	github.com/brotherlogic/godiscogs v0.0.0-20250429182651-404c7473edf8
 	github.com/brotherlogic/goserver v0.0.0-20250608182006-4ace595931a5
-	github.com/brotherlogic/gramophile v0.1317.0
+	github.com/brotherlogic/gramophile v0.1322.0
 	github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126
 	github.com/brotherlogic/recordcollection v0.0.0-20250722141022-d09a67a16bb5
 	github.com/brotherlogic/recordmatcher v0.0.0-20250809021758-2988ce68eae1

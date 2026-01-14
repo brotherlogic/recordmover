@@ -434,6 +434,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		if isSeven(r) {
 			return 7665013, "PHS 7"
 		}
+		if isTape(r) {
+			return 9120719, "PHS Tape"
+		}
 		return 812802, "PRE HIGH SCHOOL"
 	}
 

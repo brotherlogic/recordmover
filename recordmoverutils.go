@@ -122,6 +122,21 @@ func isTwelve(record *pbrc.Record) bool {
 	return isTwelve
 }
 
+func isTape(record *pbrc.Record) bool {
+	isTape := false
+	for _, format := range record.GetRelease().GetFormats() {
+		if format.GetName() == "Cassette" {
+			isTape = true
+		}
+		for _, desc := range format.GetDescriptions() {
+			if desc == "Cassette" {
+				isTape = true
+			}
+		}
+	}
+	return isTape
+}
+
 func isCD(record *pbrc.Record) bool {
 	isCD := false
 	for _, format := range record.GetRelease().GetFormats() {
@@ -314,6 +329,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		}
 		if isSeven(r) {
 			return 7665013, "ARRIVED 7"
+		}
+		if isTape(r) {
+			return 9120719, "ARRIVED TAPE"
 		}
 		return 812802, "ARRIVED"
 	}

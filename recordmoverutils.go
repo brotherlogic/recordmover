@@ -331,7 +331,7 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 			return 7665013, "ARRIVED 7"
 		}
 		if isTape(r) {
-			return 9120719
+			return 9120719, "ARRIVED TAPE"
 		}
 		return 812802, "ARRIVED"
 	}

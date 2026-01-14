@@ -485,7 +485,7 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		}
 	}
 
-	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_STAGED_TO_SELL && r.GetRelease().FolderId != 812802 && r.GetMetadata().MoveFolder != 812802 {
+	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_STAGED_TO_SELL {
 		if isTwelve(r) {
 			return 7651472, "STAGED TO SELL 12"
 		}

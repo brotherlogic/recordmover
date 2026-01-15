@@ -407,6 +407,9 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		if isSeven(r) {
 			return 7665016, "STAGED SEVEN"
 		}
+		if isTape(r) {
+			return 9121823, "STAGED TAPE"
+		}
 		return 3578980, "STAGED"
 	}
 

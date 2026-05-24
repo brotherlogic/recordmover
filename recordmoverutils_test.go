@@ -27,11 +27,11 @@ type testGetter struct {
 	failGet bool
 }
 
-func (t *testGetter) getRecordsSince(ctx context.Context, since int64) ([]int32, error) {
-	return []int32{t.rec.GetRelease().InstanceId}, nil
+func (t *testGetter) getRecordsSince(ctx context.Context, since int64) ([]int64, error) {
+	return []int64{t.rec.GetRelease().InstanceId}, nil
 }
 
-func (t *testGetter) getRecord(ctx context.Context, instanceID int32) (*pbrc.Record, error) {
+func (t *testGetter) getRecord(ctx context.Context, instanceID int64) (*pbrc.Record, error) {
 	if t.failGet {
 		return nil, fmt.Errorf("Error getting record")
 	}
@@ -42,7 +42,7 @@ func (t *testGetter) getRecords(ctx context.Context) ([]*pbrc.Record, error) {
 	return []*pbrc.Record{t.rec}, nil
 }
 
-func (t *testGetter) update(ctx context.Context, instanceID int32, reason string, moveFolder int32) error {
+func (t *testGetter) update(ctx context.Context, instanceID int64, reason string, moveFolder int32) error {
 	t.rec = &pbrc.Record{Release: &gdpb.Release{InstanceId: instanceID}, Metadata: &pbrc.ReleaseMetadata{MoveFolder: moveFolder}}
 	return nil
 }
@@ -52,14 +52,14 @@ type testFailGetter struct {
 	lastCategory pbrc.ReleaseMetadata_Category
 }
 
-func (t *testFailGetter) getRecordsSince(ctx context.Context, since int64) ([]int32, error) {
+func (t *testFailGetter) getRecordsSince(ctx context.Context, since int64) ([]int64, error) {
 	if t.grf {
-		return []int32{int32(12)}, nil
+		return []int64{int64(12)}, nil
 	}
-	return []int32{}, fmt.Errorf("Built to fail")
+	return []int64{}, fmt.Errorf("Built to fail")
 }
 
-func (t *testFailGetter) getRecord(ctx context.Context, instanceID int32) (*pbrc.Record, error) {
+func (t *testFailGetter) getRecord(ctx context.Context, instanceID int64) (*pbrc.Record, error) {
 	if t.grf {
 		return &pbrc.Record{Release: &gdpb.Release{FolderId: 1}, Metadata: &pbrc.ReleaseMetadata{Category: pbrc.ReleaseMetadata_UNLISTENED, GoalFolder: 123, Match: pbrc.ReleaseMetadata_FULL_MATCH}}, nil
 	}
@@ -73,7 +73,7 @@ func (t *testFailGetter) getRecords(ctx context.Context) ([]*pbrc.Record, error)
 	return nil, errors.New("Built to fail")
 }
 
-func (t *testFailGetter) update(ctx context.Context, instanceID int32, reason string, moveFolder int32) error {
+func (t *testFailGetter) update(ctx context.Context, instanceID int64, reason string, moveFolder int32) error {
 	if !t.grf {
 		return nil
 	}
@@ -166,7 +166,7 @@ func TestTriggerIncrement(t *testing.T) {
 
 	errCount := 0
 	for i := 0; i < 200; i++ {
-		err := s.incrementCount(context.Background(), int32(12))
+		err := s.incrementCount(context.Background(), int64(12))
 		if err != nil {
 			errCount++
 		}
@@ -182,7 +182,7 @@ func TestNoTriggerIncrement(t *testing.T) {
 
 	errCount := 0
 	for i := 0; i < 200; i++ {
-		err := s.incrementCount(context.Background(), int32(i))
+		err := s.incrementCount(context.Background(), int64(i))
 		if err != nil {
 			errCount++
 		}

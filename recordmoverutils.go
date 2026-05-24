@@ -32,7 +32,7 @@ func (s *Server) addToArchive(ctx context.Context, move *pb.RecordedMove) error 
 	return s.saveMoveArchive(ctx, move.GetInstanceId(), moves)
 }
 
-func (s *Server) incrementCount(ctx context.Context, id int32) error {
+func (s *Server) incrementCount(ctx context.Context, id int64) error {
 	if s.lastID == id {
 		s.lastIDCount++
 	} else {
@@ -49,9 +49,9 @@ func (s *Server) incrementCount(ctx context.Context, id int32) error {
 }
 
 type getter interface {
-	getRecordsSince(ctx context.Context, since int64) ([]int32, error)
-	getRecord(ctx context.Context, instanceID int32) (*pbrc.Record, error)
-	update(ctx context.Context, instanceID int32, reason string, moveFolder int32) error
+	getRecordsSince(ctx context.Context, since int64) ([]int64, error)
+	getRecord(ctx context.Context, instanceID int64) (*pbrc.Record, error)
+	update(ctx context.Context, instanceID int64, reason string, moveFolder int32) error
 }
 
 func (s *Server) refreshMove(ctx context.Context, move *pb.RecordMove) error {

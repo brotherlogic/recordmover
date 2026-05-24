@@ -33,7 +33,7 @@ type Server struct {
 	cdproc      cdproc
 	organiser   organiser
 	lastArch    time.Duration
-	lastID      int32
+	lastID      int64
 	lastIDCount int
 	total       int
 	count       int
@@ -52,7 +52,7 @@ func Init() *Server {
 		&cdprocProd{},
 		&prodOrganiser{},
 		0,
-		int32(0),
+		int64(0),
 		0,
 		0,
 		0,
@@ -140,10 +140,10 @@ type prodGetter struct {
 	dial func(ctx context.Context, server string) (*grpc.ClientConn, error)
 }
 
-func (p *prodGetter) getRecordsSince(ctx context.Context, since int64) ([]int32, error) {
+func (p *prodGetter) getRecordsSince(ctx context.Context, since int64) ([]int64, error) {
 	conn, err := p.dial(ctx, "recordcollection")
 	if err != nil {
-		return []int32{}, err
+		return []int64{}, err
 	}
 	defer conn.Close()
 
@@ -151,12 +151,12 @@ func (p *prodGetter) getRecordsSince(ctx context.Context, since int64) ([]int32,
 	resp, err := client.QueryRecords(ctx, &pbrc.QueryRecordsRequest{Query: &pbrc.QueryRecordsRequest_UpdateTime{since}})
 
 	if err != nil {
-		return []int32{}, err
+		return []int64{}, err
 	}
 
 	return resp.GetInstanceIds(), err
 }
-func (p *prodGetter) getRecord(ctx context.Context, instanceID int32) (*pbrc.Record, error) {
+func (p *prodGetter) getRecord(ctx context.Context, instanceID int64) (*pbrc.Record, error) {
 	conn, err := p.dial(ctx, "recordcollection")
 	if err != nil {
 		return nil, err
@@ -173,7 +173,7 @@ func (p *prodGetter) getRecord(ctx context.Context, instanceID int32) (*pbrc.Rec
 	return resp.GetRecord(), err
 }
 
-func (s *Server) forceMatch(ctx context.Context, ID int32) {
+func (s *Server) forceMatch(ctx context.Context, ID int64) {
 	if s.testing {
 		return
 	}
@@ -198,7 +198,7 @@ func (s *Server) readMoves(ctx context.Context) (*pb.Config, error) {
 	return data.(*pb.Config), nil
 }
 
-func (s *Server) readMoveArchive(ctx context.Context, iid int32) ([]*pb.RecordedMove, error) {
+func (s *Server) readMoveArchive(ctx context.Context, iid int64) ([]*pb.RecordedMove, error) {
 	if s.testing {
 		return nil, fmt.Errorf("Bad")
 	}
@@ -217,7 +217,7 @@ func (s *Server) saveMoves(ctx context.Context, config *pb.Config) error {
 	return s.KSclient.Save(ctx, ConfigKey, config)
 }
 
-func (s *Server) saveMoveArchive(ctx context.Context, iid int32, moves []*pb.RecordedMove) error {
+func (s *Server) saveMoveArchive(ctx context.Context, iid int64, moves []*pb.RecordedMove) error {
 	return s.KSclient.Save(ctx, fmt.Sprintf("%v-%v", MoveKey, iid), &pb.MoveArchive{Moves: moves})
 }
 
@@ -243,7 +243,7 @@ func buildContext(ctx context.Context) (context.Context, context.CancelFunc, err
 	return ctx, cancel, nil
 }
 
-func (p prodGetter) update(ctx context.Context, instanceID int32, reason string, folder int32) error {
+func (p prodGetter) update(ctx context.Context, instanceID int64, reason string, folder int32) error {
 
 	// Dial gram
 	conn, err := grpc.NewClient("gramophile-grpc.brotherlogic-backend.com:80", grpc.WithTransportCredentials(insecure.NewCredentials()))

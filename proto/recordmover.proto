@@ -8,7 +8,7 @@ option go_package = ".;recordmover";
 
 message RecordedMove {
   // The record being moved
-  int32 instance_id = 1;
+  int64 instance_id = 1;
 
   // The time of the move
   int64 move_time = 2;
@@ -30,7 +30,7 @@ message Config {
   repeated RecordMove moves = 1;
   repeated RecordedMove move_archive = 2;
   int64 last_pull = 3;
-  map<int32, int64> next_update_time = 4;
+  map<int64, int64> next_update_time = 4;
 }
 
 message MoveArchive {
@@ -39,15 +39,15 @@ message MoveArchive {
 
 message Context {
   recordcollection.Record before = 1; // DEPRECATED
-  int32 before_instance = 5;
+  int64 before_instance = 5;
   string location = 2;
   recordcollection.Record after = 3; // DEPRECATED
-  int32 after_instance = 6;
+  int64 after_instance = 6;
   int32 slot = 4;
 }
 
 message RecordMove {
-  int32 instance_id = 1;
+  int64 instance_id = 1;
   int32 from_folder = 2;
   int32 to_folder = 3;
   int64 move_date = 4;
@@ -79,7 +79,7 @@ message ListResponse {
 }
 
 message ClearRequest {
-  int32 instance_id = 1;
+  int64 instance_id = 1;
 }
 
 message ClearResponse {}

@@ -19,7 +19,7 @@ import (
 	_ "google.golang.org/grpc/encoding/gzip"
 )
 
-func getRecord(ctx context.Context, instanceID int32) *pbrc.Record {
+func getRecord(ctx context.Context, instanceID int64) *pbrc.Record {
 	host, port, err := utils.Resolve("recordcollection", "recordmovercli-getRecord")
 	if err != nil {
 		log.Fatalf("Unable to reach recordcollection: %v", err)
@@ -61,7 +61,7 @@ func getFolder(ctx context.Context, folderID int32) (string, error) {
 	return r.LocationName, nil
 }
 
-func getReleaseString(ctx context.Context, instanceID int32) string {
+func getReleaseString(ctx context.Context, instanceID int64) string {
 	host, port, err := utils.Resolve("recordcollection", "recordmovercli-getReleaseString")
 	if err != nil {
 		log.Fatalf("Unable to reach collection: %v", err)
@@ -148,14 +148,14 @@ func main() {
 		client2 := pbrc.NewClientUpdateServiceClient(conn)
 		for _, id := range ids.GetInstanceIds() {
 			ctx3, cancel3 := utils.ManualContext("fullping", time.Minute)
-			res, err := client2.ClientUpdate(ctx3, &pbrc.ClientUpdateRequest{InstanceId: int32(id)})
+			res, err := client2.ClientUpdate(ctx3, &pbrc.ClientUpdateRequest{InstanceId: int64(id)})
 			fmt.Printf("%v->%v\n", res, err)
 			cancel3()
 		}
 	case "ping":
 		id, err := strconv.Atoi(os.Args[2])
 		sclient := pbrc.NewClientUpdateServiceClient(conn)
-		rr, err := sclient.ClientUpdate(ctx, &pbrc.ClientUpdateRequest{InstanceId: int32(id)})
+		rr, err := sclient.ClientUpdate(ctx, &pbrc.ClientUpdateRequest{InstanceId: int64(id)})
 		if err != nil {
 		log.Fatalf("Error on GET: %v", err)
 		}
@@ -165,7 +165,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("%v", err)
 		}
-		res, err := client.ListMoves(ctx, &pb.ListRequest{InstanceId: int32(v)})
+		res, err := client.ListMoves(ctx, &pb.ListRequest{InstanceId: int64(v)})
 		if err != nil {
 			log.Fatalf("Error on GET: %v", err)
 		}

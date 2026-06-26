@@ -271,6 +271,8 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 		}
 	}
 
+	isOversize := r.GetMetadata().GetGoalFolder() == 857449
+
 	if r.GetMetadata().GetBoxState() == pbrc.ReleaseMetadata_IN_THE_BOX && (r.GetRelease().FolderId != 3282985 && r.GetMetadata().MoveFolder != 3282985) {
 		return 3282985, "BOX_IT_UP"
 	}
@@ -322,6 +324,10 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 	// We can always move something for processing.
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_ARRIVED {
 		if isTwelve(r) {
+		if isOversize {
+		      return 9411766, "ARRIVED OVER"
+		    }
+		   
 			return 7651472, "ARRIVED 12"
 		}
 		if isCD(r) {
@@ -355,6 +361,10 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_VALIDATE {
 		if isTwelve(r) {
+		if isOversize {
+		      return 9411766, "VALIDATING OVER"
+		    }
+		   
 			return 7651472, "VALIDATING 12"
 		}
 		if isCD(r) {
@@ -383,6 +393,10 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_UNLISTENED {
 		if isTwelve(r) {
+		if isOversize {
+		      return 9411766, "UNLISTENED OVER"
+		    }
+		   
 			return 7651472, "UNLISTENED 12"
 		}
 		if isCD(r) {
@@ -399,7 +413,10 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_STAGED {
 		if isTwelve(r) {
-			return 7651475, "STAGED 12"
+		   if isOversize {
+		      return 9411766, "STAGED OVER"
+		    }
+		    return 7651475, "STAGED 12"
 		}
 		if isCD(r) {
 			return 7664296, "STAGED CD"
@@ -419,6 +436,10 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_HIGH_SCHOOL {
 		if isTwelve(r) {
+		if isOversize {
+		      return 9411766, "HIGH SCHOOL OVER"
+		    }
+		   
 			return 7651475, "HIGH SCHOOL 12"
 		}
 		if isCD(r) {
@@ -432,6 +453,10 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_HIGH_SCHOOL {
 		if isTwelve(r) {
+		if isOversize {
+		      return 9411766, "PRE HIGH SCHOOL OVER"
+		    }
+		   
 			return 7651472, "PRE HIGH SCHOOL 12"
 		}
 		if isCD(r) {
@@ -472,6 +497,10 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_PRE_IN_COLLECTION {
 		if isTwelve(r) {
+		if isOversize {
+		      return 9411766, "PRE IN COLLECTION OVER"
+		    }
+		   
 			return 7651472, "PRE IN COLLECTION 12"
 		}
 		if isCD(r) {
@@ -499,6 +528,10 @@ func (s *Server) moveRecord(ctx context.Context, r *pbrc.Record) (int32, string)
 
 	if r.GetMetadata().GetCategory() == pbrc.ReleaseMetadata_STAGED_TO_SELL {
 		if isTwelve(r) {
+		if isOversize {
+		      return 9411766, "STAGED TO SELL OVER"
+		    }
+		   
 			return 7651472, "STAGED TO SELL 12"
 		}
 		if isCD(r) {
